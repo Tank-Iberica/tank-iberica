@@ -56,6 +56,7 @@ function getTypeBadgeClass(type: string): string {
   }
 }
 
+/** Composable for dashboard mantenimientos. */
 export function useDashboardMantenimientos() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

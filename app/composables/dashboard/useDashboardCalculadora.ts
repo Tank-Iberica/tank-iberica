@@ -102,6 +102,7 @@ function printResults(): void {
   globalThis.print()
 }
 
+/** Composable for dashboard calculadora. */
 export function useDashboardCalculadora() {
   const { t } = useI18n()
 

@@ -13,6 +13,7 @@
  */
 import { serverSupabaseServiceRole } from '#supabase/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { timingSafeCompare } from '../../utils/timingSafeCompare'
 import { defineEventHandler, getHeader, getRequestIP } from 'h3'
 import { z } from 'zod'
 import { processWhatsAppSubmission, sanitizeSlug } from '~~/server/services/whatsappProcessor'
@@ -30,7 +31,7 @@ async function verifyAccess(
   turnstileToken: string | undefined,
 ): Promise<void> {
   const internalHeader = getHeader(event, 'x-internal-secret')
-  if (internalSecret && internalHeader === internalSecret) return
+  if (internalSecret && timingSafeCompare(internalHeader, internalSecret)) return
   if (turnstileToken) {
     const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
     if (!(await verifyTurnstile(turnstileToken, ip))) {

@@ -12,8 +12,9 @@ import { defineEventHandler, getRouterParam } from 'h3'
 import { serverSupabaseUser } from '#supabase/server'
 import { verifyCsrf } from '../../../utils/verifyCsrf'
 import { safeError } from '../../../utils/safeError'
+import { CREDIT_COSTS } from '../../../utils/creditsConfig'
 
-const PROTECT_COST = 2 // credits required to protect a vehicle
+const PROTECT_COST = CREDIT_COSTS.PROTECT_VEHICLE
 
 export default defineEventHandler(async (event) => {
   verifyCsrf(event)

@@ -53,6 +53,7 @@ function saveToStorage(favoriteIds: Ref<Set<string>>) {
   }
 }
 
+/** Composable for favorites. */
 export function useFavorites() {
   const favoriteIds = getFavoriteIds()
   const favoritesOnly = getFavoritesOnly()

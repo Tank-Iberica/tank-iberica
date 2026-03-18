@@ -68,6 +68,7 @@ function getTypeColor(type: ContactType): string {
   return CONTACT_TYPES.find((c) => c.value === type)?.color || '#64748b'
 }
 
+/** Composable for dashboard crm. */
 export function useDashboardCrm() {
   const supabase = useSupabaseClient()
   const { t } = useI18n()

@@ -25,6 +25,7 @@ function getCorrelationId(): string {
   }
 }
 
+/** Composable for correlation id. */
 export function useCorrelationId() {
   const correlationId = getCorrelationId()
 

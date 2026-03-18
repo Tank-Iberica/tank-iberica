@@ -380,24 +380,22 @@ describe('POST /api/whatsapp/webhook', () => {
   // ── sendWhatsAppMessage edge cases ────────────────────────────────────
 
   describe('sendWhatsAppMessage edge cases', () => {
-    it('warns when API token is missing (does not send reply)', async () => {
+    afterEach(() => {
+      // Always restore useRuntimeConfig to prevent cascading failures
       vi.stubGlobal('useRuntimeConfig', () => ({
         whatsappAppSecret: '',
-        whatsappApiToken: '', // no token
-        whatsappPhoneNumberId: '',
+        whatsappApiToken: 'test-token',
+        whatsappPhoneNumberId: 'phone-123',
         public: {},
       }))
+    })
 
-      // Ensure we have a message that reaches sendWhatsAppMessage
-      // We need to set whatsappApiToken in the outer config for payload parsing,
-      // but sendWhatsAppMessage reads config independently.
-      // So let's use a valid payload flow, but the inner sendWhatsAppMessage sees no token.
-      // Actually dev mode will return early. Let's use a different approach:
-      // Set whatsappApiToken for parsing but not for sendWhatsAppMessage
+    it('warns when API token is missing (does not send interactive menu)', async () => {
+      // Set whatsappApiToken for parsing but not for sendInteractiveMenu/sendWhatsAppMessage
       let configCallCount = 0
       vi.stubGlobal('useRuntimeConfig', () => {
         configCallCount++
-        // First call is in the handler, second+ in sendWhatsAppMessage
+        // First call is in the handler, second+ in sendInteractiveMenu/sendWhatsAppMessage
         if (configCallCount <= 1) {
           return {
             whatsappAppSecret: '',
@@ -420,7 +418,7 @@ describe('POST /api/whatsapp/webhook', () => {
       mockSupabase = {
         from: (table: string) => {
           if (table === 'whatsapp_submissions') return makeChain(null) // dedup not found
-          if (table === 'dealers') return makeChain(null) // dealer not found triggers sendWhatsAppMessage
+          if (table === 'dealers') return makeChain(null) // dealer not found triggers sendInteractiveMenu
           return makeChain(null)
         },
       }
@@ -428,17 +426,10 @@ describe('POST /api/whatsapp/webhook', () => {
       const { logger } = await import('../../../server/utils/logger')
       const result = await (handler as Function)({})
       expect(result).toEqual({ status: 'ok' })
+      // #61: non-dealer path now calls sendInteractiveMenu instead of sendWhatsAppMessage
       expect(logger.warn).toHaveBeenCalledWith(
-        '[WhatsApp Webhook] Cannot send reply: missing API token or phone number ID',
+        '[WhatsApp Webhook] Cannot send interactive menu: missing config',
       )
-
-      // Restore
-      vi.stubGlobal('useRuntimeConfig', () => ({
-        whatsappAppSecret: '',
-        whatsappApiToken: 'test-token',
-        whatsappPhoneNumberId: 'phone-123',
-        public: {},
-      }))
     })
 
     it('logs error when $fetch to Meta API fails', async () => {
@@ -450,17 +441,18 @@ describe('POST /api/whatsapp/webhook', () => {
       mockSupabase = {
         from: (table: string) => {
           if (table === 'whatsapp_submissions') return makeChain(null)
-          if (table === 'dealers') return makeChain(null) // no dealer → triggers "not registered" reply
+          if (table === 'dealers') return makeChain(null) // no dealer → triggers sendInteractiveMenu
           return makeChain(null)
         },
       }
 
-      // $fetch will throw
+      // $fetch will throw — sendInteractiveMenu catches, falls back to sendWhatsAppMessage which also fails
       vi.stubGlobal('$fetch', vi.fn().mockRejectedValue(new Error('Meta API down')))
 
       const { logger } = await import('../../../server/utils/logger')
       const result = await (handler as Function)({})
       expect(result).toEqual({ status: 'ok' })
+      // #61: sendInteractiveMenu catches and falls back to sendWhatsAppMessage, which also fails
       expect(logger.error).toHaveBeenCalledWith(
         '[WhatsApp Webhook] Failed to send reply:',
         expect.objectContaining({ error: 'Meta API down' }),
@@ -489,6 +481,7 @@ describe('POST /api/whatsapp/webhook', () => {
       const { logger } = await import('../../../server/utils/logger')
       const result = await (handler as Function)({})
       expect(result).toEqual({ status: 'ok' })
+      // #61: sendInteractiveMenu catches and falls back to sendWhatsAppMessage, which also fails
       expect(logger.error).toHaveBeenCalledWith(
         '[WhatsApp Webhook] Failed to send reply:',
         expect.objectContaining({ error: 'Unknown error' }),

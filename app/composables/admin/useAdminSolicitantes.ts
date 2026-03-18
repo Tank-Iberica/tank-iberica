@@ -85,6 +85,7 @@ export function formatYearRange(min: number | null, max: number | null): string 
 
 // --- Composable ---
 
+/** Composable for admin solicitantes. */
 export function useAdminSolicitantes() {
   const { locale } = useI18n()
 

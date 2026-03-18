@@ -52,6 +52,11 @@ function getLevelColor(level: string): string {
   return colors[level] || '#64748b'
 }
 
+/**
+ * Composable for dashboard vehiculo detail.
+ *
+ * @param vehicleId
+ */
 export function useDashboardVehiculoDetail(vehicleId: string) {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -146,11 +151,11 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
         supabase
           .from('vehicles')
           .select(
-            'id, brand, model, year, price, km, description_es, description_en, status, slug, category_id, subcategory_id, location, location_province, location_country, condition, hours, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, video_url, main_image_url, highlight_style',
+            'id, brand, model, year, price, km, description_es, description_en, status, slug, category_id, subcategory_id, location, location_province, location_country, condition, hours, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, video_url, main_image_url',
           )
           .eq('id', vehicleId)
           .eq('dealer_id', dealer.id)
-          .single(),
+          .single() as unknown as { data: Record<string, unknown> | null; error: unknown },
         supabase.from('categories').select('id, name, slug').order('slug'),
         supabase.from('subcategories').select('id, name, slug, category_id').order('slug'),
         fetchSubscription(),
@@ -173,22 +178,22 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
       favoritesCount.value = favRes.count || 0
       leadCount.value = leadsRes.count || 0
 
-      const v = vehicleRes.data
+      const v = vehicleRes.data as Record<string, unknown>
       viewCount.value = 0
       form.value = {
-        brand: v.brand || '',
-        model: v.model || '',
-        year: v.year || new Date().getFullYear(),
-        km: v.km || 0,
-        price: v.price || 0,
-        category_id: v.category_id || '',
-        subcategory_id: v.subcategory_id || '',
-        description_es: v.description_es || '',
-        description_en: v.description_en || '',
-        location: v.location || '',
-        status: v.status || 'published',
-        video_url: v.video_url || '',
-        highlight_style: v.highlight_style || null,
+        brand: (v.brand as string) || '',
+        model: (v.model as string) || '',
+        year: (v.year as number) || new Date().getFullYear(),
+        km: (v.km as number) || 0,
+        price: (v.price as number) || 0,
+        category_id: (v.category_id as string) || '',
+        subcategory_id: (v.subcategory_id as string) || '',
+        description_es: (v.description_es as string) || '',
+        description_en: (v.description_en as string) || '',
+        location: (v.location as string) || '',
+        status: (v.status as string) || 'published',
+        video_url: (v.video_url as string) || '',
+        highlight_style: (v.highlight_style as string) || null,
       }
 
       categories.value = (catRes.data || []) as CategoryOption[]

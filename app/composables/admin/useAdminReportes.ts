@@ -72,6 +72,7 @@ export function truncateEmail(email: string): string {
 // ============================================
 // COMPOSABLE
 // ============================================
+/** Composable for admin reportes. */
 export function useAdminReportes() {
   const supabase = useSupabaseClient()
 

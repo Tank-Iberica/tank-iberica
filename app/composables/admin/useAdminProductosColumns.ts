@@ -86,6 +86,7 @@ const STORAGE_KEY = 'tracciona-admin-productos-config-v4'
 // Composable
 // -------------------------------------------------------------------------
 
+/** Defines column configurations for the admin products table. */
 export function useAdminProductosColumns(adminFilterDefs: {
   readonly value: readonly AdminFilter[]
 }) {

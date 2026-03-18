@@ -65,6 +65,11 @@ describe('initial state', () => {
     expect(c.kpiSummary.value.monthlyLeads.current).toBe(0)
   })
 
+  it('kpiSummary.arpu.current starts as 0', () => {
+    const c = useAdminMetricsRevenue()
+    expect(c.kpiSummary.value.arpu.current).toBe(0)
+  })
+
   it('revenueSeries starts as empty array', () => {
     const c = useAdminMetricsRevenue()
     expect(c.revenueSeries.value).toEqual([])
@@ -142,16 +147,52 @@ describe('loadKpiSummary', () => {
     expect(s).toHaveProperty('activeVehicles')
     expect(s).toHaveProperty('activeDealers')
     expect(s).toHaveProperty('monthlyLeads')
+    expect(s).toHaveProperty('arpu')
   })
 
   it('each kpi field has current, previousMonth, changePercent', async () => {
     const c = useAdminMetricsRevenue()
     await c.loadKpiSummary()
-    for (const field of ['monthlyRevenue', 'activeVehicles', 'activeDealers', 'monthlyLeads'] as const) {
+    for (const field of ['monthlyRevenue', 'activeVehicles', 'activeDealers', 'monthlyLeads', 'arpu'] as const) {
       expect(c.kpiSummary.value[field]).toHaveProperty('current')
       expect(c.kpiSummary.value[field]).toHaveProperty('previousMonth')
       expect(c.kpiSummary.value[field]).toHaveProperty('changePercent')
     }
+  })
+
+  it('computes ARPU as revenue / dealers', async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'invoices') {
+        return makeChain({
+          data: [{ amount_cents: 100000 }],
+          error: null,
+        })
+      }
+      if (table === 'vehicles') {
+        return makeChain({
+          data: [{ dealer_id: 'd-1' }, { dealer_id: 'd-2' }, { dealer_id: 'd-1' }],
+          count: 3,
+          error: null,
+        })
+      }
+      return makeChain({ data: [], error: null, count: 0 })
+    })
+    const c = useAdminMetricsRevenue()
+    await c.loadKpiSummary()
+    // 2 unique dealers, revenue 100000 → ARPU = 50000
+    expect(c.kpiSummary.value.arpu.current).toBe(50000)
+  })
+
+  it('ARPU is 0 when no dealers', async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'invoices') {
+        return makeChain({ data: [{ amount_cents: 50000 }], error: null })
+      }
+      return makeChain({ data: [], error: null, count: 0 })
+    })
+    const c = useAdminMetricsRevenue()
+    await c.loadKpiSummary()
+    expect(c.kpiSummary.value.arpu.current).toBe(0)
   })
 })
 

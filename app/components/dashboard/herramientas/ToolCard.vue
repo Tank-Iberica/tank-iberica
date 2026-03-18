@@ -238,6 +238,7 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
     box-shadow 0.2s,
     transform 0.15s;
   min-height: 2.75rem;
+  contain: layout style paint;
 }
 
 @media (hover: hover) {

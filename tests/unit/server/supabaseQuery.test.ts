@@ -25,10 +25,23 @@ describe('vehiclesQuery', () => {
     expect(from).toHaveBeenCalledWith('vehicles')
   })
 
-  it('selects all columns', () => {
+  it('uses explicit default columns instead of select(*)', () => {
     const { client, select } = makeClient()
     vehiclesQuery(client, 'tracciona')
-    expect(select).toHaveBeenCalledWith('*')
+    const cols = select.mock.calls[0][0] as string
+    expect(cols).not.toBe('*')
+    expect(cols).toContain('id')
+    expect(cols).toContain('slug')
+    expect(cols).toContain('brand')
+    expect(cols).toContain('model')
+    expect(cols).toContain('status')
+    expect(cols).toContain('vertical')
+  })
+
+  it('allows custom column selection', () => {
+    const { client, select } = makeClient()
+    vehiclesQuery(client, 'tracciona', 'id, slug, price')
+    expect(select).toHaveBeenCalledWith('id, slug, price')
   })
 
   it('filters by the provided vertical', () => {
@@ -38,7 +51,6 @@ describe('vehiclesQuery', () => {
   })
 
   it('uses vertical from runtime config when not provided', () => {
-    // setup.ts stubs useRuntimeConfig to return vertical: 'tracciona'
     const { client, eq } = makeClient()
     vehiclesQuery(client)
     expect(eq).toHaveBeenCalledWith('vertical', 'tracciona')
@@ -52,6 +64,22 @@ describe('dealersQuery', () => {
     const { client, from } = makeClient()
     dealersQuery(client, 'tracciona')
     expect(from).toHaveBeenCalledWith('dealers')
+  })
+
+  it('uses explicit default columns instead of select(*)', () => {
+    const { client, select } = makeClient()
+    dealersQuery(client, 'tracciona')
+    const cols = select.mock.calls[0][0] as string
+    expect(cols).not.toBe('*')
+    expect(cols).toContain('id')
+    expect(cols).toContain('slug')
+    expect(cols).toContain('company_name')
+  })
+
+  it('allows custom column selection', () => {
+    const { client, select } = makeClient()
+    dealersQuery(client, 'tracciona', 'id, slug')
+    expect(select).toHaveBeenCalledWith('id, slug')
   })
 
   it('filters by vertical', () => {
@@ -70,6 +98,16 @@ describe('articlesQuery', () => {
     expect(from).toHaveBeenCalledWith('articles')
   })
 
+  it('uses explicit default columns instead of select(*)', () => {
+    const { client, select } = makeClient()
+    articlesQuery(client, 'tracciona')
+    const cols = select.mock.calls[0][0] as string
+    expect(cols).not.toBe('*')
+    expect(cols).toContain('id')
+    expect(cols).toContain('slug')
+    expect(cols).toContain('title')
+  })
+
   it('filters by vertical', () => {
     const { client, eq } = makeClient()
     articlesQuery(client, 'another')
@@ -84,6 +122,22 @@ describe('categoriesQuery', () => {
     const { client, from } = makeClient()
     categoriesQuery(client, 'tracciona')
     expect(from).toHaveBeenCalledWith('categories')
+  })
+
+  it('uses explicit default columns instead of select(*)', () => {
+    const { client, select } = makeClient()
+    categoriesQuery(client, 'tracciona')
+    const cols = select.mock.calls[0][0] as string
+    expect(cols).not.toBe('*')
+    expect(cols).toContain('id')
+    expect(cols).toContain('slug')
+    expect(cols).toContain('name')
+  })
+
+  it('allows custom column selection', () => {
+    const { client, select } = makeClient()
+    categoriesQuery(client, 'tracciona', 'id, name')
+    expect(select).toHaveBeenCalledWith('id, name')
   })
 
   it('filters by provided vertical', () => {

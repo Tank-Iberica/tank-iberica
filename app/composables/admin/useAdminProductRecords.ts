@@ -10,6 +10,11 @@ interface RecordsFormData {
   rental_records?: RentalEntry[]
 }
 
+/**
+ * Composable for admin product records.
+ *
+ * @param formData
+ */
 export function useAdminProductRecords(formData: Ref<RecordsFormData>) {
   // ── Maintenance ─────────────────────────────────────────────
   function addMaint(): void {

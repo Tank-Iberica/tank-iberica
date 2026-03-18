@@ -240,3 +240,392 @@ describe('toggleBrokerageOptOut', () => {
     expect(c.brokerageOptOut.value).toBe(false)
   })
 })
+
+// ─── createDealerProfile ──────────────────────────────────────────────────────
+
+describe('createDealerProfile', () => {
+  it('returns false when no user', async () => {
+    mockUser.value = null
+    vi.stubGlobal('useSupabaseUser', () => mockUser)
+    const c = useDealerPortal()
+    const result = await c.createDealerProfile('Test Dealer')
+    expect(result).toBe(false)
+  })
+
+  it('generates slug from name (lowercase, hyphens)', async () => {
+    const insertMock = vi.fn()
+    const selectMock = vi.fn()
+    const singleMock = vi.fn().mockResolvedValue({ data: { id: 'new-dealer-1' }, error: null })
+
+    selectMock.mockReturnValue({ single: singleMock })
+    insertMock.mockReturnValue({ select: selectMock })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: (table: string) => {
+        if (table === 'dealers') {
+          return {
+            insert: insertMock,
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+          }
+        }
+        return makeChain()
+      },
+    }))
+
+    const c = useDealerPortal()
+    await c.createDealerProfile('Mi Concesionario Especial')
+
+    expect(insertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slug: 'mi-concesionario-especial',
+        user_id: 'user-1',
+        company_name: { es: 'Mi Concesionario Especial', en: 'Mi Concesionario Especial' },
+        status: 'active',
+      }),
+    )
+  })
+
+  it('strips leading/trailing hyphens from slug', async () => {
+    const insertMock = vi.fn()
+    const selectMock = vi.fn()
+    const singleMock = vi.fn().mockResolvedValue({ data: { id: 'new-dealer-2' }, error: null })
+
+    selectMock.mockReturnValue({ single: singleMock })
+    insertMock.mockReturnValue({ select: selectMock })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: (table: string) => {
+        if (table === 'dealers') {
+          return {
+            insert: insertMock,
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+          }
+        }
+        return makeChain()
+      },
+    }))
+
+    const c = useDealerPortal()
+    await c.createDealerProfile('---Special Name---')
+
+    expect(insertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slug: 'special-name',
+      }),
+    )
+  })
+
+  it('sets needsProfile to false on success', async () => {
+    const singleMock = vi.fn().mockResolvedValue({ data: { id: 'new-dealer-3' }, error: null })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({ single: singleMock }),
+        }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    c.needsProfile.value = true
+    const result = await c.createDealerProfile('New Dealer')
+    expect(result).toBe(true)
+    expect(c.needsProfile.value).toBe(false)
+  })
+
+  it('sets error and returns false on insert failure', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: null,
+              error: { message: 'unique_violation' },
+            }),
+          }),
+        }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: null, error: { message: 'not found' } }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    const result = await c.createDealerProfile('Duplicate Dealer')
+    expect(result).toBe(false)
+    expect(c.error.value).toBeTruthy()
+  })
+
+  it('sets saving to true during creation and false after', async () => {
+    let savingDuringInsert = false
+    const insertFn = vi.fn().mockImplementation(() => {
+      savingDuringInsert = true
+      return {
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: { id: 'new-d' }, error: null }),
+        }),
+      }
+    })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        insert: insertFn,
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.createDealerProfile('Test')
+    expect(savingDuringInsert).toBe(true)
+    expect(c.saving.value).toBe(false)
+  })
+
+  it('replaces non-alphanumeric characters with hyphens in slug', async () => {
+    const insertMock = vi.fn()
+    insertMock.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({ data: { id: 'new-d-4' }, error: null }),
+      }),
+    })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        insert: insertMock,
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.createDealerProfile('Vehículos & Más S.L.')
+
+    expect(insertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slug: 'veh-culos-m-s-s-l',
+      }),
+    )
+  })
+})
+
+// ─── save ─────────────────────────────────────────────────────────────────────
+
+describe('save', () => {
+  it('does nothing when dealerId is null', async () => {
+    const updateMock = vi.fn()
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: updateMock,
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    // dealerId is null by default (not loaded)
+    await c.save()
+    expect(updateMock).not.toHaveBeenCalled()
+  })
+
+  it('calls update with correct payload when dealerId is set', async () => {
+    const updateMock = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: updateMock,
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.loadPortal() // Sets dealerId
+    await c.save()
+
+    expect(updateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        company_name: expect.any(Object),
+        theme: expect.objectContaining({ primary: '#23424A' }),
+        simple_mode: false,
+      }),
+    )
+  })
+
+  it('sets saved to true on success', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.loadPortal()
+    await c.save()
+    expect(c.saved.value).toBe(true)
+  })
+
+  it('sets error on update failure', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: { message: 'update_failed' } }),
+        }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.loadPortal()
+    await c.save()
+    expect(c.error.value).toBe('update_failed')
+  })
+
+  it('sets saving to false after save completes', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.loadPortal()
+    await c.save()
+    expect(c.saving.value).toBe(false)
+  })
+})
+
+// ─── updateCertificationField ─────────────────────────────────────────────────
+
+describe('updateCertificationField', () => {
+  it('updates icon field', () => {
+    const c = useDealerPortal()
+    c.addCertification()
+    const certId = c.certifications.value[0].id
+    c.updateCertificationField(certId, 'icon', 'shield')
+    expect(c.certifications.value[0].icon).toBe('shield')
+  })
+
+  it('updates verified field', () => {
+    const c = useDealerPortal()
+    c.addCertification()
+    const certId = c.certifications.value[0].id
+    c.updateCertificationField(certId, 'verified', true)
+    expect(c.certifications.value[0].verified).toBe(true)
+  })
+
+  it('updates label field', () => {
+    const c = useDealerPortal()
+    c.addCertification()
+    const certId = c.certifications.value[0].id
+    c.updateCertificationField(certId, 'label', { es: 'Certificado', en: 'Certified' })
+    expect(c.certifications.value[0].label.es).toBe('Certificado')
+  })
+
+  it('does nothing for unknown cert id', () => {
+    const c = useDealerPortal()
+    c.addCertification()
+    c.updateCertificationField('unknown', 'icon', 'star')
+    expect(c.certifications.value[0].icon).toBe('badge')
+  })
+})
+
+// ─── simpleMode ───────────────────────────────────────────────────────────────
+
+describe('simpleMode', () => {
+  it('defaults to false', () => {
+    const c = useDealerPortal()
+    expect(c.simpleMode.value).toBe(false)
+  })
+
+  it('can be toggled', () => {
+    const c = useDealerPortal()
+    c.simpleMode.value = true
+    expect(c.simpleMode.value).toBe(true)
+  })
+
+  it('loads simple_mode from dealer data', async () => {
+    const dealerWithSimple = { ...sampleDealer, simple_mode: true }
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => makeChain(dealerWithSimple),
+    }))
+    const c = useDealerPortal()
+    await c.loadPortal()
+    expect(c.simpleMode.value).toBe(true)
+  })
+
+  it('persists simple_mode in save payload', async () => {
+    const updateMock = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    })
+
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: updateMock,
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: sampleDealer, error: null }),
+      }),
+    }))
+
+    const c = useDealerPortal()
+    await c.loadPortal()
+    c.simpleMode.value = true
+    await c.save()
+
+    expect(updateMock).toHaveBeenCalledWith(
+      expect.objectContaining({ simple_mode: true }),
+    )
+  })
+
+  it('defaults to false when dealer data has no simple_mode field', async () => {
+    const dealerWithout = { ...sampleDealer }
+    // @ts-ignore
+    delete dealerWithout.simple_mode
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => makeChain(dealerWithout),
+    }))
+    const c = useDealerPortal()
+    await c.loadPortal()
+    expect(c.simpleMode.value).toBe(false)
+  })
+})
+
+// ─── portalUrl ────────────────────────────────────────────────────────────────
+
+describe('portalUrl', () => {
+  it('returns null when no slug', () => {
+    const c = useDealerPortal()
+    expect(c.portalUrl.value).toBeNull()
+  })
+
+  it('returns /slug when slug is set', async () => {
+    const c = useDealerPortal()
+    await c.loadPortal()
+    expect(c.portalUrl.value).toBe('/mi-concesionario')
+  })
+})

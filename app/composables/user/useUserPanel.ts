@@ -40,6 +40,11 @@ export interface UserAd {
   created_at: string
 }
 
+/**
+ * Composable for user panel.
+ *
+ * @param isOpen
+ */
 export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   const { t } = useI18n()
   const supabase = useSupabaseClient<Database>()

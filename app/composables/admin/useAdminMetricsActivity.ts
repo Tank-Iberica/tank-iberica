@@ -227,6 +227,7 @@ function computeChurnRate(total: number, cancelled: number): number {
   return total > 0 ? Math.round((cancelled / total) * 10000) / 100 : 0
 }
 
+/** Composable for admin metrics activity. */
 export function useAdminMetricsActivity() {
   const supabase = useSupabaseClient()
 

@@ -84,6 +84,7 @@ export const products: MerchProduct[] = [
   },
 ]
 
+/** Composable for dashboard merchandising. */
 export function useDashboardMerchandising() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

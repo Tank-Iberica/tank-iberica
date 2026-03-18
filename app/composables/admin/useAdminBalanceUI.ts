@@ -322,6 +322,7 @@ export function fmtPercent(val: number | null): string {
 }
 
 // ─── Composable ─────────────────────────────────────────────
+/** Composable for admin balance u i. */
 export function useAdminBalanceUI() {
   const toast = useToast()
 

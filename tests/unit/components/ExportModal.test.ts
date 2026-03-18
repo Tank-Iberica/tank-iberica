@@ -5,7 +5,7 @@
  * deselectAll, toggleColumn, close, handleBackdropClick, handleExport),
  * computed properties, format selection, and export generation.
  */
-import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest'
 import { shallowMount, VueWrapper } from '@vue/test-utils'
 import { ref, computed, watch } from 'vue'
 
@@ -127,6 +127,14 @@ async function factory(overrides: Record<string, unknown> = {}): Promise<VueWrap
 describe('ExportModal', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset mock implementations that may have been cleared
+    mockWriteBuffer.mockResolvedValue(new ArrayBuffer(8))
+    mockGetRow.mockReturnValue({ font: {}, fill: {} })
+    mockAddWorksheet.mockReturnValue({
+      columns: [],
+      addRow: mockAddRow,
+      getRow: mockGetRow,
+    })
     // Stub URL.createObjectURL / revokeObjectURL while keeping constructor intact
     vi.stubGlobal(
       'URL',
@@ -135,6 +143,10 @@ describe('ExportModal', () => {
         static override revokeObjectURL = vi.fn()
       },
     )
+  })
+
+  afterEach(() => {
+    document.body.style.overflow = ''
   })
 
   // ====== Rendering ======
@@ -349,9 +361,10 @@ describe('ExportModal', () => {
       const w = await factory({ formats: ['excel'] })
       const exportBtn = w.find('.export-btn-primary')
       await exportBtn.trigger('click')
-      // Allow async dynamic imports to resolve
-      await new Promise((r) => setTimeout(r, 100))
+      // Allow async dynamic imports to resolve — use multiple flushes for CI/full-suite stability
+      await new Promise((r) => setTimeout(r, 250))
       await w.vm.$nextTick()
+      await new Promise((r) => setTimeout(r, 50))
 
       expect(w.emitted('export')).toBeTruthy()
       const payload = w.emitted('export')![0][0] as { format: string; columns: string[] }
@@ -365,7 +378,7 @@ describe('ExportModal', () => {
       const w = await factory({ columns: noneEnabled })
       const exportBtn = w.find('.export-btn-primary')
       await exportBtn.trigger('click')
-      await new Promise((r) => setTimeout(r, 100))
+      await new Promise((r) => setTimeout(r, 250))
       expect(w.emitted('export')).toBeFalsy()
     })
   })
@@ -377,8 +390,9 @@ describe('ExportModal', () => {
       const w = await factory({ formats: ['pdf'] })
       const exportBtn = w.find('.export-btn-primary')
       await exportBtn.trigger('click')
-      await new Promise((r) => setTimeout(r, 100))
+      await new Promise((r) => setTimeout(r, 250))
       await w.vm.$nextTick()
+      await new Promise((r) => setTimeout(r, 50))
 
       expect(w.emitted('export')).toBeTruthy()
       const payload = w.emitted('export')![0][0] as { format: string; columns: string[] }
@@ -429,8 +443,9 @@ describe('ExportModal', () => {
       const w = await factory({ formats: ['excel'] })
       const exportBtn = w.find('.export-btn-primary')
       await exportBtn.trigger('click')
-      await new Promise((r) => setTimeout(r, 100))
+      await new Promise((r) => setTimeout(r, 250))
       await w.vm.$nextTick()
+      await new Promise((r) => setTimeout(r, 50))
 
       const payload = w.emitted('export')![0][0] as { format: string; columns: string[] }
       expect(payload.columns).toHaveLength(2)

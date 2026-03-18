@@ -46,6 +46,7 @@ function getDays(start: Date, count: number): Date[] {
   })
 }
 
+/** Composable for admin social calendar. */
 export function useAdminSocialCalendar() {
   const { t: _t } = useI18n()
 

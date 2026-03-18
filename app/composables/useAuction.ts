@@ -71,6 +71,7 @@ export function formatAuctionCents(cents: number): string {
   }).format(cents / 100)
 }
 
+/** Composable for auction. */
 export function useAuction() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient<Database>() as any

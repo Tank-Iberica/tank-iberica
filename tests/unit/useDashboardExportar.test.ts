@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // Mock dependencies
 vi.stubGlobal('useAuth', () => ({
@@ -360,9 +360,24 @@ describe('exportCSV — via mocked exceljs', () => {
         ) {}
       },
     )
-    vi.stubGlobal('document', {
-      createElement: vi.fn().mockReturnValue({ href: '', download: '', click: vi.fn() }),
-    })
+    // Patch only createElement on the real document to avoid replacing the entire jsdom document
+    if (typeof document !== 'undefined') {
+      const origCreateElement = document.createElement.bind(document)
+      vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
+        if (tag === 'a') {
+          return { href: '', download: '', click: vi.fn() } as unknown as HTMLElement
+        }
+        return origCreateElement(tag)
+      })
+    }
+  })
+
+  afterEach(() => {
+    vi.doUnmock('exceljs')
+    // Only restore createElement spy, not all mocks (which would undo ref/computed stubs for later describe blocks)
+    if (typeof document !== 'undefined' && vi.isMockFunction(document.createElement)) {
+      (document.createElement as ReturnType<typeof vi.fn>).mockRestore()
+    }
   })
 
   it('exports CSV with enabled columns', async () => {
@@ -388,8 +403,8 @@ describe('exportCSV — via mocked exceljs', () => {
     exp.statusFilter.value = 'all'
     exp.exportFormat.value = 'csv'
     exp.handleExport()
-    // Allow async to complete
-    await new Promise((r) => setTimeout(r, 50))
+    // Allow async to complete — use longer timeout for full suite stability
+    await new Promise((r) => setTimeout(r, 200))
     expect(exp.exporting.value).toBe(false)
   })
 
@@ -410,7 +425,7 @@ describe('exportCSV — via mocked exceljs', () => {
     exp.statusFilter.value = 'all'
     exp.exportFormat.value = 'csv'
     exp.handleExport()
-    await new Promise((r) => setTimeout(r, 100))
+    await new Promise((r) => setTimeout(r, 200))
     expect(exp.error.value).toBeTruthy()
     expect(exp.exporting.value).toBe(false)
   })

@@ -45,7 +45,7 @@ onMounted(() => {
     <div class="section-header">
       <div class="header-left">
         <h2>{{ $t('admin.comentarios.title') }}</h2>
-        <span class="total-badge">{{ totalCount }} total</span>
+        <span class="total-badge">{{ totalCount }} {{ $t('common.total', 'total') }}</span>
       </div>
     </div>
 

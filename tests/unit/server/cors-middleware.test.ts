@@ -101,4 +101,37 @@ describe('cors middleware', () => {
     const headers = mockSetResponseHeaders.mock.calls[0][1]
     expect(headers['Access-Control-Allow-Headers']).toContain('x-internal-secret')
   })
+
+  it('allows localhost origin in development', () => {
+    const origEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    mockGetHeader.mockReturnValue('http://localhost:3000')
+    handler(makeEvent('/api/vehicles'))
+    expect(mockSetResponseHeaders).toHaveBeenCalled()
+    process.env.NODE_ENV = origEnv
+  })
+
+  it('sets Max-Age header for preflight caching', () => {
+    const event = makeEvent('/api/vehicles')
+    mockGetHeader.mockReturnValue('https://test.tracciona.com')
+    handler(event)
+    const headers = mockSetResponseHeaders.mock.calls[0][1]
+    expect(headers['Access-Control-Max-Age']).toBe('86400')
+  })
+
+  it('sets Vary: Origin header', () => {
+    const event = makeEvent('/api/vehicles')
+    mockGetHeader.mockReturnValue('https://test.tracciona.com')
+    handler(event)
+    const headers = mockSetResponseHeaders.mock.calls[0][1]
+    expect(headers['Vary']).toBe('Origin')
+  })
+
+  it('includes credentials support in CORS headers', () => {
+    const event = makeEvent('/api/vehicles')
+    mockGetHeader.mockReturnValue('https://test.tracciona.com')
+    handler(event)
+    const headers = mockSetResponseHeaders.mock.calls[0][1]
+    expect(headers['Access-Control-Allow-Credentials']).toBe('true')
+  })
 })

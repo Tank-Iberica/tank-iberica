@@ -35,6 +35,7 @@ function getTypeColor(type: ContactType): string {
   return CONTACT_TYPES.find((t) => t.value === type)?.color || '#64748b'
 }
 
+/** Composable for admin agenda. */
 export function useAdminAgenda() {
   const {
     contacts,

@@ -3,6 +3,7 @@
  * Handles unsigned uploads to Cloudinary via their REST API
  * Supports SEO-friendly public_id, contextual metadata, and tags
  */
+import { validateImageMagicBytes } from '~/utils/validateImageMagicBytes'
 
 export interface CloudinaryUploadResult {
   public_id: string
@@ -25,6 +26,7 @@ export interface CloudinaryUploadOptions {
   tags?: string[]
 }
 
+/** Composable for cloudinary upload. */
 export function useCloudinaryUpload() {
   const config = useRuntimeConfig()
   const uploading = ref(false)
@@ -74,6 +76,13 @@ export function useCloudinaryUpload() {
     const maxSize = 10 * 1024 * 1024 // 10MB
     if (file.size > maxSize) {
       error.value = 'La imagen no puede superar 10MB'
+      return null
+    }
+
+    // Validate magic bytes to prevent spoofed MIME types
+    const magicResult = await validateImageMagicBytes(file)
+    if (!magicResult.valid) {
+      error.value = magicResult.reason
       return null
     }
 

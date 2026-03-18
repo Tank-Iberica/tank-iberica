@@ -99,6 +99,7 @@ function skipComment() {
         maxlength="500"
         :placeholder="t('feedback.commentPlaceholder', 'Tell us what went wrong...')"
       />
+      <UiCharCounter :current="comment.length" :max="500" />
       <div class="feedback-actions">
         <button type="button" class="feedback-btn feedback-btn--submit" @click="submitComment">
           {{ t('feedback.send', 'Send') }}

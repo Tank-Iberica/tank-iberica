@@ -23,6 +23,7 @@ export interface SelectOption {
   label: string
 }
 
+/** Composable for admin dealer config. */
 export function useAdminDealerConfig() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

@@ -20,6 +20,7 @@ interface ReferralReward {
   awarded_at: string | null
 }
 
+/** Composable for referral. */
 export function useReferral() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

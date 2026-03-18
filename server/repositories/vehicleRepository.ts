@@ -68,6 +68,17 @@ export const vehicleRepository = {
   },
 
   /**
+   * Find a single vehicle by ref_code (e.g. "TRC-00123"). (#60)
+   */
+  findByRefCode(supabase: SupabaseClient, refCode: string) {
+    return supabase
+      .from('vehicles')
+      .select(`${DETAIL_COLUMNS}, ref_code`)
+      .eq('ref_code', refCode.toUpperCase())
+      .single()
+  },
+
+  /**
    * Find vehicles that match a status for a given vertical (for cron jobs / admin).
    */
   findByStatus(supabase: SupabaseClient, vertical: string, status: string, limit = 100) {

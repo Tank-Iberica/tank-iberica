@@ -53,6 +53,7 @@ function getStatusClass(status: string): string {
   return map[status] || 'status-pending'
 }
 
+/** Composable for admin transporte. */
 export function useAdminTransporte() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

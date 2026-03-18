@@ -16,9 +16,9 @@ definePageMeta({
       <h3>{{ $t('admin.cartera.sectionTitle') }}</h3>
       <p>{{ $t('admin.cartera.subtitle') }}</p>
       <div class="placeholder-features">
-        <span class="feature-tag">Ojeados</span>
-        <span class="feature-tag">Negociando</span>
-        <span class="feature-tag">Pipeline</span>
+        <span class="feature-tag">{{ $t('admin.cartera.watched', 'Ojeados') }}</span>
+        <span class="feature-tag">{{ $t('admin.cartera.negotiating', 'Negociando') }}</span>
+        <span class="feature-tag">{{ $t('admin.cartera.pipeline', 'Pipeline') }}</span>
       </div>
     </div>
   </div>

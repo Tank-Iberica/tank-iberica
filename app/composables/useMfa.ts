@@ -7,6 +7,7 @@
 
 export type MfaStatus = 'not_enrolled' | 'enrolled' | 'verified'
 
+/** Composable for mfa. */
 export function useMfa() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

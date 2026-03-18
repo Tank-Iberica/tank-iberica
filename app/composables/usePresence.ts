@@ -25,6 +25,12 @@ function countPresences(state: Record<string, PresenceState[]>): number {
   return seen.size
 }
 
+/**
+ * Composable for presence.
+ *
+ * @param entityType
+ * @param entityId
+ */
 export function usePresence(entityType: string, entityId: string) {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

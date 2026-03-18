@@ -25,6 +25,7 @@ function getFirstImage(item: Auction): string | null {
   return sorted[0]?.url ?? null
 }
 
+/** Composable for subastas index. */
 export function useSubastasIndex() {
   const { t } = useI18n()
   const route = useRoute()

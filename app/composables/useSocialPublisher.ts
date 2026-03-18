@@ -293,6 +293,7 @@ function generatePostContent(
   return adapter.formatContent(vehicle.title, price, vehicle.location || '-', url, locale)
 }
 
+/** Composable for social publisher. */
 export function useSocialPublisher() {
   const supabase = useSupabaseClient()
 

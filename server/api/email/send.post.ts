@@ -10,6 +10,7 @@ import { z } from 'zod'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
+import { timingSafeCompare } from '../../utils/timingSafeCompare'
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
 import { Resend } from 'resend'
 import { logger } from '../../utils/logger'
@@ -293,7 +294,7 @@ async function verifyEmailAuth(
   const runtimeCfg = useRuntimeConfig()
   const internalSecret = runtimeCfg.cronSecret || process.env.CRON_SECRET
   const internalHeader = getHeader(event, 'x-internal-secret')
-  if (internalSecret && internalHeader === internalSecret) return
+  if (internalSecret && timingSafeCompare(internalHeader, internalSecret)) return
 
   const user = await serverSupabaseUser(event)
   if (!user) throw safeError(401, 'Authentication required')

@@ -190,6 +190,7 @@ async function swapSortOrder(
     .eq('id', idB)
 }
 
+/** Composable for admin filters. */
 export function useAdminFilters() {
   const supabase = useSupabaseClient()
 

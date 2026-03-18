@@ -8,6 +8,11 @@ import type { AdminVehicle } from '~/composables/admin/useAdminVehicles'
 export type SortField = 'brand' | 'model' | 'year' | 'price' | 'status' | 'created_at'
 export type SortOrder = 'asc' | 'desc'
 
+/**
+ * Composable for admin productos sort.
+ *
+ * @param vehicles
+ */
 export function useAdminProductosSort(vehicles: { readonly value: readonly AdminVehicle[] }) {
   const sortField = ref<SortField>('created_at')
   const sortOrder = ref<SortOrder>('desc')

@@ -170,6 +170,7 @@ const unlockedAdvancedIds = ref<Set<string>>(loadUnlockedComparisons())
 
 // -- Public composable -------------------------------------------------------
 
+/** Composable for vehicle comparator. */
 export function useVehicleComparator() {
   loadFromStorage()
 
@@ -565,6 +566,31 @@ export function useVehicleComparator() {
     }
   }
 
+  /**
+   * Generate a shareable URL with comparison vehicle IDs.
+   * Format: /perfil/comparador?ids=uuid1,uuid2,uuid3
+   */
+  function getShareUrl(): string {
+    const ids = activeComparison.value?.vehicle_ids ?? []
+    if (ids.length === 0) return '/perfil/comparador'
+    const base = import.meta.client ? window.location.origin : ''
+    return `${base}/perfil/comparador?ids=${ids.join(',')}`
+  }
+
+  /**
+   * Load comparison from URL query parameter ?ids=uuid1,uuid2,...
+   * Validates UUIDs and limits to MAX_VEHICLES.
+   */
+  function loadFromShareUrl(idsParam: string): string[] {
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const ids = idsParam
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => UUID_REGEX.test(id))
+      .slice(0, MAX_VEHICLES)
+    return ids
+  }
+
   return {
     comparisons,
     activeComparison,
@@ -579,6 +605,9 @@ export function useVehicleComparator() {
     deleteNote,
     fetchComparisons,
     comparisonCount,
+    getShareUrl,
+    loadFromShareUrl,
+    MAX_VEHICLES,
     // Advanced (credit-gated)
     isPremiumPlan,
     canUseAdvanced,

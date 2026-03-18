@@ -13,8 +13,9 @@ import { serverSupabaseUser } from '#supabase/server'
 import { verifyCsrf } from '../../utils/verifyCsrf'
 import { safeError } from '../../utils/safeError'
 import { deductUserCredits } from '../../utils/creditService'
+import { CREDIT_COSTS } from '../../utils/creditsConfig'
 
-const ADVANCED_COMPARISON_COST = 1
+const ADVANCED_COMPARISON_COST = CREDIT_COSTS.ADVANCED_COMPARISON
 
 export default defineEventHandler(async (event) => {
   verifyCsrf(event)

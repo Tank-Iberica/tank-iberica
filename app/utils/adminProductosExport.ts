@@ -126,7 +126,7 @@ export async function exportToPdf(data: AdminVehicle[], helpers: ExportHelpers):
 
   const doc = new jsPDF('l', 'mm', 'a4')
   doc.setFontSize(16)
-  doc.text('Tracciona - Productos', 14, 15)
+  doc.text(`${useSiteName() || 'Tracciona'} - Productos`, 14, 15)
   doc.setFontSize(10)
   doc.text(`Fecha: ${new Date().toLocaleDateString('es-ES')} · ${data.length} productos`, 14, 22)
 

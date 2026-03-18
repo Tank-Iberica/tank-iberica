@@ -32,6 +32,7 @@ function getLevelLabel(level: string): string {
   }
 }
 
+/** Composable for admin news create. */
 export function useAdminNewsCreate() {
   const router = useRouter()
 

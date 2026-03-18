@@ -13,6 +13,7 @@
  */
 import { defineEventHandler, getHeader, readBody } from 'h3'
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
+import { timingSafeCompare } from '../../utils/timingSafeCompare'
 import { safeError } from '../../utils/safeError'
 import { matchesVehicle } from '../../utils/alertMatcher'
 import { logger } from '../../utils/logger'
@@ -169,12 +170,12 @@ export default defineEventHandler(async (event) => {
   // ── Auth: internal secret OR authenticated user ────────────────────────
   const config = useRuntimeConfig()
   const internalSecret =
-    config.internalApiSecret ||
+    (config.internalApiSecret as string) ||
     process.env.INTERNAL_API_SECRET ||
-    config.cronSecret ||
+    (config.cronSecret as string) ||
     process.env.CRON_SECRET
   const headerSecret = getHeader(event, 'x-internal-secret')
-  const isInternal = internalSecret && headerSecret === internalSecret
+  const isInternal = internalSecret && timingSafeCompare(headerSecret, internalSecret as string)
 
   if (!isInternal) {
     // Fallback: allow authenticated users (for client-side publish triggers)

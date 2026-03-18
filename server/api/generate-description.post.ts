@@ -16,6 +16,7 @@ import { callAI } from '~~/server/services/aiProvider'
 import { sanitizeText } from '~~/server/utils/sanitizeInput'
 import { logger } from '~~/server/utils/logger'
 import { deductUserCredits } from '~~/server/utils/creditService'
+import { CREDIT_COSTS } from '~~/server/utils/creditsConfig'
 
 const generateDescriptionSchema = z.object({
   brand: z.string().min(1).max(128),
@@ -32,7 +33,7 @@ const generateDescriptionSchema = z.object({
   attributes: z.record(z.unknown()).optional(),
 })
 
-const DESCRIPTION_CREDIT_COST = 1
+const DESCRIPTION_CREDIT_COST = CREDIT_COSTS.AI_DESCRIPTION
 
 interface GenerateDescriptionResponse {
   description: string

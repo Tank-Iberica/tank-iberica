@@ -41,6 +41,11 @@ export interface VehicleOption {
   source: 'vehicles' | 'historico'
 }
 
+/**
+ * Composable for contract generator.
+ *
+ * @param getVehicleOptions
+ */
 export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
   // Contract state
   const contractType = ref<ContractType>('arrendamiento')

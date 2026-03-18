@@ -49,6 +49,7 @@ export interface CalculationResult {
   isLocal: boolean
 }
 
+/** Composable for transport. */
 export function useTransport() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

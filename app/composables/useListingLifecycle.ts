@@ -130,6 +130,7 @@ export interface TransitionResult {
   newStatus?: ListingStatus
 }
 
+/** Composable for listing lifecycle. */
 export function useListingLifecycle() {
   const supabase = useSupabaseClient()
 

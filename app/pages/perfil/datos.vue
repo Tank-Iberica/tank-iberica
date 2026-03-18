@@ -259,6 +259,7 @@ onMounted(async () => {
             :value="email"
             type="email"
             class="form-input form-input--readonly"
+            autocomplete="email"
             readonly
             disabled
           >

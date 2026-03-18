@@ -9,6 +9,7 @@ import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { defineEventHandler, setResponseHeaders } from 'h3'
 import { safeError } from '../../utils/safeError'
+import { getSiteName } from '../../utils/siteConfig'
 
 interface UserProfile {
   id: string
@@ -57,7 +58,7 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
   const dateStr = new Date().toISOString().slice(0, 10)
   setResponseHeaders(event, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Content-Disposition': `attachment; filename="tracciona-data-export-${dateStr}.json"`,
+    'Content-Disposition': `attachment; filename="${getSiteName().toLowerCase()}-data-export-${dateStr}.json"`,
     'Cache-Control': 'no-store',
   })
 
@@ -69,9 +70,10 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
     .single()
 
   // ── 4. Collect dealer profile (if exists) ─────────────────────────────────
+  // GDPR: select all columns intentionally — data portability requires full export
   const { data: dealer } = await supabase
     .from('dealers')
-    .select('*')
+    .select('id, slug, company_name, legal_name, cif_nif, email, phone, whatsapp, website, bio, logo_url, cover_image_url, favicon_url, address, location_data, social_links, theme, certifications, badge, verified, status, subscription_type, subscription_valid_until, rating, total_reviews, total_listings, active_listings, total_leads, response_rate_pct, avg_response_time_hours, avg_response_minutes, catalog_sort, contact_config, notification_config, notification_preferences, auto_reply_message, pinned_vehicles, sort_boost, featured, locale, vertical, visits_enabled, logo_text_config, user_id, created_at, updated_at')
     .eq('user_id', userId)
     .maybeSingle()
 

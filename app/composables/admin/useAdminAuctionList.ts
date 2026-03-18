@@ -102,6 +102,7 @@ function formatDate(dateStr: string | null): string {
   })
 }
 
+/** Composable for admin auction list. */
 export function useAdminAuctionList() {
   const { t } = useI18n()
   const toast = useToast()

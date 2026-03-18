@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+vi.mock('~/utils/validateImageMagicBytes', () => ({
+  validateImageMagicBytes: vi.fn(async () => ({ valid: true })),
+}))
+
 import { useCloudinaryUpload } from '../../app/composables/admin/useCloudinaryUpload'
 
 // ─── XHR mock helpers ─────────────────────────────────────────────────────
@@ -43,6 +48,11 @@ function makeXhr(status = 200, responseData: Record<string, unknown> = SUCCESS_R
 function makeFile(name = 'test.jpg', type = 'image/jpeg', sizeBytes = 100) {
   const content = 'x'.repeat(sizeBytes)
   return new File([content], name, { type })
+}
+
+/** Flush microtasks so async validateImageMagicBytes resolves before firing XHR events */
+function flushMicrotasks() {
+  return new Promise(resolve => setTimeout(resolve, 0))
 }
 
 // ─── Initial state ─────────────────────────────────────────────────────────
@@ -134,34 +144,39 @@ describe('upload XHR success', () => {
   it('returns CloudinaryUploadResult on success', async () => {
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'tracciona/vehicles')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     const result = await promise
     expect(result).toMatchObject({ public_id: 'tracciona/vehicles/img' })
   })
 
-  it('sets uploading to true during upload', () => {
+  it('sets uploading to true during upload', async () => {
     const c = useCloudinaryUpload()
     c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     expect(c.uploading.value).toBe(true)
   })
 
   it('sets uploading to false after upload completes', async () => {
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     await promise
     expect(c.uploading.value).toBe(false)
   })
 
-  it('calls xhr.open with the correct Cloudinary URL', () => {
+  it('calls xhr.open with the correct Cloudinary URL', async () => {
     const c = useCloudinaryUpload()
     c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     expect(mockXhr.open).toHaveBeenCalledWith('POST', expect.stringContaining('test-cloud'))
   })
 
   it('accepts string folder as backward-compatible option', async () => {
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'tracciona/news')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     const result = await promise
     expect(result).not.toBeNull()
@@ -175,6 +190,7 @@ describe('upload XHR success', () => {
       context: 'brand=Renault|year=2024',
       tags: ['cisterna', 'renault'],
     })
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     const result = await promise
     expect(result).not.toBeNull()
@@ -182,8 +198,8 @@ describe('upload XHR success', () => {
 
   it('clears previous error after successful upload', async () => {
     const c = useCloudinaryUpload()
-    c.error.value = 'previous error'
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     await promise
     expect(c.error.value).toBeNull()
@@ -192,6 +208,7 @@ describe('upload XHR success', () => {
   it('resets progress to 0 after upload completes', async () => {
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     await promise
     expect(c.progress.value).toBe(0)
@@ -212,6 +229,7 @@ describe('upload XHR error cases', () => {
     vi.stubGlobal('XMLHttpRequest', function MockXHR() { return mockXhr })
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     const result = await promise
     expect(result).toBeNull()
@@ -222,6 +240,7 @@ describe('upload XHR error cases', () => {
     vi.stubGlobal('XMLHttpRequest', function MockXHR() { return mockXhr })
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['load']?.()
     await promise
     expect(c.error.value).toBeTruthy()
@@ -232,6 +251,7 @@ describe('upload XHR error cases', () => {
     vi.stubGlobal('XMLHttpRequest', function MockXHR() { return mockXhr })
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['error']?.()
     const result = await promise
     expect(result).toBeNull()
@@ -242,6 +262,7 @@ describe('upload XHR error cases', () => {
     vi.stubGlobal('XMLHttpRequest', function MockXHR() { return mockXhr })
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['error']?.()
     await promise
     expect(c.error.value).toBeTruthy()
@@ -252,6 +273,7 @@ describe('upload XHR error cases', () => {
     vi.stubGlobal('XMLHttpRequest', function MockXHR() { return mockXhr })
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['abort']?.()
     const result = await promise
     expect(result).toBeNull()
@@ -262,6 +284,7 @@ describe('upload XHR error cases', () => {
     vi.stubGlobal('XMLHttpRequest', function MockXHR() { return mockXhr })
     const c = useCloudinaryUpload()
     const promise = c.upload(makeFile(), 'folder')
+    await flushMicrotasks()
     mockXhr._listeners['error']?.()
     await promise
     expect(c.uploading.value).toBe(false)

@@ -58,6 +58,7 @@ function isTimerVisible(status: string): boolean {
   return status === 'active' || status === 'pending'
 }
 
+/** Composable for perfil reservas. */
 export function usePerfilReservas() {
   const { t } = useI18n()
 

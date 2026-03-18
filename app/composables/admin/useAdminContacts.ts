@@ -30,6 +30,7 @@ export const CONTACT_TYPES: { value: ContactType; label: string; color: string }
 
 const PAGE_SIZE = 100
 
+/** Composable for admin contacts. */
 export function useAdminContacts() {
   const supabase = useSupabaseClient()
 

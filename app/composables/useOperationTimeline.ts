@@ -51,6 +51,7 @@ const HAPPY_PATH: OperationStage[] = [
   'completed',
 ]
 
+/** Composable for operation timeline. */
 export function useOperationTimeline() {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()

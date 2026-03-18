@@ -44,6 +44,7 @@ export type SettingsField =
   | 'invoiceConditions'
   | 'vehicleSearch'
 
+/** Composable for dashboard factura. */
 export function useDashboardFactura() {
   const {
     // State

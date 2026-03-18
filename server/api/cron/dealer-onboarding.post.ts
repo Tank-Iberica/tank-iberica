@@ -15,7 +15,7 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { logger } from '../../utils/logger'
-import { getSiteUrl, getSiteName } from '../../utils/siteConfig'
+import { getSiteUrl, getSiteName, BRAND_COLORS } from '../../utils/siteConfig'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -106,7 +106,7 @@ export function buildOnboardingHtml(
   siteUrl: string,
   locale: string,
 ): string {
-  const primary = '#23424A'
+  const { primary } = BRAND_COLORS
   const isEs = locale !== 'en'
 
   const dashboardUrl = `${siteUrl}/dashboard`

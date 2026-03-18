@@ -73,6 +73,11 @@ function getDepositStatusClass(status: DepositStatus): string {
   return classes[status] || ''
 }
 
+/**
+ * Composable for admin auction detail.
+ *
+ * @param auctionId
+ */
 export function useAdminAuctionDetail(auctionId: Ref<string>) {
   const { t } = useI18n()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

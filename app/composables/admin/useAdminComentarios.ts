@@ -70,6 +70,7 @@ function relativeDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('es-ES')
 }
 
+/** Composable for admin comentarios. */
 export function useAdminComentarios() {
   const supabase = useSupabaseClient()
 

@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
+import { timingSafeCompare } from '../../utils/timingSafeCompare'
 
 const pushSendSchema = z.object({
   userId: z.string().uuid(),
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
   // ── Auth: internal secret OR admin user ──
   const internalSecret = config.cronSecret || process.env.CRON_SECRET
   const internalHeader = getHeader(event, 'x-internal-secret')
-  const isInternal = internalSecret && internalHeader === internalSecret
+  const isInternal = internalSecret && timingSafeCompare(internalHeader, internalSecret)
 
   if (!isInternal) {
     // Fallback: admin authentication for calls from admin panel

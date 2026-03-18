@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── Fetch clusters ──────────────────────────────────────────────────────
-  const { data, error } = await supabase.from('infra_clusters').select('*').order('created_at')
+  const { data, error } = await supabase.from('infra_clusters').select('id, name, vertical, provider, region, status, is_primary, host, port, database, max_connections, storage_gb, version, metadata, created_at, updated_at').order('created_at')
 
   if (error) {
     throw safeError(500, `Failed to fetch clusters: ${error.message}`)

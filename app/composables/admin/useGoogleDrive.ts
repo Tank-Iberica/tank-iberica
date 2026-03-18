@@ -30,6 +30,7 @@ import {
 import { useGoogleDriveFolders } from '~/composables/admin/useGoogleDriveFolders'
 export type { DriveSection, DriveUploadResult } from '~/utils/googleDriveUtils'
 
+/** Composable for google drive. */
 export function useGoogleDrive() {
   const config = useRuntimeConfig()
   const clientId = config.public.googleClientId

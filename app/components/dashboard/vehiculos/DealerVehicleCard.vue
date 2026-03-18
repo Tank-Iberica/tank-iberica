@@ -116,6 +116,7 @@ function getStatusClass(status: string): string {
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-card);
   overflow: hidden;
+  contain: layout style paint;
 }
 
 .card-image {

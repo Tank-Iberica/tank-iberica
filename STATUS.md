@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-18 (Roadmap v3 COMPLETADO 127/127) · SonarQube ~0 bloques
+**Última actualización:** 2026-03-18 (Roadmap v3 127/127 + BACKLOG sync ~300 done) · SonarQube ~0 bloques
 **Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→18-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v3 + setup servicios + test fixes (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
@@ -52,9 +52,16 @@
 - **Fix DevModal.test.ts:** faltaba mock `useFocusTrap`. Fix: `vi.stubGlobal('useFocusTrap', ...)`
 - **Resultado:** 0 failures en suite completa
 
+### BACKLOG-EJECUTABLE.md sincronizado (18-mar continuación)
+
+- **~119 items** marcados ✅ en BACKLOG-EJECUTABLE.md correspondientes a los 127 items del Roadmap v3
+- **Bloques actualizados:** 11, 12, 14, 30-33, 37, 39-47 + post-setup
+- **Header actualizado:** ~182 done → **~300 done** (incl. Roadmap Autónomo v3)
+- **Excluidos:** #46/#49 (specs-only, no full implementation)
+
 ### Pendiente
 
-- **Siguiente:** Commit selectivo, actualizar BACKLOG-EJECUTABLE.md con items completados
+- **Siguiente:** Commit selectivo de todo el trabajo del roadmap v3 + backlog sync
 
 ---
 

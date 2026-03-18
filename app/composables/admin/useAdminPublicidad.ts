@@ -145,6 +145,7 @@ export function csvToArray(val: string): string[] {
 }
 
 // ─── Composable ──────────────────────────────────────────────
+/** Composable for admin publicidad. */
 export function useAdminPublicidad() {
   const supabase = useSupabaseClient<Database>()
 

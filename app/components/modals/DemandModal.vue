@@ -3,6 +3,8 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSupabaseClient, useSupabaseUser } from '#imports'
 import { localizedField } from '~/composables/useLocalized'
+import { advertisementContactSchema } from '~/utils/schemas'
+
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -39,9 +41,7 @@ const {
 const dialogRef = ref<HTMLElement | null>(null)
 const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
 
-const isSubmitting = ref(false)
 const isSuccess = ref(false)
-const validationErrors = ref<Record<string, string>>({})
 
 const formData = ref({
   brandPreference: '',
@@ -50,12 +50,73 @@ const formData = ref({
   priceMin: null as number | null,
   priceMax: null as number | null,
   specifications: '',
-  contactName: '',
-  contactEmail: '',
-  contactPhone: '',
-  contactPreference: 'email',
-  termsAccepted: false,
 })
+
+const {
+  defineField: defineContactField,
+  translatedErrors: contactErrors,
+  isSubmitting,
+  onSubmit: onContactSubmit,
+  resetForm: resetContactForm,
+} = useFormValidation(advertisementContactSchema, {
+  initialValues: {
+    contactName: '',
+    contactEmail: '',
+    contactPhone: '',
+    contactPreference: 'email' as const,
+    termsAccepted: false as unknown as true,
+  },
+  onSubmit: async (contactValues) => {
+    if (!isAuthenticated.value) return
+
+    try {
+      const specs = {
+        brandPreference: formData.value.brandPreference,
+        yearMin: formData.value.yearMin,
+        yearMax: formData.value.yearMax,
+        priceMin: formData.value.priceMin,
+        priceMax: formData.value.priceMax,
+        specifications: formData.value.specifications,
+      }
+
+      const { error } = await supabase.from('demands').insert({
+        user_id: user.value!.id,
+        vehicle_type: getVehicleSubcategoryLabel(locale.value),
+        category_id: selectedCategoryId.value,
+        subcategory_id: selectedSubcategoryId.value,
+        attributes_json: getAttributesJson() as never,
+        year_min: formData.value.yearMin,
+        year_max: formData.value.yearMax,
+        price_min: formData.value.priceMin,
+        price_max: formData.value.priceMax,
+        specs,
+        contact_name: contactValues.contactName,
+        contact_email: contactValues.contactEmail,
+        contact_phone: contactValues.contactPhone,
+        contact_preference: contactValues.contactPreference,
+        status: 'pending',
+      })
+
+      if (error) throw error
+
+      isSuccess.value = true
+      resetForm()
+
+      setTimeout(() => {
+        isSuccess.value = false
+        close()
+      }, 3000)
+    } catch (err) {
+      if (import.meta.dev) console.error('Error submitting demand:', err)
+    }
+  },
+})
+
+const [contactName] = defineContactField('contactName')
+const [contactEmail] = defineContactField('contactEmail')
+const [contactPhone] = defineContactField('contactPhone')
+const [contactPreference] = defineContactField('contactPreference')
+const [termsAccepted] = defineContactField('termsAccepted')
 
 const contactPreferences = [
   { value: 'email', label: 'demand.prefEmail' },
@@ -98,26 +159,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
   }
 }
 
-const validateForm = (): boolean => {
-  validationErrors.value = {}
-
-  if (!formData.value.contactName.trim()) {
-    validationErrors.value.contactName = _t('validation.required')
-  }
-
-  if (!formData.value.contactEmail.trim()) {
-    validationErrors.value.contactEmail = _t('validation.required')
-  } else if (!/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.value.contactEmail)) {
-    validationErrors.value.contactEmail = _t('validation.invalidEmail')
-  }
-
-  if (!formData.value.termsAccepted) {
-    validationErrors.value.termsAccepted = _t('validation.termsRequired')
-  }
-
-  return Object.keys(validationErrors.value).length === 0
-}
-
 const resetForm = () => {
   formData.value = {
     brandPreference: '',
@@ -126,64 +167,9 @@ const resetForm = () => {
     priceMin: null,
     priceMax: null,
     specifications: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
-    contactPreference: 'email',
-    termsAccepted: false,
   }
-  validationErrors.value = {}
+  resetContactForm()
   resetSelector()
-}
-
-const handleSubmit = async () => {
-  if (!validateForm()) return
-  if (!isAuthenticated.value) return
-
-  isSubmitting.value = true
-
-  try {
-    const specs = {
-      brandPreference: formData.value.brandPreference,
-      yearMin: formData.value.yearMin,
-      yearMax: formData.value.yearMax,
-      priceMin: formData.value.priceMin,
-      priceMax: formData.value.priceMax,
-      specifications: formData.value.specifications,
-    }
-
-    const { error } = await supabase.from('demands').insert({
-      user_id: user.value!.id,
-      vehicle_type: getVehicleSubcategoryLabel(locale.value),
-      category_id: selectedCategoryId.value,
-      subcategory_id: selectedSubcategoryId.value,
-      attributes_json: getAttributesJson() as never,
-      year_min: formData.value.yearMin,
-      year_max: formData.value.yearMax,
-      price_min: formData.value.priceMin,
-      price_max: formData.value.priceMax,
-      specs,
-      contact_name: formData.value.contactName,
-      contact_email: formData.value.contactEmail,
-      contact_phone: formData.value.contactPhone,
-      contact_preference: formData.value.contactPreference,
-      status: 'pending',
-    })
-
-    if (error) throw error
-
-    isSuccess.value = true
-    resetForm()
-
-    setTimeout(() => {
-      isSuccess.value = false
-      close()
-    }, 3000)
-  } catch (err) {
-    if (import.meta.dev) console.error('Error submitting demand:', err)
-  } finally {
-    isSubmitting.value = false
-  }
 }
 
 const handleLoginClick = () => {
@@ -251,7 +237,7 @@ watch(
             <p>{{ $t('demand.successMessage') }}</p>
           </div>
 
-          <form v-else class="modal-body" @submit.prevent="handleSubmit">
+          <form v-else class="modal-body" @submit="onContactSubmit">
             <div class="form-grid">
               <!-- Category selector -->
               <div class="form-group full-width">
@@ -436,22 +422,21 @@ watch(
                 <label for="contactName"> {{ $t('demand.contactName') }} * </label>
                 <input
                   id="contactName"
-                  v-model="formData.contactName"
+                  v-model="contactName"
                   type="text"
                   class="form-input"
-                  :class="{ 'input-error': validationErrors.contactName }"
-                  :aria-invalid="!!validationErrors.contactName || undefined"
-                  :aria-describedby="validationErrors.contactName ? 'err-demand-name' : undefined"
+                  :class="{ 'input-error': contactErrors.contactName }"
+                  :aria-invalid="!!contactErrors.contactName || undefined"
+                  :aria-describedby="contactErrors.contactName ? 'err-demand-name' : undefined"
                   autocomplete="name"
-                  required
                 >
                 <p
-                  v-if="validationErrors.contactName"
+                  v-if="contactErrors.contactName"
                   id="err-demand-name"
                   class="field-error"
                   role="alert"
                 >
-                  {{ validationErrors.contactName }}
+                  {{ contactErrors.contactName }}
                 </p>
               </div>
 
@@ -459,41 +444,51 @@ watch(
                 <label for="contactEmail"> {{ $t('demand.contactEmail') }} * </label>
                 <input
                   id="contactEmail"
-                  v-model="formData.contactEmail"
+                  v-model="contactEmail"
                   type="email"
                   class="form-input"
-                  :class="{ 'input-error': validationErrors.contactEmail }"
-                  :aria-invalid="!!validationErrors.contactEmail || undefined"
-                  :aria-describedby="validationErrors.contactEmail ? 'err-demand-email' : undefined"
+                  :class="{ 'input-error': contactErrors.contactEmail }"
+                  :aria-invalid="!!contactErrors.contactEmail || undefined"
+                  :aria-describedby="contactErrors.contactEmail ? 'err-demand-email' : undefined"
                   autocomplete="email"
-                  required
                 >
                 <p
-                  v-if="validationErrors.contactEmail"
+                  v-if="contactErrors.contactEmail"
                   id="err-demand-email"
                   class="field-error"
                   role="alert"
                 >
-                  {{ validationErrors.contactEmail }}
+                  {{ contactErrors.contactEmail }}
                 </p>
               </div>
 
               <div class="form-group">
-                <label for="contactPhone">{{ $t('demand.contactPhone') }}</label>
+                <label for="contactPhone">{{ $t('demand.contactPhone') }} *</label>
                 <input
                   id="contactPhone"
-                  v-model="formData.contactPhone"
+                  v-model="contactPhone"
                   type="tel"
                   class="form-input"
+                  :class="{ 'input-error': contactErrors.contactPhone }"
+                  :aria-invalid="!!contactErrors.contactPhone || undefined"
+                  :aria-describedby="contactErrors.contactPhone ? 'err-demand-phone' : undefined"
                   autocomplete="tel"
                 >
+                <p
+                  v-if="contactErrors.contactPhone"
+                  id="err-demand-phone"
+                  class="field-error"
+                  role="alert"
+                >
+                  {{ contactErrors.contactPhone }}
+                </p>
               </div>
 
               <div class="form-group">
                 <label for="contactPreference">{{ $t('demand.contactPreference') }}</label>
                 <select
                   id="contactPreference"
-                  v-model="formData.contactPreference"
+                  v-model="contactPreference"
                   class="form-input"
                 >
                   <option v-for="pref in contactPreferences" :key="pref.value" :value="pref.value">
@@ -505,24 +500,24 @@ watch(
               <div class="form-group full-width">
                 <label class="checkbox-label">
                   <input
-                    v-model="formData.termsAccepted"
+                    v-model="termsAccepted"
                     type="checkbox"
                     class="checkbox-input"
-                    :class="{ 'input-error': validationErrors.termsAccepted }"
-                    :aria-invalid="!!validationErrors.termsAccepted || undefined"
+                    :class="{ 'input-error': contactErrors.termsAccepted }"
+                    :aria-invalid="!!contactErrors.termsAccepted || undefined"
                     :aria-describedby="
-                      validationErrors.termsAccepted ? 'err-demand-terms' : undefined
+                      contactErrors.termsAccepted ? 'err-demand-terms' : undefined
                     "
                   >
                   <span>{{ $t('demand.acceptTerms') }}</span>
                 </label>
                 <p
-                  v-if="validationErrors.termsAccepted"
+                  v-if="contactErrors.termsAccepted"
                   id="err-demand-terms"
                   class="field-error"
                   role="alert"
                 >
-                  {{ validationErrors.termsAccepted }}
+                  {{ contactErrors.termsAccepted }}
                 </p>
               </div>
             </div>

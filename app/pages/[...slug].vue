@@ -65,9 +65,25 @@
           </div>
         </div>
 
-        <!-- Vehicles will be rendered here by the catalog system -->
-        <div class="landing-catalog-placeholder">
-          <p>{{ $t('catalog.comingSoon') }}</p>
+        <!-- #63 — Real vehicle catalog from filters_json -->
+        <div v-if="landingCatalogLoading" class="landing-catalog-loading">
+          <div v-for="i in 6" :key="i" class="skeleton-card">
+            <div class="skeleton-img" />
+            <div class="skeleton-text">
+              <div class="skeleton-line wide" />
+              <div class="skeleton-line medium" />
+            </div>
+          </div>
+        </div>
+        <div v-else-if="landingCatalogVehicles.length" class="landing-catalog-grid">
+          <CatalogVehicleCard
+            v-for="vehicle in landingCatalogVehicles"
+            :key="vehicle.id"
+            :vehicle="(vehicle as any)"
+          />
+        </div>
+        <div v-else class="landing-catalog-empty">
+          <p>{{ $t('catalog.noResults') }}</p>
         </div>
       </div>
     </template>
@@ -111,6 +127,7 @@ interface Landing {
   vehicle_count: number
   is_active: boolean
   parent_slug: string | null
+  filters_json: Record<string, string> | null
   meta_title_es: string | null
   meta_title_en: string | null
   meta_description_es: string | null
@@ -123,6 +140,7 @@ interface Landing {
 
 interface DealerProfile {
   id: string
+  user_id: string
   slug: string
   company_name: Record<string, string>
   logo_url: string | null
@@ -181,7 +199,7 @@ async function resolveSlug(): Promise<
     const { data: dealerData } = await supabase
       .from('dealers')
       .select(
-        'id, slug, company_name, logo_url, cover_image_url, theme, bio, phone, whatsapp, email, website, location_data, address, badge, subscription_type, social_links, certifications, pinned_vehicles, catalog_sort, contact_config, active_listings, total_leads, rating, created_at',
+        'id, user_id, slug, company_name, logo_url, cover_image_url, theme, bio, phone, whatsapp, email, website, location_data, address, badge, subscription_type, social_links, certifications, pinned_vehicles, catalog_sort, contact_config, active_listings, total_leads, rating, created_at',
       )
       .eq('slug', fullSlug.value)
       .eq('status', 'active')
@@ -314,6 +332,48 @@ if (landing.value) {
     }
   }
 }
+
+// #63 — Landing catalog: fetch vehicles matching the landing's filters_json
+interface LandingVehicle {
+  id: string
+  slug: string
+  brand: string | null
+  model: string | null
+  year: number | null
+  price: number | null
+  location: string | null
+  location_country: string | null
+  vehicle_images: Array<{ url: string; position: number; alt_text?: string }> | null
+}
+
+const landingCatalogVehicles = ref<LandingVehicle[]>([])
+const landingCatalogLoading = ref(false)
+
+async function fetchLandingCatalog() {
+  if (!landing.value?.filters_json) return
+  landingCatalogLoading.value = true
+  try {
+    const filters = landing.value.filters_json
+    let query = supabase
+      .from('vehicles')
+      .select('id, slug, brand, model, year, price, location, location_country, vehicle_images(url, position, alt_text)')
+      .eq('status', 'published')
+
+    if (filters.subcategory_id) query = query.eq('subcategory_id', filters.subcategory_id)
+    if (filters.location_province_eq) query = query.eq('location_province', filters.location_province_eq)
+    if (filters.brand) query = query.ilike('brand', filters.brand)
+
+    query = query.order('featured', { ascending: false }).order('created_at', { ascending: false }).limit(24)
+
+    const { data } = await query
+    landingCatalogVehicles.value = (data ?? []) as unknown as LandingVehicle[]
+  } catch { /* silent */ }
+  landingCatalogLoading.value = false
+}
+
+if (landing.value?.filters_json) {
+  await fetchLandingCatalog()
+}
 </script>
 
 <style scoped>
@@ -362,7 +422,46 @@ if (landing.value) {
   border-radius: var(--border-radius);
 }
 
-.landing-catalog-placeholder {
+/* #63 — Landing catalog grid */
+.landing-catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
+}
+
+@media (min-width: 30em) {
+  .landing-catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64em) {
+  .landing-catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.landing-catalog-loading {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
+}
+
+@media (min-width: 30em) {
+  .landing-catalog-loading {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64em) {
+  .landing-catalog-loading {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.landing-catalog-empty {
   text-align: center;
   padding: 3rem 0;
   color: var(--text-auxiliary);

@@ -19,6 +19,7 @@ declare global {
   var dataLayer: unknown[] | undefined
 }
 
+/** Composable for gtag. */
 export function useGtag() {
   const { hasConsent } = useConsent()
   const config = useRuntimeConfig()

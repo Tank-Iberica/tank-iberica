@@ -117,7 +117,7 @@ async function removeBg() {
       @change="onFileChange"
     >
 
-    <p v-if="localError" class="uploader-error">{{ localError }}</p>
+    <p v-if="localError" class="uploader-error" role="alert" aria-live="assertive">{{ localError }}</p>
   </div>
 </template>
 

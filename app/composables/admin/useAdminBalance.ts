@@ -183,6 +183,7 @@ function computeBalanceSummary(entryList: BalanceEntry[]): BalanceSummary {
   }
 }
 
+/** Composable for admin balance. */
 export function useAdminBalance() {
   const supabase = useSupabaseClient()
 

@@ -17,6 +17,7 @@ export interface CalendarEvent {
   url?: string
 }
 
+/** Composable for admin editorial calendar. */
 export function useAdminEditorialCalendar() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

@@ -55,7 +55,7 @@ onMounted(() => {
     <!-- Header -->
     <div class="section-header">
       <h2>{{ $t('admin.anunciantes.title') }}</h2>
-      <span class="total-badge">{{ total }} registros</span>
+      <span class="total-badge">{{ total }} {{ $t('common.records', 'registros') }}</span>
     </div>
 
     <!-- Filters -->

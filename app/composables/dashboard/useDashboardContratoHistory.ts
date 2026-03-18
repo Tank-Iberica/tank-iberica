@@ -24,6 +24,11 @@ export interface ContractRow {
   updated_at: string | null
 }
 
+/**
+ * Composable for dashboard contrato history.
+ *
+ * @param dealerProfile
+ */
 export function useDashboardContratoHistory(dealerProfile: Ref<{ id: string } | null>) {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

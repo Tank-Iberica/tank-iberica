@@ -23,6 +23,11 @@ interface UsePricingSuggestionParams {
   currentPrice?: Ref<number | undefined>
 }
 
+/**
+ * Composable for pricing suggestion.
+ *
+ * @param params
+ */
 export function usePricingSuggestion(params: UsePricingSuggestionParams) {
   const suggestion = ref<PriceSuggestion | null>(null)
   const loading = ref(false)

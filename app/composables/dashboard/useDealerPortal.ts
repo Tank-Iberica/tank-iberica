@@ -23,6 +23,7 @@ export interface DealerCertification {
   verified: boolean
 }
 
+/** Composable for dealer portal. */
 export function useDealerPortal() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

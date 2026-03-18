@@ -13,6 +13,7 @@ import { maskContactData, resolveUserName } from '~/composables/shared/conversat
 // Re-export types for backwards compatibility
 export type { Conversation, ConversationMessage } from '~/composables/shared/conversationTypes'
 
+/** Composable for conversation. */
 export function useConversation() {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()

@@ -39,6 +39,7 @@ export const translationEngines: EngineOption[] = [
   { value: 'deepl', label: 'DeepL' },
 ]
 
+/** Composable for admin languages. */
 export function useAdminLanguages() {
   const supabase = useSupabaseClient()
   const { config, loading, saving, error, saved, loadConfig, saveFields } = useAdminVerticalConfig()

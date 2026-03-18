@@ -18,6 +18,7 @@ export interface ChatMessage {
   created_at: string
 }
 
+/** Composable for user chat. */
 export function useUserChat() {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()

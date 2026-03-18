@@ -46,6 +46,7 @@ export interface UseVoiceSearch {
   reset: () => void
 }
 
+/** Composable for voice search. */
 export function useVoiceSearch(): UseVoiceSearch {
   const isListening = ref(false)
   const transcript = ref('')

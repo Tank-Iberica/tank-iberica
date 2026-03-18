@@ -64,6 +64,7 @@ function generateBannerId(): string {
   return `banner_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`
 }
 
+/** Composable for admin homepage. */
 export function useAdminHomepage() {
   const { config, loading, saving, error, saved, loadConfig, saveFields } = useAdminVerticalConfig()
 

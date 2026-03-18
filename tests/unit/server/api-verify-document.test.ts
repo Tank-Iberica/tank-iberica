@@ -221,7 +221,7 @@ describe('/api/verify-document', () => {
 
     it('should extract user from JWT token', () => {
       const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyfQ'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
       const isValidJWT = token.split('.').length === 3
 
       expect(isValidJWT).toBe(true)
@@ -243,10 +243,11 @@ describe('/api/verify-document', () => {
 
     it('should verify vehicle exists BEFORE checking authorization', () => {
       // This prevents disclosing which vehicles a user owns
-      const step1 = 'fetch vehicle'
-      const step2 = 'check ownership'
+      const steps = ['fetch vehicle', 'check ownership']
+      const step1Index = steps.indexOf('fetch vehicle')
+      const step2Index = steps.indexOf('check ownership')
 
-      expect(step1).toBeLessThanOrEqual(step2)
+      expect(step1Index).toBeLessThanOrEqual(step2Index)
     })
   })
 
@@ -300,7 +301,7 @@ describe('/api/verify-document', () => {
     })
 
     it('should include documentId and vehicleId in metadata', () => {
-      const metadata = { documentId, resourceId: vehicleId1 }
+      const metadata = { documentId: documentId1, resourceId: vehicleId1 }
       expect(metadata.documentId).toBeDefined()
       expect(metadata.resourceId).toBeDefined()
     })
@@ -366,7 +367,7 @@ describe('/api/verify-document', () => {
         confidence: 0.95,
         extractedData: { brand: 'Ford', model: 'Transit', year: 2022, km: 45000 },
         discrepancies: [],
-        documentId,
+        documentId: documentId1,
         status: 'verified',
       }
 

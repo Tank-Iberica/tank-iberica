@@ -14,6 +14,7 @@ export interface KpiSummary {
   activeVehicles: KpiValue
   activeDealers: KpiValue
   monthlyLeads: KpiValue
+  arpu: KpiValue
 }
 
 export interface RevenuePoint {

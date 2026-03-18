@@ -47,6 +47,7 @@ function getCategoryLabels(categoryIds: string[] | undefined): string {
   return labels.length ? labels.join(', ') : '-'
 }
 
+/** Composable for admin subcategorias page. */
 export function useAdminSubcategoriasPage() {
   const { t } = useI18n()
   const toast = useToast()

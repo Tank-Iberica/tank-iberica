@@ -21,6 +21,7 @@ export interface ComparisonRow {
 
 export type BillingInterval = 'month' | 'year'
 
+/** Composable for precios. */
 export function usePrecios() {
   const { t } = useI18n()
   const user = useSupabaseUser()

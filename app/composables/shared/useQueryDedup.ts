@@ -82,6 +82,7 @@ function clearAll(): void {
   cache.clear()
 }
 
+/** Composable for query dedup. */
 export function useQueryDedup() {
   return {
     dedupedFetch,

@@ -61,7 +61,7 @@ export interface EmailTheme {
 }
 
 const DEFAULT_THEME: EmailTheme = {
-  primaryColor: '#23424A',
+  primaryColor: BRAND_COLORS.primary,
   logoUrl: null,
   siteName: getSiteName(),
   siteUrl: getSiteUrl(),

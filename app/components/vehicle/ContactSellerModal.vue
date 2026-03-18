@@ -147,6 +147,7 @@ onUnmounted(() => {
               maxlength="1000"
               :aria-describedby="error ? 'contact-error' : undefined"
             />
+            <UiCharCounter :current="messageText.length" :max="1000" />
             <div v-if="error" id="contact-error" class="modal-error" role="alert">{{ error }}</div>
             <div class="modal-actions">
               <button class="btn-secondary" :disabled="sending" @click="handleClose">

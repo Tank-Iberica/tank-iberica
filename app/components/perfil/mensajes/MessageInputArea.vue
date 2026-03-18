@@ -64,6 +64,7 @@ function useQuickReply(text: string): void {
         @input="onTextareaInput"
         @keydown.enter.exact.prevent="emit('send')"
       />
+      <UiCharCounter v-if="value.length > 4000" :current="value.length" :max="5000" />
       <button class="message-send-btn" :disabled="sending || !value.trim()" @click="emit('send')">
         <svg viewBox="0 0 20 20" fill="currentColor" width="20" height="20" aria-hidden="true">
           <path

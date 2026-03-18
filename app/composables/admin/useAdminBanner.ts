@@ -182,6 +182,7 @@ function parseDatetimeLocal(value: string): string | null {
   return new Date(value).toISOString()
 }
 
+/** Composable for admin banner. */
 export function useAdminBanner() {
   const toast = useToast()
   const { loading, saving, error, banner, fetchBanner, saveBanner, getBannerPreviewHtml } =

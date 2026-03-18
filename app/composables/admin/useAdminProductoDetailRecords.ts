@@ -12,6 +12,7 @@ import type {
 } from '~/composables/admin/useAdminVehicles'
 import type { FileNamingData } from '~/utils/fileNaming'
 
+/** Manages record history in admin product detail. */
 export function useAdminProductoDetailRecords(params: {
   formData: Ref<VehicleFormData>
   fileNamingData: ComputedRef<FileNamingData>

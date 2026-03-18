@@ -206,6 +206,7 @@ function aggregateAdRevenue(revenue: RevenueRow[]) {
   return { totalRevenue, revenueSourceMap, revenuePositionMap }
 }
 
+/** Composable for admin ad dashboard. */
 export function useAdminAdDashboard() {
   const supabase = useSupabaseClient()
 

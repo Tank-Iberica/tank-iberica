@@ -28,6 +28,7 @@ interface BestPerformingVehicle {
   leads: number
 }
 
+/** Composable for dealer stats. */
 export function useDealerStats() {
   const supabase = useSupabaseClient<Database>()
 

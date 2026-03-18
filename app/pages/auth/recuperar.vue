@@ -47,24 +47,28 @@
         <h1 class="auth-title">{{ $t('auth.resetPasswordTitle') }}</h1>
         <p class="auth-subtitle">{{ $t('auth.resetPasswordSubtitle') }}</p>
 
-        <form @submit.prevent="handleReset">
+        <form @submit="onSubmit">
           <div class="field">
             <label for="reset-email">{{ $t('auth.email') }}</label>
             <input
               id="reset-email"
               v-model="email"
               type="email"
-              required
               autocomplete="email"
               :placeholder="$t('auth.emailPlaceholder')"
+              :aria-invalid="!!translatedErrors.email || undefined"
+              :aria-describedby="translatedErrors.email ? 'error-reset-email' : undefined"
             >
+            <p v-if="translatedErrors.email" id="error-reset-email" class="field-error" role="alert">
+              {{ translatedErrors.email }}
+            </p>
           </div>
 
           <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
 
-          <button type="submit" class="btn-primary" :disabled="loading">
-            <span v-if="loading" class="spinner" />
-            {{ loading ? $t('common.loading') : $t('auth.sendResetLink') }}
+          <button type="submit" class="btn-primary" :disabled="isSubmitting">
+            <span v-if="isSubmitting" class="spinner" />
+            {{ isSubmitting ? $t('common.loading') : $t('auth.sendResetLink') }}
           </button>
         </form>
       </template>
@@ -73,6 +77,8 @@
 </template>
 
 <script setup lang="ts">
+import { passwordResetSchema } from '~/utils/schemas'
+
 definePageMeta({
   layout: 'default',
 })
@@ -80,30 +86,26 @@ definePageMeta({
 const { t } = useI18n()
 const auth = useAuth()
 
-const email = ref('')
-const loading = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
 
-async function handleReset() {
-  errorMsg.value = ''
+const { defineField, translatedErrors, isSubmitting, onSubmit } = useFormValidation(
+  passwordResetSchema,
+  {
+    initialValues: { email: '' },
+    onSubmit: async (values) => {
+      errorMsg.value = ''
+      try {
+        await auth.resetPassword(values.email)
+        success.value = true
+      } catch (err: unknown) {
+        errorMsg.value = err instanceof Error ? err.message : t('common.error')
+      }
+    },
+  },
+)
 
-  if (!email.value) {
-    errorMsg.value = t('auth.enterEmail')
-    return
-  }
-
-  loading.value = true
-
-  try {
-    await auth.resetPassword(email.value)
-    success.value = true
-  } catch (err: unknown) {
-    errorMsg.value = err instanceof Error ? err.message : t('common.error')
-  } finally {
-    loading.value = false
-  }
-}
+const [email] = defineField('email')
 
 useHead({
   title: t('auth.resetPasswordPageTitle'),
@@ -174,6 +176,12 @@ useHead({
 
 .field input {
   width: 100%;
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-1);
 }
 
 .error-msg {

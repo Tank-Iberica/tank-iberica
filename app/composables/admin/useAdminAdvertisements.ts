@@ -57,6 +57,7 @@ export const ADVERTISEMENT_STATUSES: {
 
 const PAGE_SIZE = 50
 
+/** Composable for admin advertisements. */
 export function useAdminAdvertisements() {
   const supabase = useSupabaseClient()
 

@@ -60,6 +60,15 @@ vi.mock('../../../server/utils/siteConfig', () => ({
   getSiteUrl: () => 'https://tracciona.com',
   getSiteName: () => 'Tracciona',
   getSiteEmail: () => 'hola@tracciona.com',
+  BRAND_COLORS: {
+    primary: '#23424A',
+    primaryDark: '#1a3236',
+    accent: '#E8A838',
+    white: '#ffffff',
+    gray100: '#f7fafc',
+    gray600: '#718096',
+    gray800: '#2d3748',
+  },
 }))
 
 vi.mock('../../../server/utils/logger', () => ({ logger: mockLogger }))

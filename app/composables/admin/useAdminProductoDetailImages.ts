@@ -16,6 +16,7 @@ interface ImageEntry {
   position: number
 }
 
+/** Manages image gallery in admin product detail. */
 export function useAdminProductoDetailImages(params: {
   vehicleId: ComputedRef<string>
   fileNamingData: ComputedRef<FileNamingData>

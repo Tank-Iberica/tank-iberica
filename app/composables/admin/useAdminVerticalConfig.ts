@@ -48,6 +48,7 @@ export interface VerticalConfigRow {
   [key: string]: unknown
 }
 
+/** Composable for admin vertical config. */
 export function useAdminVerticalConfig() {
   const supabase = useSupabaseClient()
   const config = useState<VerticalConfigRow | null>('admin-vertical-config', () => null)

@@ -34,16 +34,16 @@
         <slot />
       </NuxtErrorBoundary>
     </main>
-    <LayoutAppFooter />
+    <LazyLayoutAppFooter />
     <LazyModalsAuthModal v-model="authOpen" />
     <LazyUserPanel v-model="userPanelOpen" />
     <LazyModalsAdvertiseModal v-model="advertiseOpen" @open-auth="authOpen = true" />
     <LazyModalsDemandModal v-model="demandOpen" @open-auth="authOpen = true" />
     <LazyModalsSubscribeModal v-model="subscribeOpen" />
-    <LayoutCookieBanner />
-    <AccessibilityFAB />
+    <LazyLayoutCookieBanner />
+    <LazyAccessibilityFAB />
     <UiToastContainer />
-    <UiScrollToTop />
+    <LazyUiScrollToTop />
     <UiOnboardingTourCard
       :visible="tourVisible"
       :step="tourStep"

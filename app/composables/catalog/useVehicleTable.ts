@@ -57,6 +57,11 @@ function compartmentsText(v: Vehicle): string {
   return val ? String(val) : '—'
 }
 
+/**
+ * Composable for vehicle table.
+ *
+ * @param getVehicles
+ */
 export function useVehicleTable(getVehicles: () => readonly Vehicle[]) {
   const { t, locale } = useI18n()
   const { location: userLocation } = useUserLocation()

@@ -47,6 +47,7 @@ const defaultState: CatalogState = {
   locationLevel: null,
 }
 
+/** Composable for catalog state. */
 export function useCatalogState() {
   const scope = inject<string>('catalogScope', 'global')
   const state = useState<CatalogState>(`catalog-${scope}`, () => ({ ...defaultState }))

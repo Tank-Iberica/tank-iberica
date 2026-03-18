@@ -13,8 +13,9 @@ import { defineEventHandler } from 'h3'
 import { serverSupabaseUser } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
 import { verifyCsrf } from '../../utils/verifyCsrf'
+import { CREDIT_COSTS } from '../../utils/creditsConfig'
 
-const EXPORT_COST = 1
+const EXPORT_COST = CREDIT_COSTS.EXPORT_CATALOG
 
 /** Plans where export is included (no credit charge) */
 const FREE_EXPORT_PLANS = ['premium', 'founding'] as const

@@ -85,6 +85,7 @@ function isFileImage(url: string | null): boolean {
   return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'].includes(ext)
 }
 
+/** Composable for admin verificaciones. */
 export function useAdminVerificaciones() {
   const { t } = useI18n()
   const { locale } = useI18n()

@@ -32,6 +32,7 @@ export const USER_ROLES: { value: UserRole; label: string; color: string }[] = [
 
 const PAGE_SIZE = 100
 
+/** Composable for admin users. */
 export function useAdminUsers() {
   const supabase = useSupabaseClient()
 

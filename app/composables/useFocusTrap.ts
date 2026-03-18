@@ -18,6 +18,7 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(', ')
 
+/** Composable for focus trap. */
 export function useFocusTrap() {
   let container: HTMLElement | null = null
   let previouslyFocused: HTMLElement | null = null

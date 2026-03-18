@@ -47,7 +47,7 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
     <div class="section-header">
       <h2>{{ $t('admin.chats.title') }}</h2>
       <div v-if="totalUnreadCount > 0" class="unread-badge-header">
-        {{ totalUnreadCount }} sin leer
+        {{ totalUnreadCount }} {{ $t('admin.chats.unread', 'sin leer') }}
       </div>
     </div>
 

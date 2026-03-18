@@ -72,6 +72,7 @@ function applyRelaxations(filters: VehicleFilters, relaxations: Relaxation[]): V
   return result
 }
 
+/** Composable for similar searches. */
 export function useSimilarSearches() {
   const { fetchCount } = useVehicles()
   const { getNextLevelFilters } = useGeoFallback()

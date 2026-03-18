@@ -68,6 +68,7 @@ function getStatusClass(status: BookingStatus): string {
   }
 }
 
+/** Composable for dashboard visitas. */
 export function useDashboardVisitas() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

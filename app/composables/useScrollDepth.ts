@@ -7,6 +7,11 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAnalyticsTracking } from '~/composables/useAnalyticsTracking'
 
+/**
+ * Composable for scroll depth.
+ *
+ * @param vehicleId
+ */
 export function useScrollDepth(vehicleId: string) {
   const depth = ref(0)
   const maxDepth = ref(0)

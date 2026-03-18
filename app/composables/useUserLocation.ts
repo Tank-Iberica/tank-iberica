@@ -146,6 +146,7 @@ function resolveProvinceRegion(
   return { province: null, region: null }
 }
 
+/** Composable for user location. */
 export function useUserLocation() {
   const supabase = useSupabaseClient()
   const location = useState<UserLocation>('userLocation', () => ({

@@ -55,6 +55,7 @@ function applyLocationFilters(query: FilterChain, filters: VehicleFilters): Filt
   return query
 }
 
+/** Composable for hidden vehicles. */
 export function useHiddenVehicles() {
   const supabase = useSupabaseClient()
 

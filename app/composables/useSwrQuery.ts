@@ -48,6 +48,7 @@ function setCache<T>(key: string, data: T): void {
   }
 }
 
+/** SWR (stale-while-revalidate) data fetching pattern. */
 export function useSwrQuery<T>(
   key: string,
   fetcher: () => Promise<{ data: T | null; error: unknown }>,

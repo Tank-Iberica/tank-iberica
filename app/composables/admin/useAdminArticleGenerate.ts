@@ -21,6 +21,7 @@ interface GenerateArticleResult {
   aiUnavailable?: boolean
 }
 
+/** Composable for admin article generate. */
 export function useAdminArticleGenerate() {
   const generating = ref(false)
   const error = ref<string | null>(null)

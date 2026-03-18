@@ -29,6 +29,11 @@ function deriveBadge(score: number): TrustBadgeTier {
   return null
 }
 
+/**
+ * Composable for dealer trust score.
+ *
+ * @param dealerId
+ */
 export function useDealerTrustScore(dealerId: Ref<string | null>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

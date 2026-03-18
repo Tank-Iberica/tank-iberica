@@ -81,6 +81,7 @@ function removeMarketingCookies(): void {
   }
 }
 
+/** Composable for consent. */
 export function useConsent() {
   const consent = getConsent()
   const loaded = getLoaded()

@@ -68,6 +68,7 @@ function checkLoginRateLimit(email: string): { allowed: boolean; retryAfterMs: n
   return { allowed: true, retryAfterMs: 0 }
 }
 
+/** Composable for auth. */
 export function useAuth() {
   const supabase = useSupabaseClient()
   const supabaseUser = useSupabaseUser()

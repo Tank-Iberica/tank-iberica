@@ -47,6 +47,7 @@ function buildEmailStats(
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for admin emails. */
 export function useAdminEmails() {
   const { sanitize } = useSanitize()
   const { t } = useI18n()

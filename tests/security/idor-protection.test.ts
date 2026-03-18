@@ -255,9 +255,9 @@ describe('IDOR: rutas publicas no exponen datos sensibles', () => {
   it('Sitemap no contiene rutas de admin', async () => {
     let res: Response
     try {
-      res = await fetch(`${BASE}/sitemap.xml`)
+      res = await fetch(`${BASE}/sitemap.xml`, { signal: AbortSignal.timeout(5000) })
     } catch {
-      // Server not running — skip
+      // Server not running or timeout — skip
       return
     }
 

@@ -20,6 +20,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return outputArray
 }
 
+/** Composable for push notifications. */
 export function usePushNotifications() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

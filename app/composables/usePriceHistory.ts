@@ -62,6 +62,11 @@ const CHART_DAYS = 90
 // Composable
 // ---------------------------------------------------------------------------
 
+/**
+ * Composable for price history.
+ *
+ * @param vehicleId
+ */
 export function usePriceHistory(vehicleId: string) {
   const supabase = useSupabaseClient()
 

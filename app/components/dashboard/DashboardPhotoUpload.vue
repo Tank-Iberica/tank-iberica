@@ -183,7 +183,7 @@ function onDragEnd() {
     </div>
 
     <!-- Error -->
-    <div v-if="localError" class="upload-error" role="alert">{{ localError }}</div>
+    <div v-if="localError" class="upload-error" role="alert" aria-live="assertive">{{ localError }}</div>
 
     <!-- Previews -->
     <div v-if="modelValue.length" class="photo-grid">

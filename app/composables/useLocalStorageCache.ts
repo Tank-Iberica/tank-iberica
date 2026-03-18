@@ -16,6 +16,7 @@ export interface CacheEntry<T> {
   timestamp: number
 }
 
+/** Caches data in localStorage with TTL expiration. */
 export function useLocalStorageCache<T>(key: string, ttlSeconds = 300) {
   const storageKey = `tracciona_cache_${key}`
 

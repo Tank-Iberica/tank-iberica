@@ -44,6 +44,7 @@ export type {
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for market data. */
 export function useMarketData() {
   const supabase = useSupabaseClient()
 

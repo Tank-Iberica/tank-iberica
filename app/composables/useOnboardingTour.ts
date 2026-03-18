@@ -56,6 +56,12 @@ function safeSetItem(key: string, value: string): void {
 // Composable
 // ---------------------------------------------------------------------------
 
+/**
+ * Composable for onboarding tour.
+ *
+ * @param steps
+ * @param storageKey
+ */
 export function useOnboardingTour(steps: TourStep[], storageKey: string = DEALER_TOUR_KEY) {
   const currentIndex = ref(0)
   const visible = ref(false)

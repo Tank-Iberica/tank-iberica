@@ -10,6 +10,7 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { safeError } from '../../utils/safeError'
 import { logger } from '../../utils/logger'
+import { timingSafeCompare } from '../../utils/timingSafeCompare'
 
 interface WebhookVerifyQuery {
   'hub.mode'?: string
@@ -25,7 +26,7 @@ export default defineEventHandler((event) => {
   const token = query['hub.verify_token']
   const challenge = query['hub.challenge']
 
-  if (mode === 'subscribe' && token === config.whatsappVerifyToken) {
+  if (mode === 'subscribe' && timingSafeCompare(token as string, config.whatsappVerifyToken)) {
     logger.info('[WhatsApp Webhook] Verification successful')
     // Meta expects the challenge value returned as plain text
     return challenge
@@ -33,7 +34,7 @@ export default defineEventHandler((event) => {
 
   logger.warn('[WhatsApp Webhook] Verification failed', {
     mode,
-    tokenMatch: token === config.whatsappVerifyToken,
+    tokenMatch: timingSafeCompare(token as string, config.whatsappVerifyToken),
   })
   throw safeError(403, 'Forbidden')
 })

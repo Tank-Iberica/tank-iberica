@@ -250,3 +250,25 @@ describe('applyFilters — combined filters', () => {
     expect(result).toBe(chain)
   })
 })
+
+// ── #54 — top_rated filter ──────────────────────────────────────────────────
+
+describe('applyFilters — top_rated (#54)', () => {
+  it('adds gte(dealers.trust_score, 80) when top_rated=true', () => {
+    const { chain, calls } = makeChain()
+    applyFilters(chain, { top_rated: true })
+    expect(calls).toContainEqual(['gte', 'dealers.trust_score', 80])
+  })
+
+  it('does not add trust_score filter when top_rated is undefined', () => {
+    const { chain, calls } = makeChain()
+    applyFilters(chain, {})
+    expect(calls.some(([_, col]) => col === 'dealers.trust_score')).toBe(false)
+  })
+
+  it('does not add trust_score filter when top_rated is false', () => {
+    const { chain, calls } = makeChain()
+    applyFilters(chain, { top_rated: false })
+    expect(calls.some(([_, col]) => col === 'dealers.trust_score')).toBe(false)
+  })
+})

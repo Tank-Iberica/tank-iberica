@@ -90,7 +90,7 @@ watch(
         </div>
 
         <!-- Success state -->
-        <div v-if="submitted" class="report-success">
+        <div v-if="submitted" class="report-success" aria-live="polite">
           <svg
             width="48"
             height="48"

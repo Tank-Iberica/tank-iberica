@@ -204,6 +204,7 @@
               height="15"
               sizes="20px"
               format="webp"
+              decoding="async"
               class="lang-flag-desktop"
             />
           </button>
@@ -219,6 +220,7 @@
               height="15"
               sizes="20px"
               format="webp"
+              decoding="async"
               class="lang-flag-desktop"
             />
           </button>

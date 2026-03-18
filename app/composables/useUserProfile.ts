@@ -24,6 +24,7 @@ interface ExportedData {
   email_preferences: Record<string, unknown>[]
 }
 
+/** Composable for user profile. */
 export function useUserProfile() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

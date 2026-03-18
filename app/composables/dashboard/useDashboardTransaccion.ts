@@ -66,6 +66,11 @@ export interface SellFormData {
 // Composable
 // ---------------------------------------------------------------------------
 
+/**
+ * Composable for dashboard transaccion.
+ *
+ * @param vehicleId
+ */
 export function useDashboardTransaccion(vehicleId: string) {
   const { t } = useI18n()
   const router = useRouter()

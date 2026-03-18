@@ -27,6 +27,7 @@ interface ConfirmOptions {
   requireType?: string
 }
 
+/** Composable for confirm modal. */
 export function useConfirmModal() {
   const isOpen = ref(false)
   const options = ref<ConfirmOptions>({ title: '' })

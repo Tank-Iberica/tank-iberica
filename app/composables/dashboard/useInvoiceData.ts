@@ -21,6 +21,7 @@ interface DealerDataProfile {
   website?: string | null
 }
 
+/** Loads and manages invoice data for the dashboard. */
 export function useInvoiceData(
   dealerProfile: Ref<DealerDataProfile | null>,
   loadDealer: () => Promise<DealerDataProfile | null>,

@@ -222,6 +222,7 @@
             <input
               v-model="form.name"
               type="text"
+              autocomplete="name"
               :placeholder="t('dealer.contactFormName')"
               class="form-input"
               required
@@ -230,6 +231,7 @@
             <input
               v-model="form.phone"
               type="tel"
+              autocomplete="tel"
               :placeholder="t('dealer.contactFormPhone')"
               class="form-input"
               maxlength="30"
@@ -303,7 +305,36 @@
       </div>
     </div>
 
-    <!-- 7. Social links -->
+    <!-- 7c. Seller Reviews section (#51) -->
+    <section class="dealer-section">
+      <h2 class="section-title">{{ t('vehicle.reviews.title') }}</h2>
+      <div v-if="dealerReviewsLoading" class="loading-state">
+        {{ t('common.loading') }}
+      </div>
+      <div v-else-if="dealerReviews.length === 0" class="empty-reviews">
+        <p>{{ t('vehicle.reviews.noReviews') }}</p>
+      </div>
+      <div v-else class="reviews-list">
+        <article v-for="review in dealerReviews" :key="review.id" class="review-card">
+          <div class="review-card__header">
+            <span class="review-stars" aria-hidden="true">{{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }}</span>
+            <span class="review-rating">{{ review.rating }}/5</span>
+            <span v-if="review.verified_purchase" class="review-verified">
+              {{ t('sellerProfile.verifiedPurchase') }}
+            </span>
+          </div>
+          <h3 v-if="review.title" class="review-title">{{ review.title }}</h3>
+          <p v-if="review.content" class="review-content">{{ review.content }}</p>
+          <div class="review-footer">
+            <time class="review-date" :datetime="review.created_at">
+              {{ new Date(review.created_at).toLocaleDateString() }}
+            </time>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 8. Social links -->
     <section v-if="hasSocialLinks" class="dealer-section">
       <h2 class="section-title">{{ t('dealer.followUs') }}</h2>
       <div class="social-links">
@@ -424,6 +455,7 @@ import { buildAggregateRatingSchema } from '~/utils/aggregateRatingSchema'
 
 interface DealerProfile {
   id: string
+  user_id: string
   slug: string
   company_name: Record<string, string>
   logo_url: string | null
@@ -554,6 +586,35 @@ const hasSocialLinks = computed(() => Object.keys(activeSocialLinks.value).lengt
 
 // Contact form state
 const supabase = useSupabaseClient()
+
+// #51 — Seller reviews for this dealer
+interface DealerReview {
+  id: string
+  rating: number
+  title: string | null
+  content: string | null
+  verified_purchase: boolean
+  created_at: string
+}
+const dealerReviews = ref<DealerReview[]>([])
+const dealerReviewsLoading = ref(false)
+
+async function fetchDealerReviews() {
+  if (!props.dealer.user_id) return
+  dealerReviewsLoading.value = true
+  try {
+    const { data } = await supabase
+      .from('seller_reviews')
+      .select('id, rating, title, content, verified_purchase, created_at')
+      .eq('seller_id', props.dealer.user_id)
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(10)
+    dealerReviews.value = (data ?? []) as unknown as DealerReview[]
+  } catch { /* silent */ }
+  dealerReviewsLoading.value = false
+}
+
 const form = reactive({ name: '', phone: '', message: '' })
 const formLoading = ref(false)
 const formSent = ref(false)
@@ -646,6 +707,8 @@ onMounted(async () => {
     setSort(props.dealer.catalog_sort as SortOption)
   }
   await loadVehicles()
+  // #51 — Fetch seller reviews
+  fetchDealerReviews()
 })
 
 onUnmounted(() => {
@@ -1320,5 +1383,82 @@ onUnmounted(() => {
   .dealer-discover {
     margin: 0 var(--spacing-6) var(--spacing-4);
   }
+}
+
+/* ── Reviews section (#51) ── */
+.loading-state {
+  text-align: center;
+  padding: var(--spacing-6);
+  color: var(--text-auxiliary);
+  font-size: var(--font-size-sm);
+}
+
+.empty-reviews {
+  text-align: center;
+  padding: var(--spacing-6);
+  color: var(--text-auxiliary);
+  font-size: var(--font-size-sm);
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.review-card {
+  padding: var(--spacing-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius);
+}
+
+.review-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-2);
+}
+
+.review-stars {
+  color: var(--color-accent);
+  font-size: var(--font-size-base);
+  letter-spacing: 1px;
+}
+
+.review-rating {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.review-verified {
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  font-weight: var(--font-weight-medium);
+}
+
+.review-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.review-content {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-line;
+}
+
+.review-footer {
+  margin-top: var(--spacing-2);
+}
+
+.review-date {
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
 }
 </style>

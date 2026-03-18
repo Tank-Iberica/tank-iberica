@@ -65,6 +65,7 @@ interface DashboardSummary {
   recentViewsCount: number
 }
 
+/** Composable for buyer dashboard. */
 export function useBuyerDashboard() {
   const supabase = useSupabaseClient()
   const { userId } = useAuth()

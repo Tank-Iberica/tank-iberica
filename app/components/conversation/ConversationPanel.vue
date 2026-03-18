@@ -44,7 +44,7 @@
     </div>
 
     <!-- Messages area -->
-    <div ref="messagesContainer" class="messages-area">
+    <div ref="messagesContainer" class="messages-area" aria-live="polite">
       <div v-if="loading" class="messages-loading">
         <span class="spinner" />
         <span>{{ $t('common.loading') }}</span>

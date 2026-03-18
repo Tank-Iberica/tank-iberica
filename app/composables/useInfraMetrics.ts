@@ -56,6 +56,7 @@ function getStatusColor(usagePercent: number | null): 'green' | 'yellow' | 'red'
   return 'green'
 }
 
+/** Composable for infra metrics. */
 export function useInfraMetrics() {
   const supabase = useSupabaseClient()
   const metrics = ref<InfraMetric[]>([])

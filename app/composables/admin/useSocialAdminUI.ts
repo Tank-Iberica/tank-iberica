@@ -48,6 +48,7 @@ function getStatusClass(status: string): string {
   return classes[status] || 'status-pending'
 }
 
+/** Composable for social admin u i. */
 export function useSocialAdminUI() {
   const { t } = useI18n()
   const { locale } = useI18n()

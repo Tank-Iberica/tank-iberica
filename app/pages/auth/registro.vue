@@ -95,6 +95,7 @@
                 id="reg-cif"
                 v-model="taxId"
                 type="text"
+                autocomplete="off"
                 :placeholder="$t('auth.taxIdPlaceholder')"
               >
             </div>

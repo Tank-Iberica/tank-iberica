@@ -17,6 +17,7 @@ export interface Toast {
 const toasts = ref<Toast[]>([])
 let toastIdCounter = 0
 
+/** Composable for toast. */
 export function useToast() {
   const { t } = useI18n()
 

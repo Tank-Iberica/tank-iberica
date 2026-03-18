@@ -28,6 +28,7 @@ interface VirtualItem<T> {
   index: number
 }
 
+/** Renders large lists efficiently using virtual scrolling. */
 export function useVirtualList<T>(items: Ref<T[]> | ComputedRef<T[]>, options: VirtualListOptions) {
   const { itemHeight, overscan = 5 } = options
 

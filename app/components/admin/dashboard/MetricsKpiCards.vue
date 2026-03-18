@@ -124,6 +124,34 @@ defineProps<{
       </span>
       <span class="kpi-sublabel">{{ $t('admin.metrics.vsLastMonth') }}</span>
     </div>
+
+    <!-- ARPU -->
+    <div class="kpi-card">
+      <span class="kpi-label">{{ $t('admin.metrics.arpu', 'ARPU') }}</span>
+      <span class="kpi-value">{{ formatCurrency(kpiSummary.arpu.current / 100) }}</span>
+      <span
+        class="kpi-change"
+        :class="{
+          'kpi-change--up': kpiSummary.arpu.changePercent > 0,
+          'kpi-change--down': kpiSummary.arpu.changePercent < 0,
+        }"
+      >
+        <template v-if="kpiSummary.arpu.changePercent > 0">
+          <svg class="change-arrow" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 3l7 7h-5v7H8v-7H3l7-7z" />
+          </svg>
+          {{ formatPercent(kpiSummary.arpu.changePercent) }}
+        </template>
+        <template v-else-if="kpiSummary.arpu.changePercent < 0">
+          <svg class="change-arrow" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 17l-7-7h5V3h4v7h5l-7 7z" />
+          </svg>
+          {{ formatPercent(kpiSummary.arpu.changePercent) }}
+        </template>
+        <template v-else> &mdash; {{ $t('admin.metrics.noChange') }} </template>
+      </span>
+      <span class="kpi-sublabel">{{ $t('admin.metrics.vsLastMonth') }}</span>
+    </div>
   </section>
 </template>
 
@@ -192,7 +220,7 @@ defineProps<{
 
 @media (min-width: 48em) {
   .kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--spacing-4);
   }
 

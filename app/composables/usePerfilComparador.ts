@@ -62,6 +62,7 @@ function printPage(): void {
   globalThis.print()
 }
 
+/** Composable for perfil comparador. */
 export function usePerfilComparador() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

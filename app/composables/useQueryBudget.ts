@@ -20,6 +20,7 @@ interface QueryLogEntry {
   timestamp: number
 }
 
+/** Composable for query budget. */
 export function useQueryBudget() {
   const queries = useState<QueryLogEntry[]>(QUERY_LOG_KEY, () => [])
 

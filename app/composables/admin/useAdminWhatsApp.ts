@@ -45,6 +45,7 @@ function getStatusClass(status: string): string {
   return classes[status] || 'status-received'
 }
 
+/** Composable for admin whats app. */
 export function useAdminWhatsApp() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

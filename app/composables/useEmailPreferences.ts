@@ -25,6 +25,7 @@ function isAlwaysOn(emailType: string): boolean {
   return ALWAYS_ON_TYPES.has(emailType)
 }
 
+/** Composable for email preferences. */
 export function useEmailPreferences() {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()

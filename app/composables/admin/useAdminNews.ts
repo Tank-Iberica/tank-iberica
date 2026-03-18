@@ -36,6 +36,7 @@ export interface NewsFormData {
 
 const PAGE_SIZE = 50
 
+/** Composable for admin news. */
 export function useAdminNews() {
   const supabase = useSupabaseClient()
 

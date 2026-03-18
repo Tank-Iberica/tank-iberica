@@ -90,6 +90,7 @@ function formatCategory(category: string): string {
   return map[category] || category
 }
 
+/** Composable for admin dashboard. */
 export function useAdminDashboard() {
   const supabase = useSupabaseClient()
 

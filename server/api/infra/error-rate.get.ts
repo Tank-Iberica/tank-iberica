@@ -10,12 +10,13 @@
  */
 
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { timingSafeCompare } from '../../utils/timingSafeCompare'
 
 export default defineEventHandler(async (event) => {
-  // Auth: Check CRON_SECRET
+  // Auth: Check CRON_SECRET (timing-safe)
   const cronSecret = useRuntimeConfig().cronSecret
   const authHeader = getHeader(event, 'authorization')
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  if (!timingSafeCompare(authHeader, `Bearer ${cronSecret}`)) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 

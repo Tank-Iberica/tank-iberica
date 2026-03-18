@@ -110,7 +110,7 @@ onMounted(() => {
       </UiEmptyState>
 
       <!-- Grid -->
-      <div v-else class="vehicles-grid">
+      <TransitionGroup v-else name="list" tag="div" class="vehicles-grid">
         <div v-for="vehicle in vehicles" :key="vehicle.id" class="vehicle-card">
           <NuxtLink :to="`/vehiculo/${vehicle.slug}`" class="card-link">
             <div class="card-image">
@@ -148,12 +148,40 @@ onMounted(() => {
             </svg>
           </button>
         </div>
-      </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* List transitions */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(1rem);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.list-move {
+  transition: transform 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list-enter-active,
+  .list-leave-active,
+  .list-move {
+    transition: none;
+  }
+}
+
 .favorites-page {
   min-height: 60vh;
   padding: 1.5rem 0 3rem;

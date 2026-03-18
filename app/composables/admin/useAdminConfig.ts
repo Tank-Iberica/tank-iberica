@@ -17,6 +17,7 @@ export interface ConfigValue {
   [key: string]: unknown
 }
 
+/** Composable for admin config. */
 export function useAdminConfig() {
   const supabase = useSupabaseClient()
 

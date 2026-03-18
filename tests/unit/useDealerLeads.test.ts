@@ -567,3 +567,135 @@ describe('updateCloseReason', () => {
     expect(c.error.value).toBe('Error updating close reason')
   })
 })
+
+// ─── #36 — updateNegotiatedPrice ────────────────────────────────────────────
+
+describe('updateNegotiatedPrice', () => {
+  it('returns true on success', async () => {
+    const c = useDealerLeads('dealer-1')
+    const result = await c.updateNegotiatedPrice('lead-1', 5000000)
+    expect(result).toBe(true)
+    expect(c.error.value).toBeNull()
+  })
+
+  it('updates currentLead.negotiated_price_cents on success', async () => {
+    const sampleLead = {
+      id: 'lead-1', dealer_id: 'dealer-1', vehicle_id: null,
+      buyer_name: 'Jane', buyer_email: null, buyer_phone: null,
+      buyer_location: null, message: null, status: 'new',
+      dealer_notes: null, close_reason: null, negotiated_price_cents: null,
+      created_at: null, updated_at: null, status_history: null, vehicles: null,
+    }
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain(sampleLead),
+        update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
+      }),
+    }))
+    const c = useDealerLeads('dealer-1')
+    await c.loadLead('lead-1')
+
+    await c.updateNegotiatedPrice('lead-1', 4500000)
+    expect(c.currentLead.value!.negotiated_price_cents).toBe(4500000)
+  })
+
+  it('sets negotiated_price_cents to null when clearing', async () => {
+    const sampleLead = {
+      id: 'lead-1', dealer_id: 'dealer-1', vehicle_id: null,
+      buyer_name: 'Jane', buyer_email: null, buyer_phone: null,
+      buyer_location: null, message: null, status: 'new',
+      dealer_notes: null, close_reason: null, negotiated_price_cents: 5000000,
+      created_at: null, updated_at: null, status_history: null, vehicles: null,
+    }
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain(sampleLead),
+        update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
+      }),
+    }))
+    const c = useDealerLeads('dealer-1')
+    await c.loadLead('lead-1')
+
+    await c.updateNegotiatedPrice('lead-1', null)
+    expect(c.currentLead.value!.negotiated_price_cents).toBeNull()
+  })
+
+  it('does not update currentLead when id does not match', async () => {
+    const sampleLead = {
+      id: 'lead-1', dealer_id: 'dealer-1', vehicle_id: null,
+      buyer_name: 'Jane', buyer_email: null, buyer_phone: null,
+      buyer_location: null, message: null, status: 'new',
+      dealer_notes: null, close_reason: null, negotiated_price_cents: null,
+      created_at: null, updated_at: null, status_history: null, vehicles: null,
+    }
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain(sampleLead),
+        update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
+      }),
+    }))
+    const c = useDealerLeads('dealer-1')
+    await c.loadLead('lead-1')
+
+    await c.updateNegotiatedPrice('lead-999', 3000000)
+    expect(c.currentLead.value!.negotiated_price_cents).toBeNull()
+  })
+
+  it('returns false on DB error', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain(),
+        update: () => ({
+          eq: () => Promise.resolve({ data: null, error: new Error('DB fail') }),
+        }),
+      }),
+    }))
+    const c = useDealerLeads('dealer-1')
+    const result = await c.updateNegotiatedPrice('lead-1', 5000000)
+    expect(result).toBe(false)
+    expect(c.error.value).toBeTruthy()
+  })
+
+  it('sets generic error for non-Error exception', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain(),
+        update: () => ({
+          eq: () => Promise.reject('string error'),
+        }),
+      }),
+    }))
+    const c = useDealerLeads('dealer-1')
+    const result = await c.updateNegotiatedPrice('lead-1', 5000000)
+    expect(result).toBe(false)
+    expect(c.error.value).toBe('Error updating negotiated price')
+  })
+
+  it('maps negotiated_price_cents in loadLeads response', async () => {
+    stubClient([{
+      id: 'lead-1', dealer_id: 'dealer-1', vehicle_id: 'v-1',
+      buyer_name: 'John', buyer_email: 'john@test.com', buyer_phone: null,
+      buyer_location: null, message: 'Interested', status: 'contacted',
+      dealer_notes: null, close_reason: null, negotiated_price_cents: 4200000,
+      created_at: '2026-01-01', updated_at: '2026-01-02',
+      status_history: null, vehicles: { brand: 'Volvo', model: 'FH', year: 2023 },
+    }], null, 1)
+    const c = useDealerLeads('dealer-1')
+    await c.loadLeads()
+    expect(c.leads.value[0]!.negotiated_price_cents).toBe(4200000)
+  })
+
+  it('maps null negotiated_price_cents when field is missing', async () => {
+    stubClient([{
+      id: 'lead-1', dealer_id: 'dealer-1', vehicle_id: null,
+      buyer_name: 'Jane', buyer_email: null, buyer_phone: null,
+      buyer_location: null, message: null, status: 'new',
+      dealer_notes: null, close_reason: null,
+      created_at: null, updated_at: null,
+      status_history: null, vehicles: null,
+    }], null, 1)
+    const c = useDealerLeads('dealer-1')
+    await c.loadLeads()
+    expect(c.leads.value[0]!.negotiated_price_cents).toBeNull()
+  })
+})

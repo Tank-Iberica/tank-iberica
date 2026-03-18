@@ -10,14 +10,12 @@ import {
   type SupabaseRestConfig,
 } from '../../services/billing'
 import { logger } from '../../utils/logger'
+import { PLAN_LIMITS as SUBSCRIPTION_LIMITS } from '../../services/subscriptionLimits'
 
-// Plan listing limits for vehicle pause/reactivation
-const PLAN_LIMITS: Record<string, number> = {
-  free: 3,
-  basic: 20,
-  premium: Infinity,
-  founding: Infinity,
-}
+// Plan listing limits — derived from canonical subscriptionLimits service
+const PLAN_LIMITS: Record<string, number> = Object.fromEntries(
+  Object.entries(SUBSCRIPTION_LIMITS).map(([k, v]) => [k, v.maxVehicles]),
+)
 
 type PatchFn = (table: string, filter: string, data: Record<string, unknown>) => Promise<unknown>
 type InsertFn = (table: string, data: Record<string, unknown>) => Promise<unknown>

@@ -61,6 +61,7 @@ export function renderStars(rating: number): string {
   return '\u2605'.repeat(full) + (half ? '\u00BD' : '') + '\u2606'.repeat(empty)
 }
 
+/** Composable for vendedor detail. */
 export function useVendedorDetail() {
   const { t, locale } = useI18n()
   const route = useRoute()

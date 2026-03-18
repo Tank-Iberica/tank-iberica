@@ -11,6 +11,7 @@ function formatPriceLabel(n: number): string {
   return String(n)
 }
 
+/** Manages catalog filter bar state and interactions. */
 export function useFilterBar(
   getVehicles: () => readonly Vehicle[] | undefined,
   onEmit: () => void,

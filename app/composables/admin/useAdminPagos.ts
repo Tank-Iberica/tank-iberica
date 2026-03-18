@@ -117,6 +117,7 @@ export function getStripeAccountUrl(accountId: string): string {
 // ============================================
 // COMPOSABLE
 // ============================================
+/** Composable for admin pagos. */
 export function useAdminPagos() {
   const supabase = useSupabaseClient()
 

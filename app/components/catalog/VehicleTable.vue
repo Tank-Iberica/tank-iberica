@@ -170,6 +170,7 @@
               <div class="action-buttons">
                 <NuxtLink
                   :to="`/vehiculo/${vehicle.slug}`"
+                  prefetch
                   class="action-icon-btn view-btn"
                   :title="$t('catalog.viewDetails')"
                 >

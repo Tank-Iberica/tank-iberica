@@ -39,6 +39,7 @@ export function formatMessageTime(dateStr: string): string {
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for perfil mensajes. */
 export function usePerfilMensajes() {
   const { t } = useI18n()
   const user = useSupabaseUser()

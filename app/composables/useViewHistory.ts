@@ -46,6 +46,7 @@ function persistHistory(entries: ViewEntry[]): void {
   }
 }
 
+/** Composable for view history. */
 export function useViewHistory() {
   const history = getHistory()
 

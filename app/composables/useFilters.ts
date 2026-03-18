@@ -119,6 +119,7 @@ async function queryVehicleAttributes(
 
 // ── Composable ────────────────────────────────────────────────────────────────
 
+/** Composable for filters. */
 export function useFilters() {
   const supabase = useSupabaseClient()
   const state = useState<FiltersState>('filters', () => ({ ...defaultState }))

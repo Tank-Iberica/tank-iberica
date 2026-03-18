@@ -10,10 +10,21 @@ export function usePageSeo(options: {
   path: string
   jsonLd?: Record<string, unknown>
 }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const SITE_URL = useSiteUrl()
-  const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`
   const canonicalUrl = `${SITE_URL}${options.path}`
+
+  // Read vertical_config for per-vertical OG defaults
+  const verticalConfig = useState<Record<string, unknown> | null>('vertical_config')
+  const ogImageUrl = (verticalConfig.value?.og_image_url as string) || null
+  const verticalName = verticalConfig.value?.name
+    ? (verticalConfig.value.name as Record<string, string>)[locale.value] || null
+    : null
+  const verticalThemeColor = verticalConfig.value?.theme
+    ? (verticalConfig.value.theme as Record<string, string>)['color_primary'] || null
+    : null
+  const DEFAULT_IMAGE = ogImageUrl || `${SITE_URL}/og-default.png`
+  const siteName = verticalName || t('site.title')
 
   useSeoMeta({
     robots: 'index, follow',
@@ -24,11 +35,12 @@ export function usePageSeo(options: {
     ogImage: options.image || DEFAULT_IMAGE,
     ogType: (options.type || 'website') as 'website',
     ogUrl: canonicalUrl,
-    ogSiteName: t('site.title'),
+    ogSiteName: siteName,
     twitterCard: 'summary_large_image',
     twitterTitle: options.title,
     twitterDescription: options.description,
     twitterImage: options.image || DEFAULT_IMAGE,
+    ...(verticalThemeColor ? { themeColor: verticalThemeColor } : {}),
   })
 
   // Remove any existing locale prefix from path to get the base path

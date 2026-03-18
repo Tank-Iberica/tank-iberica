@@ -2,31 +2,44 @@
 -- Migration 00170: Add review dimensions (JSONB) and NPS score
 -- Backlog #52 — Reviews with 4 dimension scores
 -- Backlog #53 — NPS 0-10 field
+-- Target table: seller_reviews (used by /api/seller-reviews endpoints)
 -- ============================================================
 
 -- Add dimensions JSONB column for detailed scoring
 -- Expected shape: { "communication": 4, "accuracy": 5, "condition": 3, "logistics": 4 }
-ALTER TABLE dealer_reviews
+ALTER TABLE seller_reviews
   ADD COLUMN IF NOT EXISTS dimensions JSONB DEFAULT NULL;
 
 -- Add NPS score (0-10 scale, Net Promoter Score)
-ALTER TABLE dealer_reviews
-  ADD COLUMN IF NOT EXISTS nps_score SMALLINT DEFAULT NULL CHECK (nps_score IS NULL OR (nps_score >= 0 AND nps_score <= 10));
+ALTER TABLE seller_reviews
+  ADD COLUMN IF NOT EXISTS nps_score SMALLINT DEFAULT NULL;
 
--- Add constraint to validate dimension values are 1-5
-ALTER TABLE dealer_reviews
-  ADD CONSTRAINT check_dimension_values CHECK (
-    dimensions IS NULL
-    OR (
-      (dimensions->>'communication')::int BETWEEN 1 AND 5
-      AND (dimensions->>'accuracy')::int BETWEEN 1 AND 5
-      AND (dimensions->>'condition')::int BETWEEN 1 AND 5
-      AND (dimensions->>'logistics')::int BETWEEN 1 AND 5
-    )
-  );
+-- Add CHECK constraint for NPS range (0-10)
+-- Using DO block to avoid error if constraint already exists
+DO $$ BEGIN
+  ALTER TABLE seller_reviews
+    ADD CONSTRAINT seller_reviews_nps_range
+    CHECK (nps_score IS NULL OR (nps_score >= 0 AND nps_score <= 10));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
--- Update the rating summary function to include dimensions and NPS
-CREATE OR REPLACE FUNCTION get_dealer_rating_summary(p_dealer_id UUID)
+-- Add CHECK constraint to validate dimension values are 1-5
+DO $$ BEGIN
+  ALTER TABLE seller_reviews
+    ADD CONSTRAINT seller_reviews_dimension_values CHECK (
+      dimensions IS NULL
+      OR (
+        (dimensions->>'communication')::int BETWEEN 1 AND 5
+        AND (dimensions->>'accuracy')::int BETWEEN 1 AND 5
+        AND (dimensions->>'condition')::int BETWEEN 1 AND 5
+        AND (dimensions->>'logistics')::int BETWEEN 1 AND 5
+      )
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+-- Rating summary function for seller_reviews including dimensions and NPS
+CREATE OR REPLACE FUNCTION get_seller_rating_summary(p_seller_id UUID)
 RETURNS TABLE(
   average_rating NUMERIC,
   review_count BIGINT,
@@ -61,12 +74,17 @@ AS $$
         , 1)
       ELSE NULL
     END AS nps_score_net
-  FROM dealer_reviews
-  WHERE dealer_id = p_dealer_id
-    AND status = 'approved';
+  FROM seller_reviews
+  WHERE seller_id = p_seller_id
+    AND status = 'published';
 $$;
 
 -- Index for efficient NPS aggregation queries
-CREATE INDEX IF NOT EXISTS idx_dealer_reviews_nps
-  ON dealer_reviews(dealer_id, nps_score)
-  WHERE status = 'approved' AND nps_score IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_seller_reviews_nps
+  ON seller_reviews(seller_id, nps_score)
+  WHERE status = 'published' AND nps_score IS NOT NULL;
+
+-- Index for dimension-based queries
+CREATE INDEX IF NOT EXISTS idx_seller_reviews_dimensions
+  ON seller_reviews(seller_id)
+  WHERE status = 'published' AND dimensions IS NOT NULL;

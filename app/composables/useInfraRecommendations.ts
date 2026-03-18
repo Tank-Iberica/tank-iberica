@@ -198,6 +198,7 @@ function getRecommendation(
   }
 }
 
+/** Composable for infra recommendations. */
 export function useInfraRecommendations() {
   function getAllRecommendations(
     metricsData: Array<{ component: string; metric_name: string; usage_percent: number | null }>,

@@ -8,6 +8,7 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
+import { BRAND_COLORS } from '../../utils/siteConfig'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -116,7 +117,7 @@ function buildHtmlPage(params: {
   showBackLink: boolean
 }): string {
   const { title, heading, message, showBackLink } = params
-  const primary = '#23424A'
+  const { primary } = BRAND_COLORS
   const siteUrl = getSiteUrl()
 
   return `<!DOCTYPE html>

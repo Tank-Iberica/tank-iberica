@@ -76,6 +76,7 @@ function formatCurrency(value: number | null | undefined): string {
   }).format(value)
 }
 
+/** Composable for dashboard pipeline. */
 export function useDashboardPipeline() {
   const supabase = useSupabaseClient()
   const { userId } = useAuth()

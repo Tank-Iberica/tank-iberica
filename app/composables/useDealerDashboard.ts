@@ -35,6 +35,7 @@ export function mapLeads(raw: RawLead[]): RecentLead[] {
   }))
 }
 
+/** Composable for dealer dashboard. */
 export function useDealerDashboard() {
   const supabase = useSupabaseClient()
   const { userId } = useAuth()

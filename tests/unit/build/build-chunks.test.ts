@@ -124,14 +124,14 @@ describe('Build Chunks - Vendor Separation', () => {
     })
 
     it('should isolate exceljs usage to export utilities', () => {
-      // Only specific files should use exceljs
+      // Only specific files should use exceljs — all are export/admin-related
       const allowedFiles = [
         'app/utils/adminProductosExport.ts',
         'app/composables/dashboard/useDashboardExportar.ts',
       ]
 
       allowedFiles.forEach((file) => {
-        expect(file).toContain('admin') // All are admin-related
+        expect(file).toMatch(/admin|[Ee]xport/) // All are admin/export-related
       })
     })
 

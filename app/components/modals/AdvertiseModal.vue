@@ -50,13 +50,27 @@ const {
   () => emit('update:modelValue', false),
   () => emit('open-auth'),
 )
+
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+const modalRef = ref<HTMLElement | null>(null)
+
+watch(
+  () => props.modelValue,
+  (isOpen) => {
+    if (isOpen) {
+      nextTick(() => activateTrap(modalRef.value))
+    } else {
+      deactivateTrap()
+    }
+  },
+)
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="modal-backdrop" @click="handleBackdropClick">
-        <div class="modal-container">
+        <div ref="modalRef" class="modal-container" role="dialog" aria-modal="true">
           <div class="modal-header">
             <div>
               <h2 class="modal-title">{{ t('advertise.title') }}</h2>

@@ -131,6 +131,9 @@
       <!-- Related vehicles (internal linking) -->
       <VehicleRelatedVehicles :vehicle="vehicle" />
 
+      <!-- Related articles (internal linking — SEO) -->
+      <ArticleRelatedArticles :keyword="vehicle.brand" :limit="3" />
+
       <!-- Category navigation links (crawlability) -->
       <VehicleCategoryLinks
         :current-brand="vehicle.brand"

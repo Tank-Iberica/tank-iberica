@@ -28,6 +28,7 @@ const FUNNEL_STAGES = [
   { key: 'funnel:reservation', label: 'funnel.reservation' },
 ] as const
 
+/** Composable for funnel analysis. */
 export function useFunnelAnalysis() {
   const supabase = useSupabaseClient<Database>()
   const { t } = useI18n()

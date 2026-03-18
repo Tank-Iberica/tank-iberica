@@ -85,6 +85,7 @@ const PLATFORM_COLORS = [
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for dashboard observatorio. */
 export function useDashboardObservatorio() {
   const supabase = useSupabaseClient()
   const { userId } = useAuth()

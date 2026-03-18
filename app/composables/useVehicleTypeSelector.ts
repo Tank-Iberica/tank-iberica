@@ -43,6 +43,7 @@ export interface SelectorAttribute {
   sort_order: number
 }
 
+/** Composable for vehicle type selector. */
 export function useVehicleTypeSelector() {
   const supabase = useSupabaseClient()
 

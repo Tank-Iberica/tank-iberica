@@ -23,6 +23,7 @@ export interface FormAutosaveOptions<T> {
   beforeSave?: (data: T) => Partial<T>
 }
 
+/** Auto-saves form data to localStorage as the user types. */
 export function useFormAutosave<T extends Record<string, unknown>>(
   key: string,
   form: Ref<T>,

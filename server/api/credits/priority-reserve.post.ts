@@ -15,8 +15,9 @@ import { serverSupabaseUser } from '#supabase/server'
 import { verifyCsrf } from '../../utils/verifyCsrf'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
+import { CREDIT_COSTS } from '../../utils/creditsConfig'
 
-const RESERVE_COST = 2 // credits required
+const RESERVE_COST = CREDIT_COSTS.PRIORITY_RESERVE
 
 const reserveSchema = z.object({
   vehicleId: z.string().uuid(),

@@ -197,6 +197,70 @@ async function verifyAndParsePayload(
   }
 }
 
+// ── #60 — TRC ref_code pattern detection ────────────────────────────────────
+
+/** Regex to match ref_codes like TRC-00123 (case-insensitive, flexible padding) */
+const REF_CODE_PATTERN = /\b([A-Z]{2,5}-\d{3,6})\b/i
+
+/**
+ * Extract a ref_code from text if present.
+ * Returns the uppercased ref_code or null.
+ */
+export function extractRefCode(text: string): string | null {
+  const match = text.match(REF_CODE_PATTERN)
+  return match?.[1] ? match[1].toUpperCase() : null
+}
+
+/**
+ * Handle a TRC ref_code lookup: query vehicle and send details back via WhatsApp.
+ * Returns true if a ref_code was found and handled, false otherwise.
+ */
+async function handleRefCodeLookup(
+  supabase: SupabaseClient,
+  senderPhone: string,
+  textContent: string,
+): Promise<boolean> {
+  const refCode = extractRefCode(textContent)
+  if (!refCode) return false
+
+  const { data: vehicle } = await supabase
+    .from('vehicles')
+    .select('id, ref_code, slug, title, price, year, location_province, status, brand, model')
+    .eq('ref_code', refCode)
+    .maybeSingle()
+
+  if (!vehicle) {
+    await sendWhatsAppMessage(
+      senderPhone,
+      `No encontramos ningún vehículo con referencia *${refCode}*. Verifica el código e inténtalo de nuevo.`,
+    )
+    return true
+  }
+
+  const siteUrl = getSiteUrl()
+  const title = vehicle.title || `${vehicle.brand || ''} ${vehicle.model || ''} ${vehicle.year || ''}`.trim()
+  const price = vehicle.price ? `${vehicle.price.toLocaleString('es-ES')} €` : 'Consultar'
+  const location = vehicle.location_province || ''
+  const fichaUrl = `${siteUrl}/${vehicle.slug}`
+  const statusLabel = vehicle.status === 'published' ? 'Disponible' : vehicle.status === 'reserved' ? 'Reservado' : vehicle.status
+
+  const message = [
+    `🔍 *${refCode}*`,
+    '',
+    `🚛 *${title}*`,
+    location ? `📍 ${location}` : '',
+    `💰 ${price}`,
+    `📋 Estado: ${statusLabel}`,
+    '',
+    `🔗 ${fichaUrl}`,
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  await sendWhatsAppMessage(senderPhone, message)
+  return true
+}
+
 // ── Message extraction ──────────────────────────────────────────────────────
 
 function extractMessageContent(messages: WhatsAppMessage[]): {
@@ -281,12 +345,20 @@ async function processMessageChange(
 
   const textContent = textParts.join('\n').trim() || null
 
+  // #60 — Check for TRC ref_code before processing as submission
+  if (textContent && await handleRefCodeLookup(supabase, senderPhone, textContent)) {
+    return // Ref code handled, no submission needed
+  }
+
+  // #61 — Check for interactive menu selection
+  if (textContent && await handleMenuSelection(senderPhone, textContent)) {
+    return // Menu selection handled
+  }
+
   const dealer = await lookupDealer(supabase, senderPhone)
   if (!dealer) {
-    await sendWhatsAppMessage(
-      senderPhone,
-      `No estás registrado como dealer en ${getSiteName()}. Visita ${getSiteUrl().replace('https://', '')} para más información.`,
-    )
+    // #61 — Send interactive menu to non-dealers instead of generic message
+    await sendInteractiveMenu(senderPhone)
     return
   }
 
@@ -314,6 +386,116 @@ async function processMessageChange(
       error: String(message),
     })
   })
+}
+
+// ── #61 — Interactive menu "¿Qué buscas?" ───────────────────────────────────
+
+/** Vehicle category options for the interactive menu */
+export const MENU_CATEGORIES = [
+  { id: 'camion', title: '🚛 Camión', description: 'Camiones de carga y transporte' },
+  { id: 'furgoneta', title: '🚐 Furgoneta', description: 'Furgonetas de reparto y carga' },
+  { id: 'excavadora', title: '🏗️ Excavadora', description: 'Excavadoras y maquinaria' },
+  { id: 'remolque', title: '🚚 Remolque', description: 'Remolques y semirremolques' },
+  { id: 'autobus', title: '🚌 Autobús', description: 'Autobuses y microbuses' },
+  { id: 'otro', title: '🔧 Otro', description: 'Otros vehículos industriales' },
+] as const
+
+/**
+ * Send an interactive list menu via WhatsApp.
+ * Uses Meta Cloud API interactive message type.
+ */
+async function sendInteractiveMenu(recipientPhone: string): Promise<void> {
+  const config = useRuntimeConfig()
+  const apiToken = config.whatsappApiToken || process.env.WHATSAPP_API_TOKEN
+  const phoneNumberId = config.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+
+  if (!apiToken || !phoneNumberId) {
+    logger.warn('[WhatsApp Webhook] Cannot send interactive menu: missing config')
+    return
+  }
+
+  const siteUrl = getSiteUrl()
+
+  try {
+    await $fetch(`https://graph.instagram.com/v19.0/${phoneNumberId}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: recipientPhone,
+        type: 'interactive',
+        interactive: {
+          type: 'list',
+          header: { type: 'text', text: `👋 ¡Bienvenido a ${getSiteName()}!` },
+          body: {
+            text: '¿Qué tipo de vehículo buscas? Selecciona una categoría para ver opciones disponibles.\n\n💡 También puedes enviar un código de referencia (ej: TRC-00123) para consultar un vehículo específico.',
+          },
+          footer: { text: siteUrl.replace('https://', '') },
+          action: {
+            button: 'Ver categorías',
+            sections: [
+              {
+                title: 'Categorías',
+                rows: MENU_CATEGORIES.map((cat) => ({
+                  id: `cat_${cat.id}`,
+                  title: cat.title,
+                  description: cat.description,
+                })),
+              },
+            ],
+          },
+        },
+      },
+    })
+  } catch (err: unknown) {
+    // Fallback to plain text if interactive not supported
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    logger.warn('[WhatsApp Webhook] Interactive menu failed, falling back to text:', { error: String(message) })
+    await sendWhatsAppMessage(
+      recipientPhone,
+      `👋 ¡Bienvenido a ${getSiteName()}!\n\n¿Qué buscas?\n${MENU_CATEGORIES.map((c, i) => `${i + 1}. ${c.title}`).join('\n')}\n\n💡 Envía un código (ej: TRC-00123) para consultar un vehículo.`,
+    )
+  }
+}
+
+/**
+ * Handle interactive menu reply (category selection).
+ * Returns true if the message was a menu selection, false otherwise.
+ */
+function isMenuSelection(textContent: string): string | null {
+  // Match "cat_camion" format from interactive reply
+  const match = textContent.match(/^cat_(\w+)$/)
+  if (match?.[1]) return match[1]
+
+  // Match numeric selection "1", "2", etc.
+  const num = parseInt(textContent.trim(), 10)
+  if (num >= 1 && num <= MENU_CATEGORIES.length) {
+    return MENU_CATEGORIES[num - 1]?.id ?? null
+  }
+
+  return null
+}
+
+async function handleMenuSelection(
+  senderPhone: string,
+  textContent: string,
+): Promise<boolean> {
+  const categoryId = isMenuSelection(textContent)
+  if (!categoryId) return false
+
+  const siteUrl = getSiteUrl()
+  const category = MENU_CATEGORIES.find((c) => c.id === categoryId)
+  const label = category?.title || categoryId
+
+  await sendWhatsAppMessage(
+    senderPhone,
+    `✅ ${label}\n\nExplora los vehículos disponibles en:\n🔗 ${siteUrl}/catalogo?category=${categoryId}\n\n💡 ¿Tienes un código? Envía TRC-XXXXX para consultar un vehículo específico.`,
+  )
+  return true
 }
 
 // ── Send WhatsApp message via Meta API ───────────────────────────────────────

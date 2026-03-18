@@ -22,6 +22,7 @@ export interface UseTableOfContents {
   scrollToHeading: (id: string) => void
 }
 
+/** Composable for table of contents. */
 export function useTableOfContents(): UseTableOfContents {
   const tocItems = ref<TocItem[]>([])
   const activeId = ref('')

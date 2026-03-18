@@ -5,6 +5,7 @@ export interface CategoryOption {
   name_en: string | null
 }
 
+/** Composable for dashboard widget. */
 export function useDashboardWidget() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

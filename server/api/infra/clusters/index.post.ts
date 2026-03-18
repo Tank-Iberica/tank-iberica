@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
       status: 'active',
       metadata: {},
     } as never)
-    .select('*')
+    .select('id, name, vertical, provider, region, status, is_primary, host, port, database, max_connections, storage_gb, version, metadata, created_at, updated_at')
     .single()
 
   if (error) {

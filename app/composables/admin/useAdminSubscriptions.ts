@@ -31,6 +31,7 @@ export const SUBSCRIPTION_PREFS: { key: keyof AdminSubscription; label: string; 
 
 const PAGE_SIZE = 100
 
+/** Composable for admin subscriptions. */
 export function useAdminSubscriptions() {
   const supabase = useSupabaseClient()
 

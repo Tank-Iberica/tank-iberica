@@ -74,6 +74,7 @@ const displayRating = computed(() => hoverRating.value || rating.value)
         rows="3"
         maxlength="500"
       />
+      <UiCharCounter :current="comment.length" :max="500" />
     </div>
 
     <button type="submit" class="submit-btn">

@@ -440,6 +440,9 @@
     },
     "sellerInfo": "Información del vendedor",
     "sellerCif": "CIF",
+    "responseTimeFast": "Responde en menos de 1h",
+    "responseTimeGood": "Responde en menos de 4h",
+    "responseTimeSlow": "Responde en más de 4h",
     "viewSellerProfile": "Ver perfil del vendedor",
     "relatedVehicles": "Vehículos similares",
     "browseCategories": "Explorar por categoría",
@@ -679,7 +682,8 @@
     "success": "Operación completada",
     "draftFound": "Hay un borrador guardado. ¿Quieres recuperarlo?",
     "draftRestore": "Recuperar borrador",
-    "draftDiscard": "Descartar"
+    "draftDiscard": "Descartar",
+    "records": "registros"
   },
   "tour": {
     "label": "Tour guiado de bienvenida",
@@ -1212,6 +1216,19 @@
       "noAdminPermissions": "No tienes permisos de administrador",
       "errorBoundaryMsg": "Error inesperado en el panel de administración.",
       "backToStart": "Volver al inicio"
+    },
+    "searchAnalytics": {
+      "title": "Analítica de búsquedas",
+      "period": "Período",
+      "totalSearches": "Búsquedas totales",
+      "zeroResults": "Sin resultados",
+      "zeroRate": "Tasa sin resultados",
+      "topZeroResults": "Top búsquedas sin resultados",
+      "dailyTrend": "Tendencia diaria",
+      "queryCol": "Búsqueda",
+      "countCol": "Veces",
+      "lastSeenCol": "Última vez",
+      "noZeroResults": "No hay búsquedas sin resultados en este período."
     },
     "nav": {
       "dashboard": "Dashboard",
@@ -2328,7 +2345,8 @@
       "subtitle": "Vehículos vistos, en negociación y seguimiento comercial"
     },
     "chats": {
-      "title": "Chats"
+      "title": "Chats",
+      "unread": "sin leer"
     },
     "comentarios": {
       "title": "Comentarios",
@@ -2541,9 +2559,11 @@
       "title": "Solicitantes"
     },
     "suscripciones": {
-      "title": "Suscripciones"
+      "title": "Suscripciones",
+      "searchPlaceholder": "Buscar por email..."
     },
     "utilidades": {
+      "subtitle": "Herramientas de gestión financiera",
       "invoiceTitle": "Generador de Facturas",
       "invoiceDesc": "Crear facturas comerciales con datos de cliente y vehículos",
       "contractTitle": "Generador de Contratos",

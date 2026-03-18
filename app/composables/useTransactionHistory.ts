@@ -26,6 +26,7 @@ export interface UseTransactionHistory {
   fetch: () => Promise<void>
 }
 
+/** Composable for transaction history. */
 export function useTransactionHistory(): UseTransactionHistory {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

@@ -63,7 +63,7 @@ function handleExport() {
     <div class="section-header">
       <div class="header-left">
         <h2>{{ $t('admin.suscripciones.title') }}</h2>
-        <span class="total-badge">{{ total }} registros</span>
+        <span class="total-badge">{{ total }} {{ $t('common.records', 'registros') }}</span>
       </div>
       <button class="btn-export" @click="handleExport">{{ $t('common.exportCsv') }}</button>
     </div>
@@ -72,7 +72,7 @@ function handleExport() {
       <input
         v-model="filters.search"
         type="text"
-        placeholder="Buscar por email..."
+        :placeholder="$t('admin.suscripciones.searchPlaceholder', 'Buscar por email...')"
         class="filter-search"
       >
     </div>

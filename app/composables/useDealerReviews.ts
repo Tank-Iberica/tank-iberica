@@ -16,6 +16,11 @@ export interface ReviewFormData {
   comment: string
 }
 
+/**
+ * Composable for dealer reviews.
+ *
+ * @param dealerId
+ */
 export function useDealerReviews(dealerId: string) {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

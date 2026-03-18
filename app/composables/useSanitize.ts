@@ -10,6 +10,7 @@ function sanitizeStrict(dirty: string): string {
   return DOMPurify.sanitize(dirty, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
 }
 
+/** Composable for sanitize. */
 export function useSanitize() {
   /**
    * Sanitize user-generated HTML allowing a safe subset of tags.

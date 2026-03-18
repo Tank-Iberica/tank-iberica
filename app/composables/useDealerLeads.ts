@@ -50,6 +50,11 @@ export interface LeadFilters {
   search: string
 }
 
+/**
+ * Composable for dealer leads.
+ *
+ * @param dealerId
+ */
 export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
   const supabase = useSupabaseClient()
 

@@ -32,6 +32,7 @@ function getLastActivity(): number {
   }
 }
 
+/** Composable for session timeout. */
 export function useSessionTimeout() {
   const user = useSupabaseUser()
   const supabase = useSupabaseClient()

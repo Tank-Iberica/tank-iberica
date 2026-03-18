@@ -31,6 +31,7 @@ export interface CharacteristicEntry {
   value_en: string
 }
 
+/** Composable for admin producto detail. */
 export function useAdminProductoDetail() {
   const { t } = useI18n()
   const toast = useToast()

@@ -19,6 +19,7 @@ interface UseFormValidationOptions<T extends Record<string, unknown>> {
   onSubmit: (values: T) => Promise<void> | void
 }
 
+/** Validates form data against a Zod schema. */
 export function useFormValidation<S extends z.ZodType>(
   schema: S,
   options: UseFormValidationOptions<z.infer<S>>,

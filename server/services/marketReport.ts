@@ -1217,7 +1217,7 @@ export async function generateMarketReport(
 
   const { data: marketRows, error: marketError } = await supabase
     .from('market_data')
-    .select('*')
+    .select('id, vertical, subcategory, brand, avg_price, median_price, min_price, max_price, listings, sold_count, avg_days_to_sell, location_province, month')
     .eq('vertical', vertical)
     .gte('month', threeMonthsAgo.toISOString())
     .order('month', { ascending: false })
@@ -1233,7 +1233,7 @@ export async function generateMarketReport(
 
   const { data: historyRows, error: historyError } = await supabase
     .from('price_history')
-    .select('*')
+    .select('id, vertical, subcategory, avg_price, median_price, listings, week')
     .eq('vertical', vertical)
     .gte('week', yearAgo.toISOString())
     .order('week', { ascending: true })

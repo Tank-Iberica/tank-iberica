@@ -440,6 +440,9 @@
     },
     "sellerInfo": "Seller information",
     "sellerCif": "Tax ID",
+    "responseTimeFast": "Responds in less than 1h",
+    "responseTimeGood": "Responds in less than 4h",
+    "responseTimeSlow": "Responds in more than 4h",
     "viewSellerProfile": "View seller profile",
     "relatedVehicles": "Similar vehicles",
     "browseCategories": "Browse by category",
@@ -679,7 +682,8 @@
     "success": "Operation completed",
     "draftFound": "A saved draft was found. Do you want to restore it?",
     "draftRestore": "Restore draft",
-    "draftDiscard": "Discard"
+    "draftDiscard": "Discard",
+    "records": "records"
   },
   "tour": {
     "label": "Welcome guided tour",
@@ -1212,6 +1216,19 @@
       "noAdminPermissions": "You do not have administrator permissions",
       "errorBoundaryMsg": "Unexpected error in the administration panel.",
       "backToStart": "Back to home"
+    },
+    "searchAnalytics": {
+      "title": "Search Analytics",
+      "period": "Period",
+      "totalSearches": "Total searches",
+      "zeroResults": "Zero results",
+      "zeroRate": "Zero-result rate",
+      "topZeroResults": "Top zero-result searches",
+      "dailyTrend": "Daily trend",
+      "queryCol": "Search query",
+      "countCol": "Count",
+      "lastSeenCol": "Last seen",
+      "noZeroResults": "No zero-result searches in this period."
     },
     "nav": {
       "dashboard": "Dashboard",
@@ -2328,7 +2345,8 @@
       "subtitle": "Vehicles viewed, in negotiation and commercial follow-up"
     },
     "chats": {
-      "title": "Chats"
+      "title": "Chats",
+      "unread": "unread"
     },
     "comentarios": {
       "title": "Comments",
@@ -2539,9 +2557,11 @@
       "title": "Applicants"
     },
     "suscripciones": {
-      "title": "Subscriptions"
+      "title": "Subscriptions",
+      "searchPlaceholder": "Search by email..."
     },
     "utilidades": {
+      "subtitle": "Financial management tools",
       "invoiceTitle": "Invoice Generator",
       "invoiceDesc": "Create commercial invoices with client and vehicle data",
       "contractTitle": "Contract Generator",

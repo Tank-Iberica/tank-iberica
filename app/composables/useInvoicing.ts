@@ -10,6 +10,7 @@ function formatAmount(cents: number, currency = 'EUR'): string {
   }).format(cents / 100)
 }
 
+/** Composable for invoicing. */
 export function useInvoicing() {
   const supabase = useSupabaseClient()
 

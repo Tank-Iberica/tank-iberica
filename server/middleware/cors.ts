@@ -27,6 +27,7 @@ export default defineEventHandler((event) => {
     process.env.SUPABASE_URL,
     'https://js.stripe.com',
     'https://challenges.cloudflare.com',
+    ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
   ].filter(Boolean) as string[]
 
   // Normalize origins (remove trailing slashes)
@@ -38,9 +39,10 @@ export default defineEventHandler((event) => {
   setResponseHeaders(event, {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-internal-secret',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-internal-secret, x-cron-secret, x-health-token, X-Requested-With',
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
   })
 
   // Handle preflight

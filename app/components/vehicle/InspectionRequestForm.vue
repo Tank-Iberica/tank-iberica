@@ -6,6 +6,7 @@
  * Inserts a service_request with type='inspection' and contact metadata.
  * Mobile-first design with touch targets >= 44px.
  */
+import { inspectionRequestSchema } from '~/utils/schemas'
 
 interface Props {
   vehicleId: string
@@ -18,99 +19,78 @@ const { t } = useI18n()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
-// Form state
-const formData = ref({
-  name: '',
-  email: '',
-  phone: '',
-  preferredDate: '',
-  notes: '',
-})
-
-const loading = ref(false)
 const submitted = ref(false)
 const showCheckmark = ref(false)
 const error = ref<string | null>(null)
-const fieldErrors = ref<Record<string, string>>({})
+
+const {
+  defineField,
+  translatedErrors,
+  isSubmitting,
+  onSubmit,
+  resetForm: resetValidation,
+  setFieldValue,
+} = useFormValidation(inspectionRequestSchema, {
+  initialValues: { name: '', email: '', phone: '', preferredDate: '', notes: '' },
+  onSubmit: async (values) => {
+    error.value = null
+
+    try {
+      const { error: insertError } = await supabase.from('service_requests').insert({
+        type: 'inspection',
+        vehicle_id: props.vehicleId,
+        user_id: user.value?.id || null,
+        status: 'requested',
+        details: {
+          vehicle_title: props.vehicleTitle,
+          contact: {
+            name: values.name,
+            email: values.email,
+            phone: values.phone,
+          },
+          preferred_date: values.preferredDate || null,
+          notes: values.notes || null,
+          requested_at: new Date().toISOString(),
+        },
+      })
+
+      if (insertError) throw insertError
+
+      submitted.value = true
+      await nextTick()
+      requestAnimationFrame(() => {
+        showCheckmark.value = true
+      })
+
+      resetValidation()
+    } catch (err: unknown) {
+      const supabaseError = err as { message?: string }
+      error.value = supabaseError?.message || t('inspection.errorSubmitting')
+    }
+  },
+})
+
+const [name] = defineField('name')
+const [email] = defineField('email')
+const [phone] = defineField('phone')
+const [preferredDate] = defineField('preferredDate')
+const [notes] = defineField('notes')
 
 // Pre-fill user data if authenticated
 watchEffect(() => {
   if (user.value) {
     const metadata = user.value.user_metadata
-    if (metadata?.full_name && !formData.value.name) {
-      formData.value.name = metadata.full_name
+    if (metadata?.full_name && !name.value) {
+      setFieldValue('name', metadata.full_name)
     }
-    if (user.value.email && !formData.value.email) {
-      formData.value.email = user.value.email
+    if (user.value.email && !email.value) {
+      setFieldValue('email', user.value.email)
     }
-    if (metadata?.phone && !formData.value.phone) {
-      formData.value.phone = metadata.phone
+    if (metadata?.phone && !phone.value) {
+      setFieldValue('phone', metadata.phone)
     }
   }
 })
-
-async function submitRequest() {
-  error.value = null
-  fieldErrors.value = {}
-
-  if (!formData.value.name.trim()) {
-    fieldErrors.value.name = t('validation.required')
-  }
-  if (!formData.value.email.trim()) {
-    fieldErrors.value.email = t('validation.required')
-  } else if (!/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.value.email)) {
-    fieldErrors.value.email = t('validation.invalidEmail')
-  }
-  if (!formData.value.phone.trim()) {
-    fieldErrors.value.phone = t('validation.required')
-  }
-
-  if (Object.keys(fieldErrors.value).length) return
-
-  loading.value = true
-
-  try {
-    const { error: insertError } = await supabase.from('service_requests').insert({
-      type: 'inspection',
-      vehicle_id: props.vehicleId,
-      user_id: user.value?.id || null,
-      status: 'requested',
-      details: {
-        vehicle_title: props.vehicleTitle,
-        contact: {
-          name: formData.value.name,
-          email: formData.value.email,
-          phone: formData.value.phone,
-        },
-        preferred_date: formData.value.preferredDate || null,
-        notes: formData.value.notes || null,
-        requested_at: new Date().toISOString(),
-      },
-    })
-
-    if (insertError) throw insertError
-
-    submitted.value = true
-    await nextTick()
-    requestAnimationFrame(() => {
-      showCheckmark.value = true
-    })
-
-    // Reset form
-    formData.value = {
-      name: '',
-      email: '',
-      phone: '',
-      preferredDate: '',
-      notes: '',
-    }
-  } catch (err: unknown) {
-    const supabaseError = err as { message?: string }
-    error.value = supabaseError?.message || t('inspection.errorSubmitting')
-  } finally {
-    loading.value = false
-  }
-}
 
 function resetForm() {
   submitted.value = false
@@ -131,7 +111,7 @@ function resetForm() {
       </button>
     </div>
 
-    <form v-else @submit.prevent="submitRequest">
+    <form v-else @submit="onSubmit">
       <h3>{{ $t('inspection.title') }}</h3>
       <p class="description">{{ $t('inspection.description') }}</p>
 
@@ -139,15 +119,15 @@ function resetForm() {
         <label for="name">{{ $t('inspection.name') }} *</label>
         <input
           id="name"
-          v-model="formData.name"
+          v-model="name"
           type="text"
           autocomplete="name"
-          :aria-invalid="!!fieldErrors.name || undefined"
-          :aria-describedby="fieldErrors.name ? 'err-insp-name' : undefined"
+          :aria-invalid="!!translatedErrors.name || undefined"
+          :aria-describedby="translatedErrors.name ? 'err-insp-name' : undefined"
           :placeholder="$t('inspection.namePlaceholder')"
         >
-        <p v-if="fieldErrors.name" id="err-insp-name" class="field-error" role="alert">
-          {{ fieldErrors.name }}
+        <p v-if="translatedErrors.name" id="err-insp-name" class="field-error" role="alert">
+          {{ translatedErrors.name }}
         </p>
       </div>
 
@@ -155,15 +135,15 @@ function resetForm() {
         <label for="email">{{ $t('inspection.email') }} *</label>
         <input
           id="email"
-          v-model="formData.email"
+          v-model="email"
           type="email"
           autocomplete="email"
-          :aria-invalid="!!fieldErrors.email || undefined"
-          :aria-describedby="fieldErrors.email ? 'err-insp-email' : undefined"
+          :aria-invalid="!!translatedErrors.email || undefined"
+          :aria-describedby="translatedErrors.email ? 'err-insp-email' : undefined"
           :placeholder="$t('inspection.emailPlaceholder')"
         >
-        <p v-if="fieldErrors.email" id="err-insp-email" class="field-error" role="alert">
-          {{ fieldErrors.email }}
+        <p v-if="translatedErrors.email" id="err-insp-email" class="field-error" role="alert">
+          {{ translatedErrors.email }}
         </p>
       </div>
 
@@ -171,15 +151,15 @@ function resetForm() {
         <label for="phone">{{ $t('inspection.phone') }} *</label>
         <input
           id="phone"
-          v-model="formData.phone"
+          v-model="phone"
           type="tel"
           autocomplete="tel"
-          :aria-invalid="!!fieldErrors.phone || undefined"
-          :aria-describedby="fieldErrors.phone ? 'err-insp-phone' : undefined"
+          :aria-invalid="!!translatedErrors.phone || undefined"
+          :aria-describedby="translatedErrors.phone ? 'err-insp-phone' : undefined"
           :placeholder="$t('inspection.phonePlaceholder')"
         >
-        <p v-if="fieldErrors.phone" id="err-insp-phone" class="field-error" role="alert">
-          {{ fieldErrors.phone }}
+        <p v-if="translatedErrors.phone" id="err-insp-phone" class="field-error" role="alert">
+          {{ translatedErrors.phone }}
         </p>
       </div>
 
@@ -187,7 +167,7 @@ function resetForm() {
         <label for="preferredDate">{{ $t('inspection.preferredDate') }}</label>
         <input
           id="preferredDate"
-          v-model="formData.preferredDate"
+          v-model="preferredDate"
           type="date"
           autocomplete="off"
           :min="new Date().toISOString().split('T')[0]"
@@ -198,7 +178,7 @@ function resetForm() {
         <label for="notes">{{ $t('inspection.notes') }}</label>
         <textarea
           id="notes"
-          v-model="formData.notes"
+          v-model="notes"
           rows="4"
           autocomplete="off"
           :placeholder="$t('inspection.notesPlaceholder')"
@@ -209,8 +189,8 @@ function resetForm() {
         {{ error }}
       </div>
 
-      <button type="submit" class="btn-primary" :disabled="loading">
-        {{ loading ? $t('inspection.submitting') : $t('inspection.submit') }}
+      <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        {{ isSubmitting ? $t('inspection.submitting') : $t('inspection.submit') }}
       </button>
     </form>
   </div>

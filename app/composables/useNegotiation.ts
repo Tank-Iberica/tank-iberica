@@ -37,6 +37,7 @@ function formatAmount(amountCents: number, currency = 'EUR'): string {
   }).format(amountCents / 100)
 }
 
+/** Composable for negotiation. */
 export function useNegotiation() {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()

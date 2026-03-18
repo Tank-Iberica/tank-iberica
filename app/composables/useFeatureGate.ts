@@ -39,6 +39,11 @@ export function planMeetsMinimum(current: PlanType, required: PlanType): boolean
   return (PLAN_HIERARCHY[current] ?? 0) >= (PLAN_HIERARCHY[required] ?? 0)
 }
 
+/**
+ * Composable for feature gate.
+ *
+ * @param options
+ */
 export function useFeatureGate(options: FeatureGateOptions) {
   const { feature, minPlan, vertical } = options
 

@@ -148,4 +148,87 @@ describe('POST /api/generate-article', () => {
     const aiRequest = mockCallAI.mock.calls[0][0] as { messages: Array<{ content: string }> }
     expect(aiRequest.messages[0].content).toContain('semirremolques ATP')
   })
+
+  // ─── #23 expanded: edge cases ───────────────────────────────────────────
+
+  it('handles AI response with extra whitespace around JSON', async () => {
+    mockCallAI.mockResolvedValue({
+      text: '  \n' + JSON.stringify(validAIResponse) + '\n  ',
+      provider: 'anthropic',
+      model: 'claude-haiku',
+      latencyMs: 700,
+    })
+    const result = await handler(mockEvent)
+    expect(result.title_es).toBe(validAIResponse.title_es)
+  })
+
+  it('handles AI response with ```json\\n...\\n``` wrapper and extra whitespace', async () => {
+    mockCallAI.mockResolvedValue({
+      text: '```json\n  ' + JSON.stringify(validAIResponse) + '  \n```',
+      provider: 'anthropic',
+      model: 'claude-haiku',
+      latencyMs: 800,
+    })
+    const result = await handler(mockEvent)
+    expect(result.title_es).toBe(validAIResponse.title_es)
+  })
+
+  it('returns all 6 required fields on success', async () => {
+    const result = await handler(mockEvent)
+    expect(result).toHaveProperty('title_es')
+    expect(result).toHaveProperty('title_en')
+    expect(result).toHaveProperty('meta_description_es')
+    expect(result).toHaveProperty('meta_description_en')
+    expect(result).toHaveProperty('content_es')
+    expect(result).toHaveProperty('content_en')
+  })
+
+  it('calls callAI exactly once per request', async () => {
+    await handler(mockEvent)
+    expect(mockCallAI).toHaveBeenCalledTimes(1)
+  })
+
+  it('passes topic and type from body to AI prompt', async () => {
+    await handler(mockEvent)
+    const aiRequest = mockCallAI.mock.calls[0][0] as { messages: Array<{ content: string }> }
+    const prompt = aiRequest.messages[0].content
+    expect(prompt).toContain('semirremolque refrigerado')
+  })
+
+  it('validates user is authenticated before processing body', async () => {
+    mockServerUser.mockResolvedValue(null)
+    await expect(handler(mockEvent)).rejects.toMatchObject({ statusCode: 401 })
+    // validateBody should not be called if user is not authenticated
+    expect(mockValidateBody).not.toHaveBeenCalled()
+  })
+
+  it('returns aiUnavailable fields as empty strings when AI fails', async () => {
+    mockCallAI.mockRejectedValue(new Error('Service unavailable'))
+    const result = await handler(mockEvent)
+    expect(result.aiUnavailable).toBe(true)
+    expect(result.title_es).toBe('')
+    expect(result.title_en).toBe('')
+    expect(result.content_es).toBe('')
+    expect(result.content_en).toBe('')
+  })
+
+  it('throws 502 when AI returns empty object', async () => {
+    mockCallAI.mockResolvedValue({
+      text: JSON.stringify({}),
+      provider: 'anthropic',
+      model: 'claude-haiku',
+      latencyMs: 400,
+    })
+    await expect(handler(mockEvent)).rejects.toMatchObject({ statusCode: 502 })
+  })
+
+  it('throws 502 when AI returns empty string', async () => {
+    mockCallAI.mockResolvedValue({
+      text: '',
+      provider: 'anthropic',
+      model: 'claude-haiku',
+      latencyMs: 300,
+    })
+    await expect(handler(mockEvent)).rejects.toMatchObject({ statusCode: 502 })
+  })
 })

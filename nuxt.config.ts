@@ -60,6 +60,7 @@ export default defineNuxtConfig({
     },
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
     },
     clientOptions: {
       auth: {
@@ -85,6 +86,8 @@ export default defineNuxtConfig({
       useCookie: true,
       cookieKey: 'tracciona_lang',
       fallbackLocale: 'es',
+      cookieCrossOrigin: false,
+      cookieSecure: process.env.NODE_ENV === 'production',
     },
   },
 
@@ -107,7 +110,9 @@ export default defineNuxtConfig({
       theme_color: '#23424A',
       background_color: '#F3F4F6',
       display: 'standalone',
+      scope: '/',
       start_url: '/',
+      id: '/',
       icons: [
         { src: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
         { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
@@ -118,6 +123,16 @@ export default defineNuxtConfig({
       navigateFallback: '/offline',
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
       runtimeCaching: [
+        {
+          urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'page-navigations',
+            expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            networkTimeoutSeconds: 5,
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
         {
           urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
           handler: 'CacheFirst',
@@ -222,6 +237,27 @@ export default defineNuxtConfig({
     '/embed/**': { swr: 60 * 5 },
     '/images/**': { headers: { 'Cache-Control': 'public, max-age=2592000, immutable' } },
     '/_nuxt/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+  },
+
+  nitro: {
+    prerender: {
+      // Crawl links from prerendered pages to discover more routes
+      crawlLinks: true,
+      // Static pages to always prerender (SEO landings)
+      routes: [
+        '/',
+        '/sobre-nosotros',
+        '/transparencia',
+        '/precios',
+        '/servicios-postventa',
+        '/valoracion',
+        '/top-dealers',
+        '/guia',
+        '/noticias',
+        '/subastas',
+        '/datos',
+      ],
+    },
   },
 
   runtimeConfig: {

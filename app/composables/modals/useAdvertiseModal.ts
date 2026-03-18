@@ -29,6 +29,7 @@ export const CONTACT_PREFERENCES = [
 export const MAX_PHOTOS = 6
 export const MIN_PHOTOS = 3
 
+/** Controls the advertise/promote modal dialog. */
 export function useAdvertiseModal(
   isOpen: () => boolean,
   onClose: () => void,

@@ -42,6 +42,7 @@ export function classifyDeviation(deviation: number): 'good' | 'high' | 'average
   return 'average'
 }
 
+/** Composable for price relative to market. */
 export function usePriceRelativeToMarket() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

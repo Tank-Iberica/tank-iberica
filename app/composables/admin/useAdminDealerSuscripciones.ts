@@ -111,6 +111,7 @@ function isExpired(expiresAt: string | null): boolean {
   return new Date(expiresAt) < new Date()
 }
 
+/** Composable for admin dealer suscripciones. */
 export function useAdminDealerSuscripciones() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

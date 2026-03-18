@@ -17,6 +17,7 @@ interface NetworkInfo {
   saveData?: boolean
 }
 
+/** Composable for adaptive loading. */
 export function useAdaptiveLoading() {
   const effectiveType = ref<string>('4g')
   const saveData = ref(false)

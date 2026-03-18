@@ -50,7 +50,7 @@ function isBest(vehicleId: string, key: string): boolean {
   <div class="cmp-content">
     <!-- Vehicle cards -->
     <div class="cards-scroll">
-      <div class="cards-grid" :style="{ '--cols': vehicles.length }">
+      <TransitionGroup name="list" tag="div" class="cards-grid" :style="{ '--cols': vehicles.length }">
         <div v-for="vehicle in vehicles" :key="vehicle.id" class="v-card">
           <button
             class="btn-rm"
@@ -84,7 +84,7 @@ function isBest(vehicleId: string, key: string): boolean {
             </div>
           </NuxtLink>
         </div>
-      </div>
+      </TransitionGroup>
     </div>
 
     <!-- Specs -->
@@ -165,6 +165,34 @@ function isBest(vehicleId: string, key: string): boolean {
 </template>
 
 <style scoped>
+/* List transitions */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateX(1rem);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.list-move {
+  transition: transform 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list-enter-active,
+  .list-leave-active,
+  .list-move {
+    transition: none;
+  }
+}
+
 .cmp-content {
   display: flex;
   flex-direction: column;

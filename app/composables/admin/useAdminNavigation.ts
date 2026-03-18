@@ -14,6 +14,7 @@ export interface LinkItem {
 
 export type LinkField = keyof LinkItem
 
+/** Composable for admin navigation. */
 export function useAdminNavigation() {
   const { config, loading, saving, error, saved, loadConfig, saveFields } = useAdminVerticalConfig()
 

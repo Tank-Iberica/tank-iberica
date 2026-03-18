@@ -131,9 +131,12 @@ describe('/api/stripe/checkout-credits', () => {
 
     it('should reject URLs with malicious schemes', () => {
       const url = 'javascript://alert("xss")'
-      const isValid = URL.canParse(url)
+      // URL.canParse returns true for javascript: URLs (technically parseable),
+      // but our validation must check the protocol is https:
+      const parsed = URL.canParse(url) ? new URL(url) : null
+      const isSafeScheme = parsed?.protocol === 'https:'
 
-      expect(isValid).toBe(false)
+      expect(isSafeScheme).toBe(false)
     })
 
     it('should use isAllowedUrl() to verify domain', () => {

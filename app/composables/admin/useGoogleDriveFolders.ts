@@ -10,6 +10,13 @@ import type { DriveSection } from '~/utils/googleDriveUtils'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DriveApiFn = <T = Record<string, any>>(path: string, options?: RequestInit) => Promise<T>
 
+/**
+ * Composable for google drive folders.
+ *
+ * @param driveApi
+ * @param folderCache
+ * @param string>
+ */
 export function useGoogleDriveFolders(driveApi: DriveApiFn, folderCache: Map<string, string>) {
   /**
    * Get or create a folder by name under a parent folder.

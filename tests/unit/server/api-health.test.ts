@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const { mockGetQuery, mockVerifyCronSecret, mockServiceRole } = vi.hoisted(() => {
+const { mockGetQuery, mockGetHeader, mockVerifyCronSecret, mockServiceRole } = vi.hoisted(() => {
   const mockAuth = {
     admin: { listUsers: vi.fn().mockResolvedValue({ data: { users: [] }, error: null }) },
   }
@@ -13,6 +13,7 @@ const { mockGetQuery, mockVerifyCronSecret, mockServiceRole } = vi.hoisted(() =>
   })
   return {
     mockGetQuery: vi.fn(),
+    mockGetHeader: vi.fn(),
     mockVerifyCronSecret: vi.fn(),
     mockServiceRole: vi.fn().mockReturnValue({ from: mockFrom, auth: mockAuth }),
   }
@@ -21,6 +22,7 @@ const { mockGetQuery, mockVerifyCronSecret, mockServiceRole } = vi.hoisted(() =>
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   getQuery: mockGetQuery,
+  getHeader: mockGetHeader,
   setHeader: vi.fn(),
 }))
 
@@ -40,7 +42,9 @@ describe('GET /api/health', () => {
     vi.stubGlobal('setResponseStatus', vi.fn())
     vi.stubGlobal('setHeader', vi.fn())
     mockGetQuery.mockReturnValue({})
+    mockGetHeader.mockReturnValue(undefined)
     mockVerifyCronSecret.mockReturnValue(undefined)
+    delete process.env.HEALTH_TOKEN
     // Restore default supabase mock (tests that override it pollute later tests)
     mockServiceRole.mockReturnValue({
       from: vi.fn().mockReturnValue({
@@ -163,5 +167,47 @@ describe('GET /api/health', () => {
     expect(result.db).toBe('connected')
     expect(result.auth).toBe('ok')
     delete process.env.STRIPE_SECRET_KEY
+  })
+
+  // ─── #84 — HEALTH_TOKEN ─────────────────────────────────────────────────
+
+  it('deep mode accepts HEALTH_TOKEN via x-health-token header', async () => {
+    process.env.HEALTH_TOKEN = 'my-health-secret'
+    mockGetQuery.mockReturnValue({ deep: '1' })
+    mockGetHeader.mockImplementation((_e: unknown, name: string) => {
+      if (name === 'x-health-token') return 'my-health-secret'
+      return undefined
+    })
+    const result = await handler({})
+    expect(result.status).toBe('ok')
+    // Should NOT fall back to verifyCronSecret
+    expect(mockVerifyCronSecret).not.toHaveBeenCalled()
+  })
+
+  it('deep mode accepts HEALTH_TOKEN via Bearer authorization', async () => {
+    process.env.HEALTH_TOKEN = 'my-health-secret'
+    mockGetQuery.mockReturnValue({ deep: '1' })
+    mockGetHeader.mockImplementation((_e: unknown, name: string) => {
+      if (name === 'authorization') return 'Bearer my-health-secret'
+      return undefined
+    })
+    const result = await handler({})
+    expect(result.status).toBe('ok')
+    expect(mockVerifyCronSecret).not.toHaveBeenCalled()
+  })
+
+  it('deep mode falls back to cronSecret when HEALTH_TOKEN not set', async () => {
+    // HEALTH_TOKEN not set (deleted in beforeEach)
+    mockGetQuery.mockReturnValue({ deep: '1' })
+    await handler({})
+    expect(mockVerifyCronSecret).toHaveBeenCalled()
+  })
+
+  it('deep mode falls back to cronSecret when HEALTH_TOKEN header wrong', async () => {
+    process.env.HEALTH_TOKEN = 'my-health-secret'
+    mockGetQuery.mockReturnValue({ deep: '1' })
+    mockGetHeader.mockReturnValue('wrong-token')
+    await handler({})
+    expect(mockVerifyCronSecret).toHaveBeenCalled()
   })
 })

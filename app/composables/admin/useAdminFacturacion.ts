@@ -108,6 +108,7 @@ export function getStatusClass(status: string): string {
    Composable
    ----------------------------------------------- */
 
+/** Composable for admin facturacion. */
 export function useAdminFacturacion() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

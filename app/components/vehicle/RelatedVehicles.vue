@@ -13,6 +13,7 @@
             height="200"
             fit="cover"
             loading="lazy"
+            decoding="async"
             format="webp"
             sizes="(max-width: 29.94em) 50vw, 25vw"
             class="related-img"

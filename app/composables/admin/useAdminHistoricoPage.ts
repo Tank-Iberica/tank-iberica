@@ -71,6 +71,7 @@ function fmtDate(date: string): string {
   })
 }
 
+/** Composable for admin historico page. */
 export function useAdminHistoricoPage() {
   const {
     entries,

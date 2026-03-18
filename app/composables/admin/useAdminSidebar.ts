@@ -4,6 +4,7 @@ export interface SidebarNavItem {
   badge?: number
 }
 
+/** Composable for admin sidebar. */
 export function useAdminSidebar() {
   const route = useRoute()
   const supabase = useSupabaseClient()

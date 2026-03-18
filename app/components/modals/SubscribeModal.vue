@@ -102,7 +102,7 @@ watch(
             </button>
           </div>
 
-          <div v-if="isSuccess" class="success-message">
+          <div v-if="isSuccess" class="success-message" aria-live="polite">
             <div class="success-icon">✓</div>
             <h3>{{ $t('subscribe.successTitle') }}</h3>
             <p>{{ $t('subscribe.successMessage') }}</p>
@@ -152,7 +152,7 @@ watch(
               </label>
             </div>
 
-            <p v-if="errorMsg" class="error-text">{{ errorMsg }}</p>
+            <p v-if="errorMsg" class="error-text" role="alert" aria-live="assertive">{{ errorMsg }}</p>
 
             <button type="submit" class="btn-submit" :disabled="isSubmitting || !email.trim()">
               {{ isSubmitting ? $t('common.loading') : $t('subscribe.submit') }}

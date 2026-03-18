@@ -11,11 +11,11 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div v-if="errorMessage" class="message message--error">
+  <div v-if="errorMessage" class="message message--error" role="alert" aria-live="assertive">
     {{ errorMessage }}
     <button class="message__close" @click="emit('dismiss-error')">&times;</button>
   </div>
-  <div v-if="successMessage" class="message message--success">
+  <div v-if="successMessage" class="message message--success" aria-live="polite">
     {{ successMessage }}
     <button class="message__close" @click="emit('dismiss-success')">&times;</button>
   </div>

@@ -42,6 +42,7 @@ function formatDate(dateStr: string | null): string {
   })
 }
 
+/** Composable for admin noticias index. */
 export function useAdminNoticiasIndex() {
   const router = useRouter()
 

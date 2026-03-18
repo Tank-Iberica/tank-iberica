@@ -34,6 +34,7 @@ interface IntelligenceReport {
   summary: IntelligenceSummary
 }
 
+/** Composable for market intelligence. */
 export function useMarketIntelligence() {
   const report = ref<IntelligenceReport | null>(null)
   const loading = ref(false)

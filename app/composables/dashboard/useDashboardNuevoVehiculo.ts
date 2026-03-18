@@ -13,6 +13,7 @@ interface SubcategoryOption {
   category_id: string
 }
 
+/** Composable for dashboard nuevo vehiculo. */
 export function useDashboardNuevoVehiculo() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

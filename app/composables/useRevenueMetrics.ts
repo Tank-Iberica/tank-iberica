@@ -29,6 +29,7 @@ interface LeadMetrics {
   totalValue: number
 }
 
+/** Composable for revenue metrics. */
 export function useRevenueMetrics() {
   const supabase = useSupabaseClient()
   const { locale } = useI18n()

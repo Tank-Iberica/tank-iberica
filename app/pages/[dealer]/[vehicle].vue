@@ -11,6 +11,7 @@
         decoding="async"
         width="48"
         height="48"
+        sizes="48px"
       />
       <div class="dealer-banner-text">
         <span class="dealer-name">{{ companyName }}</span>

@@ -53,6 +53,7 @@ function getStatusClass(status: FilterStatus): string {
   }
 }
 
+/** Composable for admin caracteristicas. */
 export function useAdminCaracteristicas() {
   const { t } = useI18n()
   const toast = useToast()

@@ -29,6 +29,13 @@ function stableHash(str: string): number {
   return Math.abs(hash)
 }
 
+/**
+ * Composable for ab test.
+ *
+ * @param experimentId
+ * @param variants
+ * @param options
+ */
 export function useAbTest(experimentId: string, variants: string[], options: AbTestOptions = {}) {
   const { trafficPercent = 100 } = options
   const variant = ref<string | null>(null)

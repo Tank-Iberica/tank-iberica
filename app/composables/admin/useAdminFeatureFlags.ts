@@ -13,6 +13,7 @@ interface FeatureFlag {
   updated_at: string
 }
 
+/** Composable for admin feature flags. */
 export function useAdminFeatureFlags() {
   const client = useSupabaseClient()
   const flags = ref<FeatureFlag[]>([])

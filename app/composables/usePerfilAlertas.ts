@@ -11,6 +11,7 @@ export interface AlertEditForm {
   filters: Record<string, unknown>
 }
 
+/** Composable for perfil alertas. */
 export function usePerfilAlertas() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

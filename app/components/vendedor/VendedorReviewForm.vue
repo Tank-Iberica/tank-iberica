@@ -59,6 +59,7 @@ const emit = defineEmits<{
           maxlength="120"
           @input="emit('update-title', ($event.target as HTMLInputElement).value)"
         >
+        <UiCharCounter :current="reviewTitle.length" :max="120" />
       </div>
 
       <!-- Content -->
@@ -76,6 +77,7 @@ const emit = defineEmits<{
           required
           @input="emit('update-content', ($event.target as HTMLTextAreaElement).value)"
         />
+        <UiCharCounter :current="reviewContent.length" :max="2000" />
       </div>
 
       <!-- Error -->

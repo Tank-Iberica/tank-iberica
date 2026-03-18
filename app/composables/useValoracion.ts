@@ -33,6 +33,7 @@ export { PROVINCES } from '~/composables/shared/valoracionTypes'
 
 /* ---- Composable ---- */
 
+/** Composable for valoracion. */
 export function useValoracion() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

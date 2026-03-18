@@ -69,6 +69,7 @@ export function getTotalCost(entry: SoldVehicle): number {
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for dashboard historico. */
 export function useDashboardHistorico() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

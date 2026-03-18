@@ -49,6 +49,7 @@ export function formatDeviation(dev: number): string {
   return `${sign}${dev.toFixed(1)}%`
 }
 
+/** Composable for dashboard mercado. */
 export function useDashboardMercado() {
   const { t } = useI18n()
   const { dealerProfile } = useDealerDashboard()

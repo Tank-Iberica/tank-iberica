@@ -97,7 +97,7 @@ async function removeStyle() {
   error.value = null
   applying.value = true
   try {
-    await $csrfFetch(`/api/vehicles/${props.vehicleId}`, {
+    await $csrfFetch(`/api/vehicles/${props.vehicleId}` as string, {
       method: 'PATCH',
       body: { highlight_style: null },
     })

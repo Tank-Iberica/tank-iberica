@@ -23,6 +23,7 @@ export interface DeleteModalState {
 }
 
 // ── Composable ─────────────────────────────────────────────────────
+/** Composable for admin tipos page. */
 export function useAdminTiposPage() {
   const { t } = useI18n()
   const toast = useToast()

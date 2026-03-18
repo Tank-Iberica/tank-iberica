@@ -18,6 +18,9 @@
         <span v-if="sellerInfo.cif" class="seller-item"
           >{{ $t('vehicle.sellerCif') }}: {{ sellerInfo.cif }}</span
         >
+        <span v-if="responseLabel" :class="['seller-item', 'response-badge', `response-badge--${responseBadge}`]">
+          {{ responseLabel }}
+        </span>
       </div>
     </div>
 
@@ -61,6 +64,27 @@ const props = defineProps<{
   isTerceros: boolean
   dealerTier?: TrustBadgeTier
 }>()
+
+const { t } = useI18n()
+
+// Response time badge
+type ResponseBadge = 'fast' | 'good' | 'slow' | 'unknown'
+
+const responseBadge = computed<ResponseBadge>(() => {
+  const minutes = props.sellerInfo?.avg_response_minutes
+  if (minutes === null || minutes === undefined) return 'unknown'
+  if (minutes < 60) return 'fast'
+  if (minutes < 240) return 'good'
+  return 'slow'
+})
+
+const responseLabel = computed<string | null>(() => {
+  const badge = responseBadge.value
+  if (badge === 'unknown') return null
+  if (badge === 'fast') return t('vehicle.responseTimeFast')
+  if (badge === 'good') return t('vehicle.responseTimeGood')
+  return t('vehicle.responseTimeSlow')
+})
 
 // Lazily load dealer health score to show trust badge
 const dealerScore = ref<number | null>(null)
@@ -141,5 +165,31 @@ onMounted(async () => {
 
 .seller-profile-link:hover {
   color: var(--color-primary-dark);
+}
+
+/* Response time badge */
+.response-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.response-badge--fast {
+  background: var(--color-success-bg, rgba(16, 185, 129, 0.1));
+  color: var(--color-success-text, #065f46);
+}
+
+.response-badge--good {
+  background: var(--color-warning-bg, rgba(245, 158, 11, 0.1));
+  color: var(--color-warning-text, #92400e);
+}
+
+.response-badge--slow {
+  background: var(--color-error-bg, rgba(239, 68, 68, 0.1));
+  color: var(--color-error-text, #991b1b);
 }
 </style>

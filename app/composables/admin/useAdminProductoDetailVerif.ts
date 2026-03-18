@@ -10,6 +10,7 @@ import {
   type VerificationLevel,
 } from '~/composables/useVehicleVerification'
 
+/** Manages vehicle verification in admin product detail. */
 export function useAdminProductoDetailVerif(params: {
   vehicleId: ComputedRef<string>
   uploadToCloudinary: (

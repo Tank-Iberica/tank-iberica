@@ -618,6 +618,11 @@ function evaluateReadingTime(content: string): SeoCriterion {
   }
 }
 
+/**
+ * Composable for seo score.
+ *
+ * @param input
+ */
 export function useSeoScore(input: Ref<SeoInput> | ComputedRef<SeoInput>) {
   const analysis = computed<SeoAnalysis>(() => {
     const data = unref(input)

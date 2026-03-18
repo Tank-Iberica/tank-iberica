@@ -56,6 +56,7 @@ function truncateText(text: string, maxLength: number): string {
   return text.substring(0, maxLength - 3) + '...'
 }
 
+/** Composable for dashboard exportar anuncio. */
 export function useDashboardExportarAnuncio() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

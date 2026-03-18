@@ -57,6 +57,7 @@ function persistQueue(queue: OfflineAction[]): void {
   }
 }
 
+/** Composable for offline sync. */
 export function useOfflineSync() {
   const isOnline = getIsOnline()
   const queue = getQueue()

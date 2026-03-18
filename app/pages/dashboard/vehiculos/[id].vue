@@ -124,7 +124,7 @@ function onUploadDocTypeUpdate(value: string): void {
       <AdminVehiculoHighlight
         :vehicle-id="vehicleId"
         :initial-style="form.highlight_style"
-        @updated="(style) => updateFormField('highlight_style', style)"
+        @updated="(style: string | null) => updateFormField('highlight_style', style)"
       />
 
       <VehiculoVerificationSection

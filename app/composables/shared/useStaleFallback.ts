@@ -35,6 +35,7 @@ function safeSet<T>(key: string, data: T): void {
   }
 }
 
+/** Returns stale cached data while fresh data loads. */
 export function useStaleFallback<T>(
   key: string,
   fetcher: () => Promise<T>,

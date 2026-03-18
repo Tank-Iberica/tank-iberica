@@ -49,6 +49,11 @@ function printHTML(html: string) {
   }, 100)
 }
 
+/**
+ * Composable for invoice generator.
+ *
+ * @param getVehicleOptions
+ */
 export function useInvoiceGenerator(getVehicleOptions: () => VehicleOption[]) {
   // Invoice state
   const invoiceDate = ref(new Date().toISOString().split('T')[0])

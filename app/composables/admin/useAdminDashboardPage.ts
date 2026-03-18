@@ -67,6 +67,7 @@ export const CHART_COLORS: DashboardChartColors = {
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for admin dashboard page. */
 export function useAdminDashboardPage() {
   const { t } = useI18n()
 

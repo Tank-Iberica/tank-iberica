@@ -21,6 +21,7 @@ export interface CapacityAlert {
   created_at: string
 }
 
+/** Composable for admin capacity alerts. */
 export function useAdminCapacityAlerts() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

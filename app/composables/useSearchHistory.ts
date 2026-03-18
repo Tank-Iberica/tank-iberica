@@ -12,6 +12,7 @@ import { ref, onMounted } from 'vue'
 const STORAGE_KEY = 'tracciona_search_history'
 const MAX_HISTORY = 5
 
+/** Composable for search history. */
 export function useSearchHistory() {
   const history = ref<string[]>([])
 

@@ -42,6 +42,7 @@ export interface VehicleOption {
   vehicleType: string
 }
 
+/** Composable for contract form. */
 export function useContractForm() {
   const supabase = useSupabaseClient()
 

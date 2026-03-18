@@ -60,6 +60,7 @@ function getStatusClass(status: RentalStatus): string {
   }
 }
 
+/** Composable for dashboard alquileres. */
 export function useDashboardAlquileres() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

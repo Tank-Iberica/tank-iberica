@@ -56,6 +56,7 @@ export type { ColumnDef, ColumnGroup } from '~/composables/admin/useAdminProduct
 // Composable
 // -------------------------------------------------------------------------
 
+/** Composable for admin productos page. */
 export function useAdminProductosPage() {
   const { t } = useI18n()
   const toast = useToast()

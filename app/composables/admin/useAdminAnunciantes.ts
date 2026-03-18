@@ -41,6 +41,7 @@ function formatDate(dateStr: string): string {
   })
 }
 
+/** Composable for admin anunciantes. */
 export function useAdminAnunciantes() {
   const {
     advertisements,

@@ -18,6 +18,7 @@ describe('MetricsKpiCards', () => {
     activeVehicles: { current: 200, changePercent: -5 },
     activeDealers: { current: 30, changePercent: 0 },
     monthlyLeads: { current: 150, changePercent: 8 },
+    arpu: { current: 1667, changePercent: 5 },
   }
 
   const factory = (overrides: Record<string, unknown> = {}) =>
@@ -30,8 +31,8 @@ describe('MetricsKpiCards', () => {
     expect(factory().find('.kpi-grid').exists()).toBe(true)
   })
 
-  it('renders 4 kpi cards', () => {
-    expect(factory().findAll('.kpi-card')).toHaveLength(4)
+  it('renders 5 kpi cards', () => {
+    expect(factory().findAll('.kpi-card')).toHaveLength(5)
   })
 
   it('shows revenue label', () => {
@@ -65,6 +66,6 @@ describe('MetricsKpiCards', () => {
   })
 
   it('shows sublabel for each card', () => {
-    expect(factory().findAll('.kpi-sublabel')).toHaveLength(4)
+    expect(factory().findAll('.kpi-sublabel')).toHaveLength(5)
   })
 })

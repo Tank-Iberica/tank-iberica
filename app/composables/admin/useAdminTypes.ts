@@ -28,6 +28,7 @@ export interface TypeFormData {
   sort_order: number
 }
 
+/** Composable for admin types. */
 export function useAdminTypes() {
   const supabase = useSupabaseClient()
 

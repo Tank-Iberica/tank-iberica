@@ -28,6 +28,7 @@ export type {
 // Composable
 // ---------------------------------------------------------------------------
 
+/** Composable for admin metrics. */
 export function useAdminMetrics() {
   const loading = ref(false)
   const error = ref<string>('')

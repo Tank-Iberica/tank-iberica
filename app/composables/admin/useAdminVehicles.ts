@@ -100,6 +100,7 @@ export interface DocumentEntry {
 
 const PAGE_SIZE = 50
 
+/** Composable for admin vehicles. */
 export function useAdminVehicles() {
   const supabase = useSupabaseClient()
 

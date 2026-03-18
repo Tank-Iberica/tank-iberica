@@ -130,6 +130,11 @@ function isSubscriptionActive(subscription: SubscriptionRow): boolean {
   return true
 }
 
+/**
+ * Composable for subscription plan.
+ *
+ * @param dealerId
+ */
 export function useSubscriptionPlan(dealerId?: string) {
   const supabase = useSupabaseClient()
 

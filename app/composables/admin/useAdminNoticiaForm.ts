@@ -39,6 +39,11 @@ function getLevelLabel(level: string): string {
   }
 }
 
+/**
+ * Composable for admin noticia form.
+ *
+ * @param newsId
+ */
 export function useAdminNoticiaForm(newsId: Ref<string>) {
   const router = useRouter()
 

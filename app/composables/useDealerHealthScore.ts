@@ -115,6 +115,11 @@ function calcVehiclesScore(activeCount: number): number {
   return Math.min(groups * 10, 40)
 }
 
+/**
+ * Composable for dealer health score.
+ *
+ * @param dealerId
+ */
 export function useDealerHealthScore(dealerId: string) {
   const supabase = useSupabaseClient()
 

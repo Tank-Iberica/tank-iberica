@@ -148,6 +148,11 @@ export function getRequiredDocsForLevel(targetLevel: VerificationLevel): Verific
   return [...definition.requiredDocs]
 }
 
+/**
+ * Composable for vehicle verification.
+ *
+ * @param vehicleId
+ */
 export function useVehicleVerification(vehicleId: string) {
   const supabase = useSupabaseClient()
 

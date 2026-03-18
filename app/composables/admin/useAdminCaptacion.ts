@@ -86,6 +86,7 @@ function formatVehicleTypes(types: string[]): string {
   return types.join(', ')
 }
 
+/** Composable for admin captacion. */
 export function useAdminCaptacion() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

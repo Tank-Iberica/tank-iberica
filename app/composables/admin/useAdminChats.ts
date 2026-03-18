@@ -37,6 +37,7 @@ function groupMessagesByDate(messages: ChatMessage[]): MessageDateGroup[] {
   return groups
 }
 
+/** Composable for admin chats. */
 export function useAdminChats() {
   const {
     loading,

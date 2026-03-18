@@ -16,6 +16,7 @@ import {
 // Re-export types for consumers
 export type { ComponentMetricDisplay, ComponentCardData, HistoryChartData } from '~/utils/infraCharts'
 
+/** Composable for admin infrastructura. */
 export function useAdminInfrastructura() {
   const { t } = useI18n()
 

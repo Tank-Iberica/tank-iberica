@@ -37,6 +37,7 @@ const savedPresets = ref<SavedFilterPreset[]>([])
 let hydrated = false
 let idCounter = 0
 
+/** Composable for saved filters. */
 export function useSavedFilters() {
   // Hydrate from localStorage once per page load (client-side only)
   if (import.meta.client && !hydrated) {

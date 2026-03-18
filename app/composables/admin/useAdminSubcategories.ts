@@ -54,6 +54,7 @@ function buildCategoryCountMap(
   return countMap
 }
 
+/** Composable for admin subcategories. */
 export function useAdminSubcategories() {
   const supabase = useSupabaseClient()
 

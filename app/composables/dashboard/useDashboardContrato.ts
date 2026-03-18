@@ -91,6 +91,7 @@ function resolveDealerLocation(raw: DealerRaw): string {
   return typeof raw.location === 'string' ? raw.location : ''
 }
 
+/** Composable for dashboard contrato. */
 export function useDashboardContrato() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

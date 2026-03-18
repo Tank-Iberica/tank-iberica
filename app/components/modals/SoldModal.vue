@@ -136,10 +136,16 @@ function resetState() {
   error.value = null
 }
 
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+const modalRef = ref<HTMLElement | null>(null)
+
 watch(
   () => props.modelValue,
   (isOpen) => {
-    if (!isOpen) {
+    if (isOpen) {
+      nextTick(() => activateTrap(modalRef.value))
+    } else {
+      deactivateTrap()
       resetState()
     }
   },
@@ -150,7 +156,7 @@ watch(
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="modal-overlay" @click.self="close">
-        <div class="modal-container">
+        <div ref="modalRef" class="modal-container" role="dialog" aria-modal="true">
           <button class="modal-close" :aria-label="t('common.close')" @click="close">✕</button>
 
           <!-- Step 1: Congratulations -->

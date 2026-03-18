@@ -3,7 +3,7 @@
     <div class="error-container">
       <!-- Logo branding -->
       <NuxtLink to="/" class="error-logo" aria-label="Tracciona">
-        <NuxtImg src="/icon-192x192.png" alt="Tracciona" width="48" height="48" format="webp" />
+        <NuxtImg src="/icon-192x192.png" alt="Tracciona" width="48" height="48" sizes="48px" format="webp" decoding="async" />
       </NuxtLink>
 
       <!-- Visual illustration for 404 -->

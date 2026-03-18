@@ -25,6 +25,7 @@ export type {
   DealerFiscalRow,
 } from '~/utils/invoiceTypes'
 
+/** Composable for invoice. */
 export function useInvoice() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

@@ -9,7 +9,7 @@ definePageMeta({
   <div class="admin-section">
     <div class="section-header">
       <h2>{{ $t('admin.registro.title') }}</h2>
-      <button class="btn-primary">+ Subir Documento</button>
+      <button class="btn-primary">{{ $t('admin.registro.uploadDoc', '+ Subir Documento') }}</button>
     </div>
 
     <div class="placeholder-content">
@@ -17,10 +17,10 @@ definePageMeta({
       <h3>{{ $t('admin.registro.docsTitle') }}</h3>
       <p>{{ $t('admin.registro.docsSubtitle') }}</p>
       <div class="placeholder-features">
-        <span class="feature-tag">Facturas</span>
-        <span class="feature-tag">Recibos</span>
-        <span class="feature-tag">Contratos</span>
-        <span class="feature-tag">Exportar</span>
+        <span class="feature-tag">{{ $t('admin.registro.invoices', 'Facturas') }}</span>
+        <span class="feature-tag">{{ $t('admin.registro.receipts', 'Recibos') }}</span>
+        <span class="feature-tag">{{ $t('admin.registro.contracts', 'Contratos') }}</span>
+        <span class="feature-tag">{{ $t('admin.registro.export', 'Exportar') }}</span>
       </div>
     </div>
   </div>

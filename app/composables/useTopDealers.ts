@@ -15,6 +15,7 @@ export interface TopDealerPublic {
   verified_at: string | null
 }
 
+/** Composable for top dealers. */
 export function useTopDealers() {
   const supabase = useSupabaseClient()
 

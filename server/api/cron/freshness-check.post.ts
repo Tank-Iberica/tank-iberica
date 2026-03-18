@@ -16,7 +16,7 @@ import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { fetchWithRetry } from '../../utils/fetchWithRetry'
-import { getSiteUrl, getSiteName, getSiteEmail } from '../../utils/siteConfig'
+import { getSiteUrl, getSiteName, getSiteEmail, BRAND_COLORS } from '../../utils/siteConfig'
 import { logger } from '../../utils/logger'
 
 interface CronBody {
@@ -45,7 +45,7 @@ function buildReminderHtml(
   siteName: string,
   isEs: boolean,
 ): string {
-  const primary = '#23424A'
+  const { primary } = BRAND_COLORS
   return `<!DOCTYPE html>
 <html lang="${isEs ? 'es' : 'en'}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${siteName}</title></head>
@@ -93,7 +93,7 @@ function buildExpiryHtml(
   siteName: string,
   isEs: boolean,
 ): string {
-  const primary = '#23424A'
+  const { primary } = BRAND_COLORS
   return `<!DOCTYPE html>
 <html lang="${isEs ? 'es' : 'en'}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${siteName}</title></head>

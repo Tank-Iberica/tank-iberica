@@ -56,6 +56,7 @@ interface VerticalConfig {
   [key: string]: unknown
 }
 
+/** Composable for vertical config. */
 export function useVerticalConfig() {
   const config = useState<VerticalConfig | null>('vertical_config', () => null)
 

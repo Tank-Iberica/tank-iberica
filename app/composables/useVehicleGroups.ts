@@ -32,6 +32,7 @@ export interface VehicleGroupWithCount extends VehicleGroup {
   vehicle_count: number
 }
 
+/** Composable for vehicle groups. */
 export function useVehicleGroups() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

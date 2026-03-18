@@ -4,8 +4,9 @@ import { serverSupabaseUser } from '#supabase/server'
 import { verifyCsrf } from '../../utils/verifyCsrf'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
+import { CREDIT_COSTS } from '../../utils/creditsConfig'
 
-const UNLOCK_COST = 1 // credits required to unlock early access
+const UNLOCK_COST = CREDIT_COSTS.UNLOCK_VEHICLE
 
 const unlockSchema = z.object({
   vehicleId: z.string().uuid(),

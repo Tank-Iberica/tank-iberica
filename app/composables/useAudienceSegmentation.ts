@@ -22,6 +22,7 @@ function getOrCreateSessionId(): string {
   return id
 }
 
+/** Composable for audience segmentation. */
 export function useAudienceSegmentation() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

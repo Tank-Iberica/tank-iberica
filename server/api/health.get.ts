@@ -7,11 +7,27 @@
  * Vertical mode (?vertical=1): verifies vertical_config completeness (name, theme,
  *                       subscription_prices, categories). Requires cron secret.
  */
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery, getHeader } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../utils/verifyCronSecret'
+import { timingSafeCompare } from '../utils/timingSafeCompare'
 
 const APP_VERSION = process.env.APP_VERSION || '1.0.0'
+
+/**
+ * Verify health-check access: accepts dedicated HEALTH_TOKEN or falls back to cron secret.
+ * This allows monitoring services to use a separate token from cron jobs.
+ * Uses timing-safe comparison to prevent timing attacks.
+ */
+function verifyHealthAccess(event: Parameters<Parameters<typeof defineEventHandler>[0]>[0]): void {
+  const healthToken = process.env.HEALTH_TOKEN
+  if (healthToken) {
+    const header = getHeader(event, 'x-health-token') || getHeader(event, 'authorization')?.replace('Bearer ', '')
+    if (timingSafeCompare(header, healthToken)) return
+  }
+  // Fallback to cron secret
+  verifyCronSecret(event)
+}
 const DB_TIMEOUT_MS = 3000
 
 interface LightHealthResponse {
@@ -59,7 +75,7 @@ async function handleVerticalCheck(
   event: Parameters<Parameters<typeof defineEventHandler>[0]>[0],
   timestamp: string,
 ): Promise<VerticalHealthResponse> {
-  verifyCronSecret(event)
+  verifyHealthAccess(event)
   const supabase = serverSupabaseServiceRole(event)
   const VERTICAL = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
   const checks: VerticalCheckItem[] = []
@@ -180,7 +196,7 @@ export default defineEventHandler(
 
     if (query.vertical) return handleVerticalCheck(event, timestamp)
 
-    verifyCronSecret(event)
+    verifyHealthAccess(event)
     const supabase = serverSupabaseServiceRole(event)
     const result = await handleDeepCheck(supabase, timestamp, uptime)
     if (result.status === 'degraded') setResponseStatus(event, 503)

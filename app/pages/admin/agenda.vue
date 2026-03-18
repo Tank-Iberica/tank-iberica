@@ -41,7 +41,7 @@ onMounted(() => init())
         <h1>{{ $t('admin.agenda.title') }}</h1>
         <span class="count-badge">{{ total }}</span>
       </div>
-      <button class="btn-primary" @click="openCreateModal">+ Nuevo contacto</button>
+      <button class="btn-primary" @click="openCreateModal">{{ $t('admin.agenda.newContact', '+ Nuevo contacto') }}</button>
     </header>
 
     <!-- Filters -->

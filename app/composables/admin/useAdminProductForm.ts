@@ -56,6 +56,7 @@ function fmt(val: number | null | undefined): string {
   }).format(val)
 }
 
+/** Composable for admin product form. */
 export function useAdminProductForm() {
   const { t, locale } = useI18n()
   const toast = useToast()

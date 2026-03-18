@@ -16,6 +16,7 @@ function getUnreadCount(): Ref<number> {
   return _unreadCount
 }
 
+/** Composable for unread messages. */
 export function useUnreadMessages() {
   const unreadCount = getUnreadCount()
   const supabase = useSupabaseClient<Database>()

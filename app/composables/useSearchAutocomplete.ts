@@ -34,6 +34,7 @@ const DEBOUNCE_MS = 300
 const MIN_QUERY_LENGTH = 2
 const MAX_SUGGESTIONS = 5
 
+/** Composable for search autocomplete. */
 export function useSearchAutocomplete() {
   const query = ref('')
   const results = ref<AutocompleteResult[]>([])

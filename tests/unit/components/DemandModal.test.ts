@@ -96,6 +96,67 @@ vi.stubGlobal('useFocusTrap', () => ({
   deactivate: vi.fn(),
 }))
 
+/* ------------------------------------------------------------------ */
+/* Mock useFormValidation (auto-imported composable)                    */
+/* ------------------------------------------------------------------ */
+let capturedFormOnSubmit: ((values: Record<string, unknown>) => Promise<void>) | null = null
+const mockContactFieldRefs: Record<string, ReturnType<typeof ref>> = {}
+const mockContactErrors = ref<Record<string, string>>({})
+const mockContactIsSubmitting = ref(false)
+const mockResetContactForm = vi.fn()
+const mockFormSetFieldValue = vi.fn()
+
+vi.stubGlobal('useFormValidation', (_schema: unknown, opts?: { onSubmit?: (values: Record<string, unknown>) => Promise<void>; initialValues?: Record<string, unknown> }) => {
+  capturedFormOnSubmit = opts?.onSubmit || null
+  const initialValues = opts?.initialValues || {}
+
+  return {
+    defineField: (name: string) => {
+      const fieldRef = ref(initialValues[name] ?? '')
+      mockContactFieldRefs[name] = fieldRef
+      return [fieldRef, {}]
+    },
+    translatedErrors: computed(() => mockContactErrors.value),
+    isSubmitting: mockContactIsSubmitting,
+    onSubmit: async (e?: Event) => {
+      e?.preventDefault?.()
+      // Basic validation to match real useFormValidation + Zod behavior
+      const errors: Record<string, string> = {}
+      const name = mockContactFieldRefs.contactName?.value
+      const email = mockContactFieldRefs.contactEmail?.value
+      const phone = mockContactFieldRefs.contactPhone?.value
+      const terms = mockContactFieldRefs.termsAccepted?.value
+
+      if (!name || String(name).trim() === '') errors.contactName = 'validation.required'
+      if (!email || String(email).trim() === '') {
+        errors.contactEmail = 'validation.required'
+      } else if (!String(email).includes('@')) {
+        errors.contactEmail = 'validation.invalidEmail'
+      }
+      if (!phone || String(phone).trim() === '') errors.contactPhone = 'validation.required'
+      if (terms !== true && terms !== 'true') errors.termsAccepted = 'validation.termsRequired'
+
+      if (Object.keys(errors).length > 0) {
+        mockContactErrors.value = errors
+        return
+      }
+      mockContactErrors.value = {}
+      if (capturedFormOnSubmit) {
+        const values = Object.fromEntries(
+          Object.entries(mockContactFieldRefs).map(([k, v]) => [k, v.value]),
+        )
+        await capturedFormOnSubmit(values)
+      }
+    },
+    resetForm: mockResetContactForm,
+    setFieldValue: mockFormSetFieldValue,
+    setFieldError: vi.fn(),
+  }
+})
+
+// nextTick is auto-imported in Nuxt — provide it for test environment
+vi.stubGlobal('nextTick', nextTick)
+
 import DemandModal from '../../../app/components/modals/DemandModal.vue'
 
 /* ------------------------------------------------------------------ */
@@ -160,6 +221,12 @@ beforeEach(() => {
   mockGetAttributesJson.mockImplementation(() => ({}))
   mockGetVehicleSubcategoryLabel.mockClear()
   mockGetVehicleSubcategoryLabel.mockReturnValue('Camiones > Volquetes')
+  // Reset useFormValidation mock state
+  mockContactErrors.value = {}
+  mockContactIsSubmitting.value = false
+  mockResetContactForm.mockClear()
+  mockFormSetFieldValue.mockClear()
+  Object.keys(mockContactFieldRefs).forEach((k) => delete mockContactFieldRefs[k])
 })
 
 afterEach(() => {
@@ -302,12 +369,11 @@ describe('DemandModal', () => {
       expect(w.find('#specifications').exists()).toBe(true)
     })
 
-    it('renders contact name input with required marker', () => {
+    it('renders contact name input with autocomplete', () => {
       const w = factory()
       const nameInput = w.find('#contactName')
       expect(nameInput.exists()).toBe(true)
       expect(nameInput.attributes('autocomplete')).toBe('name')
-      expect(nameInput.attributes('required')).toBeDefined()
     })
 
     it('renders contact email input with required marker', () => {
@@ -798,6 +864,7 @@ describe('DemandModal', () => {
     async function fillAndSubmit(w: VueWrapper) {
       await w.find('#contactName').setValue('Test')
       await w.find('#contactEmail').setValue('test@test.com')
+      await w.find('#contactPhone').setValue('+34612345678')
       const checkboxes = w.findAll('input[type="checkbox"]')
       await checkboxes[checkboxes.length - 1].setValue(true)
       await w.find('form').trigger('submit')

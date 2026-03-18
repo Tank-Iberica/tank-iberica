@@ -231,6 +231,7 @@ const DEAL_SELECT = `
 
 const PAGE_SIZE = 50
 
+/** Composable for admin brokerage. */
 export function useAdminBrokerage() {
   const supabase = useSupabaseClient()
 

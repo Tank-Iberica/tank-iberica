@@ -57,6 +57,7 @@ function detectGeo(): UserGeo {
   return { country, region, province }
 }
 
+/** Manages ad placement and display logic. */
 export function useAds(
   position: AdPosition,
   options?: {

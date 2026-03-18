@@ -33,6 +33,7 @@ const PAGE_SIZE = 12
 const NEWS_COLUMNS =
   'id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at'
 
+/** Composable for news. */
 export function useNews() {
   const supabase = useSupabaseClient()
 

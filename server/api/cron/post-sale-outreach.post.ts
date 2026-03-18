@@ -20,7 +20,7 @@ import { Resend } from 'resend'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
-import { getSiteUrl, getSiteName, getSiteEmail } from '../../utils/siteConfig'
+import { getSiteUrl, getSiteName, getSiteEmail, BRAND_COLORS } from '../../utils/siteConfig'
 import { logger } from '../../utils/logger'
 
 interface CronBody {
@@ -51,7 +51,7 @@ function buildPostSaleHtml(
   siteName: string,
   isEs: boolean,
 ): string {
-  const primary = '#23424A'
+  const { primary } = BRAND_COLORS
   const greetWord = isEs ? 'Hola' : 'Hello'
   const greeting = buyerName ? `${greetWord} ${buyerName},` : `${greetWord},`
 

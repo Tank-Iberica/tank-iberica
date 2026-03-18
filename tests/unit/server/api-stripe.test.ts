@@ -344,6 +344,45 @@ describe('POST /api/stripe/portal', () => {
     expect(result.message).toBe('Service not configured')
     expect(result.url).toContain('portal=mock')
   })
+
+  it('calls verifyCsrf for CSRF protection', async () => {
+    await portalHandler({} as any)
+    expect(mockVerifyCsrf).toHaveBeenCalled()
+  })
+
+  it('throws 403 when CSRF validation fails', async () => {
+    mockVerifyCsrf.mockImplementation(() => {
+      const err = new Error('CSRF validation failed')
+      ;(err as any).statusCode = 403
+      throw err
+    })
+    await expect(portalHandler({} as any)).rejects.toMatchObject({ statusCode: 403 })
+  })
+
+  it('throws 400 when customerId has invalid format', async () => {
+    mockReadBody.mockResolvedValue({ customerId: 'invalid_123', returnUrl: 'https://tracciona.com' })
+    await expect(portalHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
+  })
+
+  it('returns Stripe portal URL when key is configured', async () => {
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      stripeSecretKey: 'sk_test_xxx',
+      stripeWebhookSecret: undefined,
+      supabaseServiceRoleKey: undefined,
+      cronSecret: 'test-cron',
+      public: {},
+    }))
+    const result = await portalHandler({} as any)
+    expect(result.url).toBe('https://stripe.com/portal')
+    // Restore
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      stripeSecretKey: undefined,
+      stripeWebhookSecret: undefined,
+      supabaseServiceRoleKey: undefined,
+      cronSecret: 'test-cron',
+      public: {},
+    }))
+  })
 })
 
 // ── POST /api/stripe/checkout-credits ─────────────────────────────────────

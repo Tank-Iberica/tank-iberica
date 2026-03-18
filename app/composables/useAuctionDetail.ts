@@ -18,6 +18,11 @@ import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 import { formatPrice } from '~/composables/shared/useListingUtils'
 import type { VehicleImage } from '~/composables/shared/vehiclesTypes'
 
+/**
+ * Composable for auction detail.
+ *
+ * @param auctionId
+ */
 export function useAuctionDetail(auctionId: Ref<string>) {
   const { t, locale } = useI18n()
   const toast = useToast()

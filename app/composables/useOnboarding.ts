@@ -150,6 +150,11 @@ function validatePhotoQuality(file: File): Promise<PhotoValidation> {
   })
 }
 
+/**
+ * Composable for onboarding.
+ *
+ * @param vehicleId
+ */
 export function useOnboarding(vehicleId?: string) {
   const steps = ref<OnboardingStep[]>(createDefaultSteps())
   const currentStep = ref<StepId>('basic_info')

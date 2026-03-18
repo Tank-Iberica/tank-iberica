@@ -345,10 +345,14 @@ describe('PageCatchAll ([...slug])', () => {
       expect(w.find('.landing-intro').text()).toBe('Discover our trucks')
     })
 
-    it('renders catalog placeholder', async () => {
+    it('renders catalog section', async () => {
+      // #63: placeholder was replaced with actual catalog grid (loading/grid/empty states)
       const { wrapper: w } = await factory(makeLanding())
-      expect(w.find('.landing-catalog-placeholder').exists()).toBe(true)
-      expect(w.text()).toContain('catalog.comingSoon')
+      const hasCatalog =
+        w.find('.landing-catalog-loading').exists() ||
+        w.find('.landing-catalog-grid').exists() ||
+        w.find('.landing-catalog-empty').exists()
+      expect(hasCatalog).toBe(true)
     })
   })
 

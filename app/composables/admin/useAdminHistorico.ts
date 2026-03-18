@@ -75,6 +75,7 @@ export const SALE_CATEGORIES: Record<string, string> = {
   exportacion: 'Exportación',
 }
 
+/** Composable for admin historico. */
 export function useAdminHistorico() {
   const supabase = useSupabaseClient()
 

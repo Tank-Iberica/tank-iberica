@@ -28,6 +28,7 @@ const FEW_RESULTS_THRESHOLDS: Record<LocationLevel, number> = {
   mundo: 0, // never show "few results" at world level
 }
 
+/** Composable for geo fallback. */
 export function useGeoFallback() {
   const { fetchCount } = useVehicles()
   const { locationLevel, setLocationLevel } = useCatalogState()

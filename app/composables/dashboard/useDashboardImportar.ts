@@ -206,6 +206,7 @@ function downloadTemplate(): void {
   URL.revokeObjectURL(url)
 }
 
+/** Composable for dashboard importar. */
 export function useDashboardImportar() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

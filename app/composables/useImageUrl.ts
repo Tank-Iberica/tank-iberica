@@ -59,6 +59,7 @@ function getVersionedUrl(url: string, version: string | number): string {
   return `${url}${separator}v=${encodeURIComponent(version)}`
 }
 
+/** Composable for image url. */
 export function useImageUrl() {
   /**
    * Append a `?v=` cache-busting parameter to any image URL.

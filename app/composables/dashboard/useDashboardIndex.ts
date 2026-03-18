@@ -48,6 +48,7 @@ function getStatusColor(status: string): string {
   return colors[status] || '#64748B'
 }
 
+/** Composable for dashboard index. */
 export function useDashboardIndex() {
   const { t, locale } = useI18n()
 

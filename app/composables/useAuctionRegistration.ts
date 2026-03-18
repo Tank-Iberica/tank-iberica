@@ -34,6 +34,11 @@ export interface RegistrationFormData {
   transport_license_url: string | null
 }
 
+/**
+ * Composable for auction registration.
+ *
+ * @param auctionId
+ */
 export function useAuctionRegistration(auctionId: string) {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

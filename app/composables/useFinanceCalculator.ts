@@ -14,6 +14,7 @@ import {
 } from '~/utils/financeCalculator.helpers'
 import type { ITPRate } from '~/utils/financeCalculator.helpers'
 
+/** Composable for finance calculator. */
 export function useFinanceCalculator() {
   const itpRates: Readonly<ITPRate[]> = ITP_RATES
   const selectedComunidad = ref<string>('Madrid')

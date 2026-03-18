@@ -25,6 +25,7 @@ export interface SellerInfo {
   company_name: string | null
   location: string | null
   cif: string | null
+  avg_response_minutes: number | null
 }
 
 /**
@@ -195,7 +196,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     if (!detail?.dealer_id) return
     const { data } = await supabase
       .from('dealers')
-      .select('company_name, location, cif, user_id, trust_score')
+      .select('company_name, location, cif, user_id, trust_score, avg_response_minutes')
       .eq('id', detail.dealer_id)
       .single()
     if (data) {

@@ -52,6 +52,7 @@ export const DEMAND_STATUSES: { value: DemandStatus; label: string; color: strin
 
 const PAGE_SIZE = 50
 
+/** Composable for admin demands. */
 export function useAdminDemands() {
   const supabase = useSupabaseClient()
 

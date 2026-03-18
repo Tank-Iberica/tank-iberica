@@ -153,6 +153,11 @@ function buildMetricsSummary(result: VehicleMetrics[]): VehicleMetricsSummary {
   }
 }
 
+/**
+ * Composable for product analytics.
+ *
+ * @param dealerId
+ */
 export function useProductAnalytics(dealerId?: Ref<string | null>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

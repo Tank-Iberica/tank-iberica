@@ -161,7 +161,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // Validate API key
   const { data: sub } = await supabase
     .from('data_subscriptions')
-    .select('*')
+    .select('id, api_key, active, rate_limit_daily')
     .eq('api_key', apiKey)
     .eq('active', true)
     .single<DataSubscription>()
@@ -194,7 +194,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // Query market_data
   let marketQuery = supabase
     .from('market_data')
-    .select('*')
+    .select('avg_price, brand, subcategory, location_province, avg_days_to_sell, created_at')
     .eq('vertical', 'tracciona')
     .ilike('brand', brand)
 

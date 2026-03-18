@@ -9,6 +9,7 @@ export const useAccessibility = () => {
     default: () => 'normal',
     maxAge: 60 * 60 * 24 * 365,
     sameSite: 'lax',
+    secure: !import.meta.dev,
   })
 
   // Aplica data-font-size al <html> para que el CSS lo capture

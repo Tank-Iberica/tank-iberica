@@ -40,6 +40,7 @@ export interface CursorPaginationReturn<T> {
   loadFirst: () => Promise<void>
 }
 
+/** Cursor-based pagination for Supabase queries. */
 export function useCursorPagination<T>(
   options: CursorPaginationOptions<T>,
 ): CursorPaginationReturn<T> {

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { changePasswordSchema, deleteAccountSchema } from '~/utils/schemas'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth'],
@@ -57,67 +59,68 @@ async function onDisableMfa() {
   if (!ok) mfaError.value = t('profile.security.mfaVerifyError')
 }
 
-/** Password change form */
-const passwordForm = reactive({
-  newPassword: '',
-  confirmPassword: '',
-})
+/** Password change form — Zod validated */
 const passwordError = ref<string | null>(null)
 const passwordSuccess = ref(false)
 let passwordTimer: ReturnType<typeof setTimeout> | null = null
 
-async function onChangePassword() {
-  passwordError.value = null
-  passwordSuccess.value = false
-  if (passwordTimer) clearTimeout(passwordTimer)
+const {
+  defineField: definePasswordField,
+  translatedErrors: passwordErrors,
+  isSubmitting: passwordSubmitting,
+  onSubmit: onPasswordSubmit,
+  resetForm: resetPasswordForm,
+} = useFormValidation(changePasswordSchema, {
+  initialValues: { newPassword: '', confirmPassword: '' },
+  onSubmit: async (values) => {
+    passwordError.value = null
+    passwordSuccess.value = false
+    if (passwordTimer) clearTimeout(passwordTimer)
 
-  if (passwordForm.newPassword.length < 8) {
-    passwordError.value = t('profile.security.passwordTooShort')
-    return
-  }
+    try {
+      await updatePassword(values.newPassword)
+      passwordSuccess.value = true
+      resetPasswordForm()
+      passwordTimer = setTimeout(() => {
+        passwordSuccess.value = false
+      }, 3000)
+    } catch {
+      passwordError.value = t('profile.security.passwordError')
+    }
+  },
+})
 
-  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-    passwordError.value = t('auth.passwordMismatch')
-    return
-  }
+const [pwNewPassword] = definePasswordField('newPassword')
+const [pwConfirmPassword] = definePasswordField('confirmPassword')
 
-  try {
-    await updatePassword(passwordForm.newPassword)
-    passwordSuccess.value = true
-    passwordForm.newPassword = ''
-    passwordForm.confirmPassword = ''
-    passwordTimer = setTimeout(() => {
-      passwordSuccess.value = false
-    }, 3000)
-  } catch {
-    passwordError.value = t('profile.security.passwordError')
-  }
-}
-
-/** Delete account */
+/** Delete account — Zod validated */
 const showDeleteConfirm = ref(false)
-const deleteConfirmText = ref('')
 const deleteError = ref<string | null>(null)
 
-async function onDeleteAccount() {
-  if (deleteConfirmText.value !== 'ELIMINAR') {
-    deleteError.value = t('profile.security.deleteConfirmError')
-    return
-  }
+const {
+  defineField: defineDeleteField,
+  translatedErrors: deleteErrors,
+  onSubmit: onDeleteSubmit,
+  resetForm: resetDeleteForm,
+} = useFormValidation(deleteAccountSchema, {
+  initialValues: { confirmation: '' as unknown as 'ELIMINAR' },
+  onSubmit: async () => {
+    deleteError.value = null
+    const success = await deleteAccount()
 
-  deleteError.value = null
-  const success = await deleteAccount()
+    if (success) {
+      await navigateTo('/')
+    } else {
+      deleteError.value = profileError.value || t('profile.security.deleteError')
+    }
+  },
+})
 
-  if (success) {
-    await navigateTo('/')
-  } else {
-    deleteError.value = profileError.value || t('profile.security.deleteError')
-  }
-}
+const [deleteConfirmText] = defineDeleteField('confirmation')
 
 function cancelDelete() {
   showDeleteConfirm.value = false
-  deleteConfirmText.value = ''
+  resetDeleteForm()
   deleteError.value = null
 }
 
@@ -172,21 +175,26 @@ useHead({
       <section class="section-card">
         <h2 class="section-title">{{ $t('profile.security.changePassword') }}</h2>
 
-        <form class="password-form" @submit.prevent="onChangePassword">
+        <form class="password-form" @submit="onPasswordSubmit">
           <div class="form-group">
             <label for="new_password" class="form-label">{{
               $t('profile.security.newPassword')
             }}</label>
             <input
               id="new_password"
-              v-model="passwordForm.newPassword"
+              v-model="pwNewPassword"
               type="password"
+              autocomplete="new-password"
               class="form-input"
+              :class="{ 'input-error': passwordErrors.newPassword }"
               :placeholder="$t('profile.security.newPasswordPlaceholder')"
               autocomplete="new-password"
-              minlength="8"
-              required
+              :aria-invalid="!!passwordErrors.newPassword || undefined"
+              :aria-describedby="passwordErrors.newPassword ? 'err-sec-pw' : undefined"
             >
+            <p v-if="passwordErrors.newPassword" id="err-sec-pw" class="field-error" role="alert">
+              {{ passwordErrors.newPassword }}
+            </p>
           </div>
 
           <div class="form-group">
@@ -195,14 +203,19 @@ useHead({
             }}</label>
             <input
               id="confirm_password"
-              v-model="passwordForm.confirmPassword"
+              v-model="pwConfirmPassword"
               type="password"
+              autocomplete="new-password"
               class="form-input"
+              :class="{ 'input-error': passwordErrors.confirmPassword }"
               :placeholder="$t('profile.security.confirmPasswordPlaceholder')"
               autocomplete="new-password"
-              minlength="8"
-              required
+              :aria-invalid="!!passwordErrors.confirmPassword || undefined"
+              :aria-describedby="passwordErrors.confirmPassword ? 'err-sec-confirm' : undefined"
             >
+            <p v-if="passwordErrors.confirmPassword" id="err-sec-confirm" class="field-error" role="alert">
+              {{ passwordErrors.confirmPassword }}
+            </p>
           </div>
 
           <div v-if="passwordError" class="form-error" role="alert">
@@ -213,8 +226,8 @@ useHead({
             {{ $t('profile.security.passwordChanged') }}
           </div>
 
-          <button type="submit" class="btn-primary" :disabled="authLoading">
-            {{ authLoading ? $t('common.loading') : $t('profile.security.changePasswordBtn') }}
+          <button type="submit" class="btn-primary" :disabled="passwordSubmitting">
+            {{ passwordSubmitting ? $t('common.loading') : $t('profile.security.changePasswordBtn') }}
           </button>
         </form>
       </section>
@@ -249,6 +262,7 @@ useHead({
                 id="mfa_code"
                 v-model="mfaCode"
                 type="text"
+                autocomplete="one-time-code"
                 inputmode="numeric"
                 pattern="[0-9]{6}"
                 maxlength="6"
@@ -308,26 +322,33 @@ useHead({
           {{ $t('profile.security.deleteAccountBtn') }}
         </button>
 
-        <div v-else class="delete-confirm">
+        <form v-else class="delete-confirm" @submit="onDeleteSubmit">
           <p class="delete-instruction">{{ $t('profile.security.deleteConfirmInstruction') }}</p>
           <input
             v-model="deleteConfirmText"
             type="text"
+            autocomplete="off"
             class="form-input"
+            :class="{ 'input-error': deleteErrors.confirmation }"
             placeholder="ELIMINAR"
+            :aria-invalid="!!deleteErrors.confirmation || undefined"
+            :aria-describedby="deleteErrors.confirmation ? 'err-del-confirm' : undefined"
           >
+          <p v-if="deleteErrors.confirmation" id="err-del-confirm" class="field-error" role="alert">
+            {{ deleteErrors.confirmation }}
+          </p>
           <div v-if="deleteError" class="form-error" role="alert">
             {{ deleteError }}
           </div>
           <div class="delete-actions">
-            <button class="btn-danger" :disabled="profileLoading" @click="onDeleteAccount">
+            <button type="submit" class="btn-danger" :disabled="profileLoading">
               {{ profileLoading ? $t('common.loading') : $t('profile.security.confirmDelete') }}
             </button>
-            <button class="btn-ghost" @click="cancelDelete">
+            <button type="button" class="btn-ghost" @click="cancelDelete">
               {{ $t('common.cancel') }}
             </button>
           </div>
-        </div>
+        </form>
       </section>
     </div>
   </div>
@@ -425,6 +446,16 @@ useHead({
   outline: none;
   border-color: var(--color-primary);
   box-shadow: var(--shadow-ring-strong);
+}
+
+.field-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  margin-top: 0.25rem;
+}
+
+.input-error {
+  border-color: var(--color-error);
 }
 
 .form-error {

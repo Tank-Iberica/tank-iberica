@@ -33,18 +33,21 @@
         <h1 class="auth-title">{{ $t('auth.newPasswordTitle') }}</h1>
         <p class="auth-subtitle">{{ $t('auth.newPasswordSubtitle') }}</p>
 
-        <form @submit.prevent="handleUpdatePassword">
+        <form @submit="onSubmit">
           <div class="field">
             <label for="new-password">{{ $t('auth.newPassword') }}</label>
             <input
               id="new-password"
-              v-model="newPassword"
+              v-model="password"
               type="password"
-              required
               autocomplete="new-password"
               :placeholder="$t('auth.newPasswordPlaceholder')"
-              minlength="6"
+              :aria-invalid="!!translatedErrors.password || undefined"
+              :aria-describedby="translatedErrors.password ? 'error-new-pw' : undefined"
             >
+            <p v-if="translatedErrors.password" id="error-new-pw" class="field-error" role="alert">
+              {{ translatedErrors.password }}
+            </p>
             <span class="field-hint">{{ $t('auth.passwordHint') }}</span>
           </div>
 
@@ -52,20 +55,23 @@
             <label for="confirm-new-password">{{ $t('auth.confirmPassword') }}</label>
             <input
               id="confirm-new-password"
-              v-model="confirmNewPassword"
+              v-model="confirmPassword"
               type="password"
-              required
               autocomplete="new-password"
               :placeholder="$t('auth.confirmPasswordPlaceholder')"
-              minlength="6"
+              :aria-invalid="!!translatedErrors.confirmPassword || undefined"
+              :aria-describedby="translatedErrors.confirmPassword ? 'error-confirm-pw' : undefined"
             >
+            <p v-if="translatedErrors.confirmPassword" id="error-confirm-pw" class="field-error" role="alert">
+              {{ translatedErrors.confirmPassword }}
+            </p>
           </div>
 
           <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
 
-          <button type="submit" class="btn-primary" :disabled="loading">
-            <span v-if="loading" class="spinner" />
-            {{ loading ? $t('common.loading') : $t('auth.updatePassword') }}
+          <button type="submit" class="btn-primary" :disabled="isSubmitting">
+            <span v-if="isSubmitting" class="spinner" />
+            {{ isSubmitting ? $t('common.loading') : $t('auth.updatePassword') }}
           </button>
         </form>
       </template>
@@ -74,6 +80,8 @@
 </template>
 
 <script setup lang="ts">
+import { newPasswordSchema } from '~/utils/schemas'
+
 definePageMeta({
   layout: 'default',
 })
@@ -81,39 +89,30 @@ definePageMeta({
 const { t } = useI18n()
 const auth = useAuth()
 
-const newPassword = ref('')
-const confirmNewPassword = ref('')
-const loading = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
 const countdown = ref(3)
 let timer: ReturnType<typeof setInterval> | null = null
 
-async function handleUpdatePassword() {
-  errorMsg.value = ''
+const { defineField, translatedErrors, isSubmitting, onSubmit } = useFormValidation(
+  newPasswordSchema,
+  {
+    initialValues: { password: '', confirmPassword: '' },
+    onSubmit: async (values) => {
+      errorMsg.value = ''
+      try {
+        await auth.updatePassword(values.password)
+        success.value = true
+        startRedirectCountdown()
+      } catch (err: unknown) {
+        errorMsg.value = err instanceof Error ? err.message : t('common.error')
+      }
+    },
+  },
+)
 
-  if (newPassword.value !== confirmNewPassword.value) {
-    errorMsg.value = t('auth.passwordMismatch')
-    return
-  }
-
-  if (newPassword.value.length < 6) {
-    errorMsg.value = t('auth.passwordTooShort')
-    return
-  }
-
-  loading.value = true
-
-  try {
-    await auth.updatePassword(newPassword.value)
-    success.value = true
-    startRedirectCountdown()
-  } catch (err: unknown) {
-    errorMsg.value = err instanceof Error ? err.message : t('common.error')
-  } finally {
-    loading.value = false
-  }
-}
+const [password] = defineField('password')
+const [confirmPassword] = defineField('confirmPassword')
 
 function startRedirectCountdown() {
   timer = setInterval(() => {
@@ -189,6 +188,12 @@ useHead({
   display: block;
   font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
+  margin-top: var(--spacing-1);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
   margin-top: var(--spacing-1);
 }
 

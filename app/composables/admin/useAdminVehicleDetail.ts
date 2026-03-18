@@ -120,6 +120,11 @@ function calcBeneficio(salePrice: number, cost: number | null | undefined): stri
   return `${pct > 0 ? '+' : ''}${pct}%`
 }
 
+/**
+ * Composable for admin vehicle detail.
+ *
+ * @param vehicleId
+ */
 export function useAdminVehicleDetail(vehicleId: Ref<string>) {
   const router = useRouter()
   const supabase = useSupabaseClient()

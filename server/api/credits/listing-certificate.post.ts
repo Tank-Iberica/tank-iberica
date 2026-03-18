@@ -16,8 +16,9 @@ import { verifyCsrf } from '../../utils/verifyCsrf'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
 import { deductUserCredits } from '../../utils/creditService'
+import { CREDIT_COSTS } from '../../utils/creditsConfig'
 
-const CERTIFICATE_CREDIT_COST = 1
+const CERTIFICATE_CREDIT_COST = CREDIT_COSTS.LISTING_CERTIFICATE
 
 const schema = z.object({
   vehicleId: z.string().uuid(),

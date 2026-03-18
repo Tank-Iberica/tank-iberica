@@ -101,6 +101,11 @@ const DEAL_SELECT = `
   seller_dealer:seller_dealer_id(company_name)
 `
 
+/**
+ * Composable for admin brokerage deal.
+ *
+ * @param dealId
+ */
 export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()

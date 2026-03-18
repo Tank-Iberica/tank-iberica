@@ -227,7 +227,7 @@ export async function failJob(
  * Get a job by ID (for status polling).
  */
 export async function getJob(supabase: SupabaseClient, jobId: string): Promise<Job | null> {
-  const { data, error } = await supabase.from('job_queue').select('*').eq('id', jobId).maybeSingle()
+  const { data, error } = await supabase.from('job_queue').select('id, job_type, payload, idempotency_key, status, result, retries, max_retries, backoff_seconds, correlation_id, scheduled_at, started_at, completed_at, error_message, created_at').eq('id', jobId).maybeSingle()
 
   if (error) {
     logger.error('[jobQueue] Failed to get job', { jobId, error: error.message })

@@ -86,6 +86,7 @@ function getUserInitials(user: ChatUser): string {
   return user.email.charAt(0).toUpperCase()
 }
 
+/** Composable for admin chat. */
 export function useAdminChat() {
   const supabase = useSupabaseClient<Database>()
 

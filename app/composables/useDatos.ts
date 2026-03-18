@@ -33,6 +33,7 @@ export type {
 /* ------------------------------------------------
    Composable
    ------------------------------------------------ */
+/** Composable for datos. */
 export function useDatos() {
   const supabase = useSupabaseClient()
   const { t, locale } = useI18n()

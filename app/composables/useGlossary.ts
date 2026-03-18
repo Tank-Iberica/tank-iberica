@@ -19,6 +19,7 @@ export interface GlossaryTerm {
   created_at: string
 }
 
+/** Composable for glossary. */
 export function useGlossary() {
   const supabase = useSupabaseClient()
   const vertical = getVerticalSlug()

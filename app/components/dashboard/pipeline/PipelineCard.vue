@@ -54,6 +54,7 @@ const { t } = useI18n()
     opacity 0.15s;
   min-height: 2.75rem;
   overflow: hidden;
+  contain: layout style paint;
 }
 
 .pipeline-card:hover {

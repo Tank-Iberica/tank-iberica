@@ -16,6 +16,7 @@ export type {
 
 const PAGE_SIZE = 20
 
+/** Composable for vehicles. */
 export function useVehicles() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   modelValue: boolean
   featureName?: string
 }>()
@@ -11,13 +11,27 @@ const emit = defineEmits<{
 function close() {
   emit('update:modelValue', false)
 }
+
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+const modalRef = ref<HTMLElement | null>(null)
+
+watch(
+  () => props.modelValue,
+  (isOpen) => {
+    if (isOpen) {
+      nextTick(() => activateTrap(modalRef.value))
+    } else {
+      deactivateTrap()
+    }
+  },
+)
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="dev-backdrop" @click.self="close">
-        <div class="dev-container">
+        <div ref="modalRef" class="dev-container" role="dialog" aria-modal="true">
           <button class="dev-close" @click="close">&times;</button>
           <div class="dev-icon">
             <svg

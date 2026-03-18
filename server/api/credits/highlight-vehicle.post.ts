@@ -12,8 +12,9 @@ import { serverSupabaseUser } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
 import { verifyCsrf } from '../../utils/verifyCsrf'
 import { z } from 'zod'
+import { CREDIT_COSTS } from '../../utils/creditsConfig'
 
-const HIGHLIGHT_COST = 2
+const HIGHLIGHT_COST = CREDIT_COSTS.HIGHLIGHT_VEHICLE
 
 const VALID_STYLES = ['gold', 'premium', 'spotlight', 'urgent'] as const
 

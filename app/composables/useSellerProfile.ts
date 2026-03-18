@@ -51,6 +51,11 @@ interface ActiveVehicle {
   images_json: unknown[]
 }
 
+/**
+ * Composable for seller profile.
+ *
+ * @param dealerSlug
+ */
 export function useSellerProfile(dealerSlug?: string) {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

@@ -42,6 +42,7 @@ function formatDate(date: Date): string {
   })
 }
 
+/** Composable for dashboard presupuesto. */
 export function useDashboardPresupuesto() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

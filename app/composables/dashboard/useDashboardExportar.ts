@@ -303,6 +303,7 @@ function renderPdfVehiclePage(
 // Composable
 // ────────────────────────────────────────────
 
+/** Composable for dashboard exportar. */
 export function useDashboardExportar() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()

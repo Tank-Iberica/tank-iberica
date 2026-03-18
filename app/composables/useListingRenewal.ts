@@ -33,6 +33,7 @@ export function isRenewable(status: VehicleStatus): boolean {
   return RENEWABLE_STATUSES.has(status) && isValidTransition(status, 'published')
 }
 
+/** Composable for listing renewal. */
 export function useListingRenewal() {
   const { transition, bulkTransition, transitioning, error } = useListingLifecycle()
 

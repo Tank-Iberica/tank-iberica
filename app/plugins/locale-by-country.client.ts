@@ -13,7 +13,11 @@ export default defineNuxtPlugin(async () => {
   const { $i18n } = useNuxtApp()
   const { profile, fetchProfile } = useAuth()
   const COOKIE_KEY = 'tracciona_lang'
-  const langCookie = useCookie(COOKIE_KEY)
+  const langCookie = useCookie(COOKIE_KEY, {
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+    secure: !import.meta.dev,
+  })
 
   // 1. Logged-in user preference from DB
   const p = profile.value ?? (await fetchProfile())

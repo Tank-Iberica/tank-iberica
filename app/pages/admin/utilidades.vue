@@ -83,7 +83,7 @@ onMounted(async () => {
     <!-- Header -->
     <header class="page-header">
       <h1>🛠️ Utilidades</h1>
-      <p class="subtitle">Herramientas de gestión financiera</p>
+      <p class="subtitle">{{ $t('admin.utilidades.subtitle', 'Herramientas de gestión financiera') }}</p>
     </header>
 
     <!-- Tool Cards -->

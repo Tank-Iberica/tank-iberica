@@ -13,6 +13,7 @@ export type {
   SectionState,
 } from '~/composables/admin/useAdminProductForm'
 
+/** Composable for admin producto nuevo. */
 export function useAdminProductoNuevo() {
   const form = useAdminProductForm()
 

@@ -12,6 +12,7 @@ import {
 } from '~/composables/shared/dateHelpers'
 import type { KpiSummary, RevenuePoint, LeadsPoint } from '~/utils/adminMetricsTypes'
 
+/** Composable for admin metrics revenue. */
 export function useAdminMetricsRevenue() {
   const supabase = useSupabaseClient()
 
@@ -20,6 +21,7 @@ export function useAdminMetricsRevenue() {
     activeVehicles: { current: 0, previousMonth: 0, changePercent: 0 },
     activeDealers: { current: 0, previousMonth: 0, changePercent: 0 },
     monthlyLeads: { current: 0, previousMonth: 0, changePercent: 0 },
+    arpu: { current: 0, previousMonth: 0, changePercent: 0 },
   })
   const revenueSeries = ref<RevenuePoint[]>([])
   const leadsSeries = ref<LeadsPoint[]>([])
@@ -124,6 +126,9 @@ export function useAdminMetricsRevenue() {
       countContactsInRange(prevStart, prevEnd),
     ])
 
+    const arpuCurrent = dealersCurrent > 0 ? Math.round(revCurrent / dealersCurrent) : 0
+    const arpuPrevious = dealersPrevious > 0 ? Math.round(revPrevious / dealersPrevious) : 0
+
     kpiSummary.value = {
       monthlyRevenue: {
         current: revCurrent,
@@ -144,6 +149,11 @@ export function useAdminMetricsRevenue() {
         current: leadsCurrent,
         previousMonth: leadsPrevious,
         changePercent: pctChange(leadsCurrent, leadsPrevious),
+      },
+      arpu: {
+        current: arpuCurrent,
+        previousMonth: arpuPrevious,
+        changePercent: pctChange(arpuCurrent, arpuPrevious),
       },
     }
   }

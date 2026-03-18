@@ -55,6 +55,7 @@ function formatDetailValue(value: unknown): string {
   return String(value as string | number | boolean | bigint)
 }
 
+/** Composable for admin servicios. */
 export function useAdminServicios() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()

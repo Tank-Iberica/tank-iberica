@@ -73,6 +73,7 @@ export function getProviderLabel(provider: string): string {
 
 // ── Composable ───────────────────────────────────────────────────────
 
+/** Composable for admin usuarios page. */
 export function useAdminUsuariosPage() {
   const {
     users,
