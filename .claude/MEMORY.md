@@ -188,6 +188,17 @@ beforeAll(async () => {
 - Migraciones con conflictos: `DROP TABLE IF EXISTS ... CASCADE` antes de `CREATE TABLE IF NOT EXISTS`
 - `CREATE POLICY` no tiene `IF NOT EXISTS` → `DROP POLICY IF EXISTS` + `CREATE POLICY`
 - Materialized views no soportan ALTER TABLE RLS → envolver en `DO $$ BEGIN ... EXCEPTION WHEN OTHERS THEN NULL; END $$`
+- **ENUM conversion:** `DROP DEFAULT` antes de `ALTER COLUMN TYPE` para ENUMs, luego `SET DEFAULT 'value'::enum_type` después
+- **ENUM dependency chain:** Views, RLS policies y triggers que referencian la columna bloquean `ALTER COLUMN TYPE` → drop/recrear alrededor
+- **Idempotent migration pattern:** `DO $ BEGIN IF EXISTS (...) THEN ... END IF; END $;` para conversiones condicionales
+
+## Nuxt Supabase Type System (19-mar-2026)
+
+- **Nuxt Supabase module usa `app/types/database.types.ts`**, NO `types/supabase.ts`
+- `.nuxt/types/supabase-database.d.ts` exporta desde `../../app/types/database.types.ts`
+- `types/supabase.ts` es referencia regenerable pero NO la usa el módulo
+- **`database.types.ts` está desincronizado** con schema real — actualizarlo causa ~35 errores preexistentes
+- **Tarea futura:** Regenerar `database.types.ts` + arreglar todos los archivos dependientes → eliminar `(supabase as any)` casts
 
 ## Plan 10/10 (25/27 COMPLETADO)
 

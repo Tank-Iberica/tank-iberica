@@ -7,7 +7,7 @@
 
 ## Sesión 19-mar — Migration Sync a Remoto
 
-**33 migraciones aplicadas** (00091-00191) a Supabase remoto + TypeScript types regenerados.
+**33 migraciones aplicadas** (00091-00191) a Supabase remoto + TypeScript types regenerados + cast cleanup parcial.
 
 ### Fixes necesarios durante push:
 
@@ -22,7 +22,15 @@
 - 33 migraciones en remote `schema_migrations`
 - `types/supabase.ts` regenerado (8887 líneas, 144 tablas)
 - Typecheck limpio (0 errores)
+- Cast cleanup parcial: mejorados `as any` → `as Record<string, unknown>` en 3 server routes (crm-pipeline.patch, documents.patch, documents.post)
 - Pre-existentes con cast: `useEmailPreferences` (email*preferences.created_at), `useUserPanel` (subscriptions.pref*\*)
+
+### Pendiente — database.types.ts sync (tarea futura):
+
+- `app/types/database.types.ts` está desincronizado con el schema real de BD
+- Actualizarlo causa ~35 errores de tipos preexistentes en el codebase
+- Requiere sesión dedicada: regenerar tipos + arreglar todos los archivos dependientes
+- Tras esto, se podrán eliminar los `(supabase as any)` casts restantes en composables v5
 
 ---
 
