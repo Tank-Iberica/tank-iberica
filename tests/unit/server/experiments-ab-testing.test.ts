@@ -14,10 +14,9 @@ const mockSelectChain = {
 }
 const mockFrom = vi.fn(() => mockSelectChain)
 const mockClient = { rpc: mockRpc, from: mockFrom }
-vi.stubGlobal(
-  'useSupabaseServiceClient',
-  vi.fn(() => mockClient),
-)
+vi.mock('#supabase/server', () => ({
+  serverSupabaseServiceRole: vi.fn(() => mockClient),
+}))
 
 import {
   assignExperiment,

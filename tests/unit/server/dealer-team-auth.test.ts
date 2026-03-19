@@ -53,10 +53,9 @@ const mockClient = {
     update: mockUpdate,
   })),
 }
-vi.stubGlobal(
-  'useSupabaseServiceClient',
-  vi.fn(() => mockClient),
-)
+vi.mock('#supabase/server', () => ({
+  serverSupabaseServiceRole: vi.fn(() => mockClient),
+}))
 
 import {
   requireDealerRole,
