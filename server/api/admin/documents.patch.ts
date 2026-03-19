@@ -40,8 +40,7 @@ export default defineEventHandler(async (event) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error: err } = await (supabase as any)
     .from('dealer_documents')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .update(fields as any)
+    .update(fields as Record<string, unknown>)
     .eq('id', id)
     .select('id, dealer_id, type, status, title, notes, expires_at, updated_at')
     .single()

@@ -49,8 +49,7 @@ export default defineEventHandler(async (event) => {
     .insert({
       ...body,
       uploaded_by: user.id,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any)
+    })
     .select('id, dealer_id, type, status, title, file_url, created_at')
     .single()
 

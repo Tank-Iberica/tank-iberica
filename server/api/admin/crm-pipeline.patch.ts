@@ -47,29 +47,26 @@ export default defineEventHandler(async (event) => {
       .eq('id', id)
       .single()
 
-    if (current && (current as Record<string, unknown>).stage !== fields.stage) {
+    if (current && current.stage !== fields.stage) {
       // Record history
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any).from('crm_pipeline_history').insert({
         pipeline_id: id,
-        from_stage: (current as Record<string, unknown>).stage,
+        from_stage: current.stage,
         to_stage: fields.stage,
         changed_by: user.id,
         notes: fields.notes || null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      })
 
       // Update entered_stage_at
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(fields as any).entered_stage_at = new Date().toISOString()
+      ;(fields as Record<string, unknown>).entered_stage_at = new Date().toISOString()
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error: err } = await (supabase as any)
     .from('crm_pipeline')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .update(fields as any)
+    .update(fields as Record<string, unknown>)
     .eq('id', id)
     .select(
       'id, dealer_id, stage, notes, next_action_date, next_action_desc, entered_stage_at, updated_at',
