@@ -43,28 +43,28 @@ export default defineEventHandler(async (event) => {
     // Total active vehicles
     const { count: vehicleCount } = await supabase
       .from('vehicles')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('status', 'published')
     results.total_vehicles = vehicleCount ?? 0
 
     // Total active dealers
     const { count: dealerCount } = await supabase
       .from('dealers')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('status', 'active' as never)
     results.total_dealers = dealerCount ?? 0
 
     // Total leads last 30d
     const { count: leadCount } = await supabase
       .from('leads')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .gte('created_at', thirtyDaysAgo)
     results.total_leads_30d = leadCount ?? 0
 
     // Total views last 30d
     const { count: viewCount } = await supabase
       .from('analytics_events')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('event_type', 'vehicle_view')
       .gte('created_at', thirtyDaysAgo)
     results.total_views_30d = viewCount ?? 0

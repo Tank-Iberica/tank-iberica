@@ -45,9 +45,10 @@ async function countRows(
   column: string,
   value: string,
 ): Promise<number> {
+  // head: true → no data returned, just count
   const { count } = await supabase
     .from(table)
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq(column, value)
 
   return count ?? 0
@@ -57,7 +58,8 @@ async function countAllRows(
   supabase: ReturnType<typeof serverSupabaseServiceRole>,
   table: string,
 ): Promise<number> {
-  const { count } = await supabase.from(table).select('*', { count: 'exact', head: true })
+  // head: true → no data returned, just count
+  const { count } = await supabase.from(table).select('id', { count: 'exact', head: true })
 
   return count ?? 0
 }
@@ -123,7 +125,7 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
     const ids = dealerIds.map((d: Record<string, unknown>) => d.id as string)
     const { count } = await supabase
       .from('vehicles')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .in('dealer_id', ids)
 
     vehicleCount = count ?? 0

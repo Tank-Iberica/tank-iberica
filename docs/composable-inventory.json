@@ -2426,7 +2426,7 @@
   {
     "name": "useUndoAction",
     "file": "app/composables/useUndoAction.ts",
-    "lines": 151,
+    "lines": 148,
     "domain": "core",
     "exports": ["function useUndoAction", "type UndoActionConfig", "type PendingAction"],
     "dependencies": [],

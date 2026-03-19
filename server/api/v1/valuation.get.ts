@@ -175,7 +175,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   const today = new Date().toISOString().split('T')[0]
   const { count } = await supabase
     .from('api_usage')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('api_key', apiKey)
     .gte('created_at', today + 'T00:00:00Z')
 

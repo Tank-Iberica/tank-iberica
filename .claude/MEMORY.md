@@ -75,7 +75,7 @@
 - **Test quality classification** (18-mar): BEHAVIORAL (importa+ejecuta) vs STRUCTURAL (readFileSync+toContain) vs MIXED
 - **Quality gate**: `tests/unit/build/test-quality-gate.test.ts` — 0% structural en unit/
 - **Classifier script**: `scripts/classify-tests.mjs` (--json, --structural-only)
-- **Roadmap Autónomo v5**: `.claude/ROADMAP-AUTONOMO.md` — **14 items, 5 fases, 0/14 completados** (19-mar). 7 backlog activo + 7 FUTURO adelantados. Adapter pattern en 3 items con servicio externo (#132 Redis, #56 InfoCar, F6 search engine).
+- **Roadmap Autónomo v5**: `.claude/ROADMAP-AUTONOMO.md` — **14/14 COMPLETADO** (19-mar). 7 backlog activo + 7 FUTURO. 3 adapter patterns (searchEngine, cacheLayer, vehicleReportProvider) con fallback funcional. 6 migraciones (00179-00184). 242 tests nuevos.
 - **Backlog analysis (19-mar):** ~205 pendientes / ~510 total. Código ejecutable: 7. Código bloqueado: 68 (15 activos + 17 DEFERRED + 34 FUTURO + 2 OP). No-código: 130 (32 config + 18 founders + 40 pre-launch + 6 DEFERRED + 16 FUTURO + 18 OP). SINCRONIZADO con BACKLOG-EJECUTABLE.md.
 - **Profesionalización roadmap**: `.claude/ROADMAP-TEST-PROFESIONALIZACION.md` — **COMPLETADO + AUDITADO 19-mar**
   - 111 items verificados, 0 saltados. Auditoría exhaustiva item-por-item completa.
@@ -491,6 +491,18 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Key new files:** experiments.ts, emailScale.ts, dealerTeamAuth.ts, latencyMetrics.ts, actionRateLimit.ts, dbRateLimit.ts, useInject.ts + 15+ test files
 - **Key migrations:** 00176 (rate_limit_entries), 00177 (experiments/assignments/events), 00178 (dealer_team_members)
 - **Pendiente push:** Migraciones 00176-00178 necesitan `supabase db push`
+
+## Roadmap Autónomo v5 — COMPLETADO (19-mar-2026)
+
+- **14/14 items** completados en 5 fases (0-4)
+- **242 tests nuevos**, todos passing
+- **6 migraciones nuevas:** 00179 (source_vertical leads), 00180 (dealer_documents), 00181 (crm_pipeline), 00182 (faq_entries), 00183 (vertical_custom_fields), 00184 (supply_chain_intelligence)
+- **3 adapter patterns:** searchEngine.ts (Typesense/Meilisearch/Postgres), cacheLayer.ts (Upstash/in-memory), vehicleReportProvider.ts (InfoCar/CarVertical/mock)
+- **Nuevos composables:** useUserVerticalHistory, useActiveSessions, useFaq, useCustomFields, useSearch, useSupplyChainIntelligence
+- **Nuevos server utils:** searchEngine.ts, cacheLayer.ts, vehicleReportProvider.ts
+- **Admin endpoints:** documents (3), crm-pipeline (2)
+- **Pendiente push:** Migraciones 00179-00184 necesitan `supabase db push`
+- **Supabase mock pattern confirmado:** Proxy-based chain con thenable objects para await destructuring. `range()` returns thenable, NOT is thenable.
 
 ## Sub-archivos (leer bajo demanda)
 

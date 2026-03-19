@@ -9,7 +9,7 @@
 
 | Domain         | Count | Tested | Lines |
 | -------------- | ----- | ------ | ----- |
-| core           | 103   | 78/103 | 16860 |
+| core           | 103   | 78/103 | 16857 |
 | admin          | 86    | 78/86  | 25729 |
 | dashboard      | 34    | 32/34  | 10605 |
 | vehicles       | 10    | 9/10   | 2756  |
@@ -222,7 +222,7 @@
 | `useToast`                | `app/composables/useToast.ts`                    | 113   | 0    | ✅    |
 | `useTransactionHistory`   | `app/composables/useTransactionHistory.ts`       | 95    | 0    | ❌    |
 | `useTransport`            | `app/composables/useTransport.ts`                | 229   | 0    | ✅    |
-| `useUndoAction`           | `app/composables/useUndoAction.ts`               | 151   | 0    | ✅    |
+| `useUndoAction`           | `app/composables/useUndoAction.ts`               | 148   | 0    | ✅    |
 | `useUnreadMessages`       | `app/composables/useUnreadMessages.ts`           | 105   | 0    | ✅    |
 | `useUnsavedChanges`       | `app/composables/useUnsavedChanges.ts`           | 35    | 0    | ✅    |
 | `useUserChat`             | `app/composables/useUserChat.ts`                 | 214   | 0    | ✅    |

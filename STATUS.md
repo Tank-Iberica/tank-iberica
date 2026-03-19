@@ -1,9 +1,40 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-19 (Roadmap Autónomo v5 creado — 14 items) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v4 + setup servicios + test fixes + test professionalization (ver git log)
+**Última actualización:** 2026-03-19 (Roadmap v5 COMPLETO ✅ — 14/14 items) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Roadmap v5 — COMPLETADO (14/14 items)
+
+### Fase 0 — Quick Wins & SEO (3/3 ✅)
+
+- **0.1 (#208):** ✅ Commit y push — 180 archivos, 19,140 tests passing
+- **0.2 (#292):** ✅ BOTTLENECKS-LOAD-TESTING.md — 7 bottlenecks documentados
+- **0.3 (F5):** ✅ Glosario enhanced — JSON-LD DefinedTermSet, 19 tests
+
+### Fase 1 — Data Cleanup & Security (3/3 ✅)
+
+- **1.1 (#221):** ✅ select('\*') cleanup — count queries usan select('id'), 17 tests
+- **1.2 (#46):** ✅ Cross-vertical tracking — migration leads.source_vertical + composable, 17 tests
+- **1.3 (F41):** ✅ Active sessions — useActiveSessions + UI perfil/seguridad, 21 tests
+
+### Fase 2 — Admin Tools (3/3 ✅)
+
+- **2.1 (F39):** ✅ Admin documents — migration + 3 endpoints CRUD, 12 tests
+- **2.2 (F40):** ✅ CRM pipeline — migration + 2 endpoints + history, 7 tests
+- **2.3 (F55):** ✅ FAQ system — migration + composable useFaq, 14 tests
+
+### Fase 3 — Architecture & Infrastructure (3/3 ✅)
+
+- **3.1 (F51):** ✅ Custom fields JSONB — migration + useCustomFields + validateFieldValue, 15 tests
+- **3.2 (F6):** ✅ Search engine — adapter pattern (Typesense/Meilisearch/Postgres), 50 tests
+- **3.3 (#132):** ✅ Cache layer — adapter pattern (Upstash Redis/in-memory), 37 tests
+
+### Fase 4 — Data Intelligence (2/2 ✅)
+
+- **4.1 (#56):** ✅ Vehicle report API — adapter (InfoCar/CarVertical/mock), 31 tests
+- **4.2 (#49):** ✅ Supply chain intelligence — migration + composable + analytics, 21 tests
 
 ## Sesión 19-mar — Profesionalización de Tests: COMPLETADA + AUDITORÍA
 

@@ -10,6 +10,12 @@ const { t } = useI18n()
 const { updatePassword, logoutAll, loading: authLoading } = useAuth()
 const { deleteAccount, exportData, loading: profileLoading, error: profileError } = useUserProfile()
 const {
+  sessions: activeSessions,
+  loading: sessionsLoading,
+  fetchSessions,
+  removeSession,
+} = useActiveSessions()
+const {
   status: mfaStatus,
   loading: mfaLoading,
   qrCodeUri,
@@ -26,6 +32,7 @@ const showMfaSetup = ref(false)
 
 onMounted(() => {
   void checkStatus()
+  void fetchSessions()
 })
 
 async function onEnrollMfa() {
@@ -295,6 +302,44 @@ useHead({
         </template>
 
         <div v-if="mfaError" class="form-error" role="alert">{{ mfaError }}</div>
+      </section>
+
+      <!-- Active sessions / devices -->
+      <section class="section-card">
+        <h2 class="section-title">{{ $t('profile.security.activeSessionsTitle') }}</h2>
+        <p class="section-desc">{{ $t('profile.security.activeSessionsDesc') }}</p>
+
+        <div v-if="sessionsLoading" class="sessions-loading">
+          <p>{{ $t('common.loading') }}...</p>
+        </div>
+        <div v-else-if="activeSessions.length === 0" class="sessions-empty">
+          <p>{{ $t('profile.security.activeSessionsEmpty') }}</p>
+        </div>
+        <ul v-else class="sessions-list">
+          <li v-for="session in activeSessions" :key="session.id" class="session-item">
+            <div class="session-info">
+              <span class="session-device">{{ session.device_label }}</span>
+              <span v-if="session.ip_hint" class="session-ip">IP: {{ session.ip_hint }}.*.*</span>
+              <div class="session-meta">
+                <span
+                  >{{ $t('profile.security.activeSessionsLastSeen') }}:
+                  {{ new Date(session.last_seen).toLocaleDateString() }}</span
+                >
+                <span class="session-sep">&middot;</span>
+                <span>{{
+                  $t('profile.security.activeSessionsRequests', { count: session.request_count })
+                }}</span>
+              </div>
+            </div>
+            <button
+              class="btn-session-remove"
+              :aria-label="$t('profile.security.activeSessionsRemove')"
+              @click="removeSession(session.id)"
+            >
+              {{ $t('profile.security.activeSessionsRemove') }}
+            </button>
+          </li>
+        </ul>
       </section>
 
       <!-- Logout all devices -->
@@ -567,6 +612,81 @@ useHead({
 
 .btn-ghost:hover {
   color: var(--text-primary);
+}
+
+/* Sessions */
+.sessions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius);
+  background: var(--bg-secondary, #f9fafb);
+}
+
+.session-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.session-device {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.session-ip {
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
+  font-family: monospace;
+}
+
+.session-meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.session-sep {
+  margin: 0 0.25rem;
+}
+
+.btn-session-remove {
+  flex-shrink: 0;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-error);
+  background: transparent;
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  min-height: 2rem;
+}
+
+.btn-session-remove:hover {
+  background: var(--color-error);
+  color: var(--color-white);
+}
+
+.sessions-loading,
+.sessions-empty {
+  padding: 1rem 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 /* MFA */

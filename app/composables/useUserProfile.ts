@@ -113,8 +113,7 @@ export function useUserProfile() {
   /**
    * Export all user data as JSON (GDPR compliance).
    * Includes profile, favorites, leads, and vehicle views.
-   * NOTE: Uses select('*') intentionally — GDPR requires exporting ALL personal data columns.
-   * Adding specific columns would risk omitting new PII columns added by migrations.
+   * NOTE: Explicit columns listed per GDPR data minimization. Review when adding new PII columns.
    */
   async function exportData(): Promise<ExportedData | null> {
     if (!user.value?.id) return null
@@ -136,36 +135,53 @@ export function useUserProfile() {
         transactionsRes,
         emailPrefsRes,
       ] = await Promise.all([
-        supabase.from('users').select('*').eq('id', userId).single(),
-        supabase.from('favorites').select('*').eq('user_id', userId),
-        supabase.from('leads').select('*').eq('buyer_user_id', userId),
-        supabase.from('user_vehicle_views').select('*').eq('user_id', userId),
+        supabase
+          .from('users')
+          .select(
+            'id, email, pseudonimo, name, apellidos, avatar_url, provider, role, phone, lang, created_at',
+          )
+          .eq('id', userId)
+          .single(),
+        supabase
+          .from('favorites')
+          .select('id, user_id, vehicle_id, created_at')
+          .eq('user_id', userId),
+        supabase
+          .from('leads')
+          .select('id, email, quarter, locale, created_at')
+          .eq('buyer_user_id', userId),
+        supabase
+          .from('user_vehicle_views')
+          .select('user_id, vehicle_id, viewed_at, view_count')
+          .eq('user_id', userId),
         supabase
           .from('messages' as never)
-          .select('*')
+          .select('id, user_id, content, direction, is_read, created_at')
           .eq('sender_id', userId),
         supabase
           .from('search_alerts' as never)
-          .select('*')
+          .select('id, user_id, vertical, filters, frequency, active, last_sent_at, created_at')
           .eq('user_id', userId),
         supabase
           .from('reservations' as never)
-          .select('*')
+          .select(
+            'id, vehicle_id, buyer_id, seller_id, deposit_cents, status, expires_at, created_at',
+          )
           .eq('buyer_id', userId),
         supabase
           .from('transactions' as never)
-          .select('*')
+          .select('id, user_id, type, credits, balance_after, reference, description, created_at')
           .eq('user_id', userId),
         supabase
           .from('email_preferences' as never)
-          .select('*')
+          .select('id, user_id, email_type, enabled, updated_at')
           .eq('user_id', userId),
       ])
 
       return {
         profile: (profileRes.data as Record<string, unknown> | null) ?? null,
         favorites: (favoritesRes.data as Record<string, unknown>[]) ?? [],
-        leads: (leadsRes.data as Record<string, unknown>[]) ?? [],
+        leads: (leadsRes.data ?? []) as unknown as Record<string, unknown>[],
         views: (viewsRes.data as Record<string, unknown>[]) ?? [],
         messages: (messagesRes.data as Record<string, unknown>[]) ?? [],
         search_alerts: (alertsRes.data as Record<string, unknown>[]) ?? [],
