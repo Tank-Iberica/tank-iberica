@@ -12,10 +12,12 @@ CREATE TABLE IF NOT EXISTS public.user_credits (
 ALTER TABLE public.user_credits ENABLE ROW LEVEL SECURITY;
 
 -- Users can read and update their own credit balance
+DROP POLICY IF EXISTS "user_credits_select_own" ON public.user_credits;
 CREATE POLICY "user_credits_select_own"
   ON public.user_credits FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "user_credits_update_own" ON public.user_credits;
 CREATE POLICY "user_credits_update_own"
   ON public.user_credits FOR UPDATE
   USING (auth.uid() = user_id)
@@ -39,6 +41,7 @@ CREATE TABLE IF NOT EXISTS public.credit_transactions (
 ALTER TABLE public.credit_transactions ENABLE ROW LEVEL SECURITY;
 
 -- Users can read their own transactions
+DROP POLICY IF EXISTS "credit_transactions_select_own" ON public.credit_transactions;
 CREATE POLICY "credit_transactions_select_own"
   ON public.credit_transactions FOR SELECT
   USING (auth.uid() = user_id);
@@ -56,11 +59,13 @@ CREATE TABLE IF NOT EXISTS public.vehicle_unlocks (
 ALTER TABLE public.vehicle_unlocks ENABLE ROW LEVEL SECURITY;
 
 -- Users can read their own unlocks
+DROP POLICY IF EXISTS "vehicle_unlocks_select_own" ON public.vehicle_unlocks;
 CREATE POLICY "vehicle_unlocks_select_own"
   ON public.vehicle_unlocks FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Users can insert their own unlocks (server-side validation enforces balance)
+DROP POLICY IF EXISTS "vehicle_unlocks_insert_own" ON public.vehicle_unlocks;
 CREATE POLICY "vehicle_unlocks_insert_own"
   ON public.vehicle_unlocks FOR INSERT
   WITH CHECK (auth.uid() = user_id);

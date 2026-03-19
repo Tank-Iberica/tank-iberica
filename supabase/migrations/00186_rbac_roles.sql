@@ -74,10 +74,12 @@ ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE role_permissions ENABLE ROW LEVEL SECURITY;
 
 -- user_roles: users see their own; admins see all
+DROP POLICY IF EXISTS "Users can read own roles" ON user_roles;
 CREATE POLICY "Users can read own roles"
   ON user_roles FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can manage roles" ON user_roles;
 CREATE POLICY "Admins can manage roles"
   ON user_roles FOR ALL
   USING (
@@ -89,11 +91,13 @@ CREATE POLICY "Admins can manage roles"
   );
 
 -- role_permissions: readable by authenticated users
+DROP POLICY IF EXISTS "Authenticated users can read permissions" ON role_permissions;
 CREATE POLICY "Authenticated users can read permissions"
   ON role_permissions FOR SELECT
   USING (auth.role() = 'authenticated');
 
 -- Only super_admin can modify permissions
+DROP POLICY IF EXISTS "Super admins manage permissions" ON role_permissions;
 CREATE POLICY "Super admins manage permissions"
   ON role_permissions FOR ALL
   USING (

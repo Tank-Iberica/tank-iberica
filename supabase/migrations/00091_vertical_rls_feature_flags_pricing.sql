@@ -62,15 +62,24 @@ CREATE POLICY "vehicles_dealer_delete" ON vehicles
   );
 
 -- 2b. Historico: dealer only sees archive from their vertical
-DROP POLICY IF EXISTS "historico_vertical_dealer" ON historico;
-CREATE POLICY "historico_vertical_dealer" ON historico
-  FOR SELECT
-  USING (
-    dealer_id IN (
-      SELECT id FROM dealers WHERE user_id = auth.uid()
-    )
-    AND vertical = get_dealer_vertical()
-  );
+-- Only create if historico has a vertical column
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'historico' AND column_name = 'vertical'
+  ) THEN
+    DROP POLICY IF EXISTS "historico_vertical_dealer" ON historico;
+    CREATE POLICY "historico_vertical_dealer" ON historico
+      FOR SELECT
+      USING (
+        dealer_id IN (
+          SELECT id FROM dealers WHERE user_id = auth.uid()
+        )
+        AND vertical = get_dealer_vertical()
+      );
+  END IF;
+END $$;
 
 -- ============================================================================
 -- 3. Feature flags: add vertical column for per-vertical flags

@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS experiment_assignments (
   UNIQUE (experiment_id, anonymous_id)
 );
 
-CREATE INDEX idx_exp_assignments_experiment ON experiment_assignments (experiment_id, variant_id);
-CREATE INDEX idx_exp_assignments_user ON experiment_assignments (user_id) WHERE user_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_exp_assignments_experiment ON experiment_assignments (experiment_id, variant_id);
+CREATE INDEX IF NOT EXISTS idx_exp_assignments_user ON experiment_assignments (user_id) WHERE user_id IS NOT NULL;
 
 -- ── Experiment events (conversions) ──────────────────────────────────────────
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS experiment_events (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_exp_events_experiment ON experiment_events (experiment_id, variant_id, event_type);
+CREATE INDEX IF NOT EXISTS idx_exp_events_experiment ON experiment_events (experiment_id, variant_id, event_type);
 
 -- RLS
 ALTER TABLE experiments ENABLE ROW LEVEL SECURITY;

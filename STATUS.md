@@ -1,9 +1,30 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-19 (Roadmap v5 COMPLETO ✅ — 14/14 items) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization (ver git log)
+**Última actualización:** 2026-03-19 (Migraciones sync completada — 33 migraciones aplicadas a remoto) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 19-mar — Migration Sync a Remoto
+
+**33 migraciones aplicadas** (00091-00191) a Supabase remoto + TypeScript types regenerados.
+
+### Fixes necesarios durante push:
+
+- **00094/00137:** `DROP DEFAULT` antes de `ALTER COLUMN TYPE` para ENUM conversions
+- **00137:** Drop/recrear vista `founding_expiry_check`, policies `auctions_public_read`/`comments_*`, trigger `trg_update_verification_level`
+- **00155:** `user_roles` → `is_admin()` (tabla no existía aún)
+- **00180:** `users.dealer_id` → `dealers.user_id`, `update_updated_at_column()` → `update_updated_at()`
+- **Renombrados:** 00089→185, 00090→186, 00145→187, 00165→188, 00117→189, 00118→190, 00119→191
+
+### Resultado:
+
+- 33 migraciones en remote `schema_migrations`
+- `types/supabase.ts` regenerado (8887 líneas, 144 tablas)
+- Typecheck limpio (0 errores)
+- Pre-existentes con cast: `useEmailPreferences` (email*preferences.created_at), `useUserPanel` (subscriptions.pref*\*)
+
+---
 
 ## Roadmap v5 — COMPLETADO (14/14 items)
 

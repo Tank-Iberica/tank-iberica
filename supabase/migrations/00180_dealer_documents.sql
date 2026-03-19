@@ -55,32 +55,31 @@ CREATE INDEX IF NOT EXISTS idx_dealer_documents_expires
   ON dealer_documents (expires_at)
   WHERE expires_at IS NOT NULL;
 
--- Updated at trigger
-CREATE OR REPLACE TRIGGER set_updated_at_dealer_documents
+-- Updated at trigger (use update_updated_at which exists in this schema)
+DROP TRIGGER IF EXISTS set_updated_at_dealer_documents ON dealer_documents;
+CREATE TRIGGER set_updated_at_dealer_documents
   BEFORE UPDATE ON dealer_documents
   FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+  EXECUTE FUNCTION update_updated_at();
 
 -- RLS
 ALTER TABLE dealer_documents ENABLE ROW LEVEL SECURITY;
 
 -- Admins can do everything
+DROP POLICY IF EXISTS dealer_documents_admin_all ON dealer_documents;
 CREATE POLICY dealer_documents_admin_all ON dealer_documents
   FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  USING (is_admin());
 
 -- Dealers can read their own documents
+DROP POLICY IF EXISTS dealer_documents_dealer_read ON dealer_documents;
 CREATE POLICY dealer_documents_dealer_read ON dealer_documents
   FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM users
-      WHERE users.id = auth.uid()
-        AND users.dealer_id = dealer_documents.dealer_id
+      SELECT 1 FROM dealers
+      WHERE dealers.user_id = auth.uid()
+        AND dealers.id = dealer_documents.dealer_id
     )
   );
 

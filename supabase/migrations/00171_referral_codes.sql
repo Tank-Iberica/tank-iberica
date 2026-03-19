@@ -28,6 +28,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_dealer_referral_code ON dealers;
 CREATE TRIGGER trg_dealer_referral_code
   BEFORE INSERT ON dealers
   FOR EACH ROW
@@ -49,6 +50,7 @@ CREATE TABLE IF NOT EXISTS referral_rewards (
 ALTER TABLE referral_rewards ENABLE ROW LEVEL SECURITY;
 
 -- Dealers can read their own referral rewards
+DROP POLICY IF EXISTS "referral_rewards_own_read" ON referral_rewards;
 CREATE POLICY "referral_rewards_own_read" ON referral_rewards
   FOR SELECT USING (
     inviter_dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())
@@ -56,6 +58,7 @@ CREATE POLICY "referral_rewards_own_read" ON referral_rewards
   );
 
 -- Admin full access
+DROP POLICY IF EXISTS "referral_rewards_admin_all" ON referral_rewards;
 CREATE POLICY "referral_rewards_admin_all" ON referral_rewards
   FOR ALL USING (
     EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')

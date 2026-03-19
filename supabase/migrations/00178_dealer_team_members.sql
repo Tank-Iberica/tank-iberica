@@ -27,14 +27,15 @@ CREATE TABLE IF NOT EXISTS dealer_team_members (
   UNIQUE (dealer_id, email)
 );
 
-CREATE INDEX idx_team_members_dealer ON dealer_team_members (dealer_id, status);
-CREATE INDEX idx_team_members_user ON dealer_team_members (user_id) WHERE user_id IS NOT NULL;
-CREATE INDEX idx_team_members_invite_token ON dealer_team_members (invite_token) WHERE invite_token IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_team_members_dealer ON dealer_team_members (dealer_id, status);
+CREATE INDEX IF NOT EXISTS idx_team_members_user ON dealer_team_members (user_id) WHERE user_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_team_members_invite_token ON dealer_team_members (invite_token) WHERE invite_token IS NOT NULL;
 
 -- RLS
 ALTER TABLE dealer_team_members ENABLE ROW LEVEL SECURITY;
 
 -- Owner/manager can see their dealer's team members
+DROP POLICY IF EXISTS team_members_select ON dealer_team_members;
 CREATE POLICY team_members_select ON dealer_team_members
   FOR SELECT USING (
     auth.uid() IN (
@@ -45,6 +46,7 @@ CREATE POLICY team_members_select ON dealer_team_members
   );
 
 -- Only owners can insert (invite) team members
+DROP POLICY IF EXISTS team_members_insert ON dealer_team_members;
 CREATE POLICY team_members_insert ON dealer_team_members
   FOR INSERT WITH CHECK (
     auth.uid() IN (
@@ -56,6 +58,7 @@ CREATE POLICY team_members_insert ON dealer_team_members
   );
 
 -- Only owners can update team members
+DROP POLICY IF EXISTS team_members_update ON dealer_team_members;
 CREATE POLICY team_members_update ON dealer_team_members
   FOR UPDATE USING (
     auth.uid() IN (
@@ -67,6 +70,7 @@ CREATE POLICY team_members_update ON dealer_team_members
   );
 
 -- Service role bypass for server operations
+DROP POLICY IF EXISTS team_members_service ON dealer_team_members;
 CREATE POLICY team_members_service ON dealer_team_members
   FOR ALL USING (auth.role() = 'service_role');
 

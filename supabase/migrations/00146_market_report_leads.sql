@@ -18,11 +18,13 @@ CREATE INDEX IF NOT EXISTS idx_market_reports_generated_at ON market_reports (ge
 ALTER TABLE market_reports ENABLE ROW LEVEL SECURITY;
 
 -- Public can read report metadata (to show stats in the gate component)
+DROP POLICY IF EXISTS "public_select_market_reports" ON market_reports;
 CREATE POLICY "public_select_market_reports"
   ON market_reports FOR SELECT
   USING (true);
 
 -- Only service_role can insert/update/delete
+DROP POLICY IF EXISTS "service_role_all_market_reports" ON market_reports;
 CREATE POLICY "service_role_all_market_reports"
   ON market_reports FOR ALL
   TO service_role
@@ -46,11 +48,13 @@ CREATE INDEX IF NOT EXISTS idx_market_report_leads_created ON market_report_lead
 ALTER TABLE market_report_leads ENABLE ROW LEVEL SECURITY;
 
 -- Anonymous users can insert their own lead (email capture)
+DROP POLICY IF EXISTS "anon_insert_market_report_leads" ON market_report_leads;
 CREATE POLICY "anon_insert_market_report_leads"
   ON market_report_leads FOR INSERT
   WITH CHECK (true);
 
 -- Only service_role can read leads (admin CRM)
+DROP POLICY IF EXISTS "service_role_all_market_report_leads" ON market_report_leads;
 CREATE POLICY "service_role_all_market_report_leads"
   ON market_report_leads FOR ALL
   TO service_role

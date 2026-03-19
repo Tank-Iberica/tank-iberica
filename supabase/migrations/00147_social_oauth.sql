@@ -20,6 +20,7 @@ CREATE INDEX IF NOT EXISTS idx_social_oauth_states_expires ON social_oauth_state
 ALTER TABLE social_oauth_states ENABLE ROW LEVEL SECURITY;
 
 -- Only service_role can read/write oauth states (server-side only)
+DROP POLICY IF EXISTS "service_role_all_social_oauth_states" ON social_oauth_states;
 CREATE POLICY "service_role_all_social_oauth_states"
   ON social_oauth_states FOR ALL
   TO service_role

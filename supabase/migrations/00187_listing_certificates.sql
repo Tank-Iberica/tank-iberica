@@ -19,11 +19,13 @@ CREATE INDEX IF NOT EXISTS listing_certificates_code_idx ON listing_certificates
 ALTER TABLE listing_certificates ENABLE ROW LEVEL SECURITY;
 
 -- Users can only see their own certificates
+DROP POLICY IF EXISTS "Users can view own certificates" ON listing_certificates;
 CREATE POLICY "Users can view own certificates"
   ON listing_certificates FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Admins can see all certificates
+DROP POLICY IF EXISTS "Admins can manage certificates" ON listing_certificates;
 CREATE POLICY "Admins can manage certificates"
   ON listing_certificates FOR ALL
   USING (

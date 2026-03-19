@@ -41,6 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_fp_last_seen ON user_fingerprints(last_seen DESC)
 ALTER TABLE user_fingerprints ENABLE ROW LEVEL SECURITY;
 
 -- Admins can see all fingerprints
+DROP POLICY IF EXISTS "fp_admin_all" ON user_fingerprints;
 CREATE POLICY "fp_admin_all" ON user_fingerprints
   FOR ALL
   USING (
@@ -51,6 +52,7 @@ CREATE POLICY "fp_admin_all" ON user_fingerprints
   );
 
 -- Users can see their own fingerprints
+DROP POLICY IF EXISTS "fp_own_read" ON user_fingerprints;
 CREATE POLICY "fp_own_read" ON user_fingerprints
   FOR SELECT
   USING (user_id = auth.uid());

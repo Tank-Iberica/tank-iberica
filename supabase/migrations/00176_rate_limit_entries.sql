@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS rate_limit_entries (
 );
 
 -- Index for efficient window queries and cleanup
-CREATE INDEX idx_rate_limit_key_created ON rate_limit_entries (key, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_rate_limit_key_created ON rate_limit_entries (key, created_at DESC);
 -- Index for cleanup of old entries
-CREATE INDEX idx_rate_limit_created ON rate_limit_entries (created_at);
+CREATE INDEX IF NOT EXISTS idx_rate_limit_created ON rate_limit_entries (created_at);
 
 -- RLS: only service role can access
 ALTER TABLE rate_limit_entries ENABLE ROW LEVEL SECURITY;

@@ -18,14 +18,15 @@ CREATE TABLE IF NOT EXISTS negotiation_offers (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_negotiation_offers_conversation ON negotiation_offers(conversation_id);
-CREATE INDEX idx_negotiation_offers_vehicle ON negotiation_offers(vehicle_id);
-CREATE INDEX idx_negotiation_offers_sender ON negotiation_offers(sender_id);
-CREATE INDEX idx_negotiation_offers_status ON negotiation_offers(status) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_negotiation_offers_conversation ON negotiation_offers(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_negotiation_offers_vehicle ON negotiation_offers(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_negotiation_offers_sender ON negotiation_offers(sender_id);
+CREATE INDEX IF NOT EXISTS idx_negotiation_offers_status ON negotiation_offers(status) WHERE status = 'pending';
 
 -- RLS: Only conversation participants can see/create offers
 ALTER TABLE negotiation_offers ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view offers in their conversations" ON negotiation_offers;
 CREATE POLICY "Users can view offers in their conversations" ON negotiation_offers
   FOR SELECT USING (
     EXISTS (
@@ -35,6 +36,7 @@ CREATE POLICY "Users can view offers in their conversations" ON negotiation_offe
     )
   );
 
+DROP POLICY IF EXISTS "Authenticated users can create offers in their conversations" ON negotiation_offers;
 CREATE POLICY "Authenticated users can create offers in their conversations" ON negotiation_offers
   FOR INSERT WITH CHECK (
     auth.uid() = sender_id
@@ -46,6 +48,7 @@ CREATE POLICY "Authenticated users can create offers in their conversations" ON 
     )
   );
 
+DROP POLICY IF EXISTS "Offer participants can update status" ON negotiation_offers;
 CREATE POLICY "Offer participants can update status" ON negotiation_offers
   FOR UPDATE USING (
     EXISTS (
@@ -56,6 +59,7 @@ CREATE POLICY "Offer participants can update status" ON negotiation_offers
   );
 
 -- Admin full access
+DROP POLICY IF EXISTS "Admins full access to negotiation_offers" ON negotiation_offers;
 CREATE POLICY "Admins full access to negotiation_offers" ON negotiation_offers
   FOR ALL USING (
     EXISTS (SELECT 1 FROM auth.users WHERE id = auth.uid() AND raw_user_meta_data->>'role' = 'admin')
@@ -80,23 +84,26 @@ CREATE TABLE IF NOT EXISTS operation_timeline (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_operation_timeline_vehicle ON operation_timeline(vehicle_id);
-CREATE INDEX idx_operation_timeline_dealer ON operation_timeline(dealer_id);
-CREATE INDEX idx_operation_timeline_stage ON operation_timeline(stage);
+CREATE INDEX IF NOT EXISTS idx_operation_timeline_vehicle ON operation_timeline(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_operation_timeline_dealer ON operation_timeline(dealer_id);
+CREATE INDEX IF NOT EXISTS idx_operation_timeline_stage ON operation_timeline(stage);
 
 -- RLS: Dealer and buyer can see timeline for their transactions
 ALTER TABLE operation_timeline ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Participants can view operation timeline" ON operation_timeline;
 CREATE POLICY "Participants can view operation timeline" ON operation_timeline
   FOR SELECT USING (
     dealer_id = auth.uid() OR buyer_id = auth.uid()
   );
 
+DROP POLICY IF EXISTS "Dealer can add timeline entries" ON operation_timeline;
 CREATE POLICY "Dealer can add timeline entries" ON operation_timeline
   FOR INSERT WITH CHECK (
     auth.uid() = created_by AND (dealer_id = auth.uid() OR buyer_id = auth.uid())
   );
 
+DROP POLICY IF EXISTS "Admins full access to operation_timeline" ON operation_timeline;
 CREATE POLICY "Admins full access to operation_timeline" ON operation_timeline
   FOR ALL USING (
     EXISTS (SELECT 1 FROM auth.users WHERE id = auth.uid() AND raw_user_meta_data->>'role' = 'admin')

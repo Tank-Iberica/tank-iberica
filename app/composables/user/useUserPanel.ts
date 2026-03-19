@@ -364,7 +364,8 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
         }
       }
 
-      const { data: subData } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: subData } = await (supabase as any)
         .from('subscriptions')
         .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
         .eq('email', sessionUser.value.email || '')

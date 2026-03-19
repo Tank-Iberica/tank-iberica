@@ -61,11 +61,13 @@ ALTER TABLE vehicle_groups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vehicle_group_items ENABLE ROW LEVEL SECURITY;
 
 -- Public can see active groups
+DROP POLICY IF EXISTS "vehicle_groups_select_public" ON vehicle_groups;
 CREATE POLICY "vehicle_groups_select_public"
   ON vehicle_groups FOR SELECT
   USING (status = 'active');
 
 -- Dealers can manage their own groups
+DROP POLICY IF EXISTS "vehicle_groups_insert_dealer" ON vehicle_groups;
 CREATE POLICY "vehicle_groups_insert_dealer"
   ON vehicle_groups FOR INSERT
   WITH CHECK (
@@ -75,6 +77,7 @@ CREATE POLICY "vehicle_groups_insert_dealer"
     )
   );
 
+DROP POLICY IF EXISTS "vehicle_groups_update_dealer" ON vehicle_groups;
 CREATE POLICY "vehicle_groups_update_dealer"
   ON vehicle_groups FOR UPDATE
   USING (
@@ -84,6 +87,7 @@ CREATE POLICY "vehicle_groups_update_dealer"
     )
   );
 
+DROP POLICY IF EXISTS "vehicle_groups_delete_dealer" ON vehicle_groups;
 CREATE POLICY "vehicle_groups_delete_dealer"
   ON vehicle_groups FOR DELETE
   USING (
@@ -94,13 +98,13 @@ CREATE POLICY "vehicle_groups_delete_dealer"
   );
 
 -- Admin can manage all groups (including platform-wide curated ones)
+DROP POLICY IF EXISTS "vehicle_groups_admin_all" ON vehicle_groups;
 CREATE POLICY "vehicle_groups_admin_all"
   ON vehicle_groups FOR ALL
-  USING (
-    EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'super_admin'))
-  );
+  USING (is_admin());
 
 -- Junction table: same visibility as parent group
+DROP POLICY IF EXISTS "vehicle_group_items_select_public" ON vehicle_group_items;
 CREATE POLICY "vehicle_group_items_select_public"
   ON vehicle_group_items FOR SELECT
   USING (
@@ -110,6 +114,7 @@ CREATE POLICY "vehicle_group_items_select_public"
     )
   );
 
+DROP POLICY IF EXISTS "vehicle_group_items_manage_dealer" ON vehicle_group_items;
 CREATE POLICY "vehicle_group_items_manage_dealer"
   ON vehicle_group_items FOR ALL
   USING (
@@ -121,11 +126,10 @@ CREATE POLICY "vehicle_group_items_manage_dealer"
     )
   );
 
+DROP POLICY IF EXISTS "vehicle_group_items_admin_all" ON vehicle_group_items;
 CREATE POLICY "vehicle_group_items_admin_all"
   ON vehicle_group_items FOR ALL
-  USING (
-    EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'super_admin'))
-  );
+  USING (is_admin());
 
 -- ============================================================================
 -- 5. Updated_at trigger
@@ -139,6 +143,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_vehicle_groups_updated_at ON vehicle_groups;
 CREATE TRIGGER trg_vehicle_groups_updated_at
   BEFORE UPDATE ON vehicle_groups
   FOR EACH ROW
