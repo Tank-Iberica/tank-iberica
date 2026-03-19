@@ -72,6 +72,27 @@
 - Pre-push hook: solo `typecheck + lint` (NO `npm run test` — demasiado lento).
 - Plan completo: `docs/legacy/TESTING-IMPROVEMENT-PLAN.md` (8 fases — TODAS COMPLETAS)
 - **IDOR tests** (13 tests): Supabase staging directo. Requieren `STAGING_SUPABASE_URL` + `STAGING_SUPABASE_KEY`.
+- **Test quality classification** (18-mar): BEHAVIORAL (importa+ejecuta) vs STRUCTURAL (readFileSync+toContain) vs MIXED
+- **Quality gate**: `tests/unit/build/test-quality-gate.test.ts` — 0% structural en unit/
+- **Classifier script**: `scripts/classify-tests.mjs` (--json, --structural-only)
+- **Roadmap Autónomo v5**: `.claude/ROADMAP-AUTONOMO.md` — **14 items, 5 fases, 0/14 completados** (19-mar). 7 backlog activo + 7 FUTURO adelantados. Adapter pattern en 3 items con servicio externo (#132 Redis, #56 InfoCar, F6 search engine).
+- **Backlog analysis (19-mar):** ~205 pendientes / ~510 total. Código ejecutable: 7. Código bloqueado: 68 (15 activos + 17 DEFERRED + 34 FUTURO + 2 OP). No-código: 130 (32 config + 18 founders + 40 pre-launch + 6 DEFERRED + 16 FUTURO + 18 OP). SINCRONIZADO con BACKLOG-EJECUTABLE.md.
+- **Profesionalización roadmap**: `.claude/ROADMAP-TEST-PROFESIONALIZACION.md` — **COMPLETADO + AUDITADO 19-mar**
+  - 111 items verificados, 0 saltados. Auditoría exhaustiva item-por-item completa.
+  - Fases 0-2: Infra + conversiones + mixed splits (DONE)
+  - Fases 3-5: 59 structural tests movidos a `tests/conformance/` → 8 convertidos a behavioral = 51 en conformance
+  - Fase 6: Quality gate enforced 0%, clasificador mejorado (false positive fix)
+  - **Resultado:** 973 behavioral / 0 structural / 0 mixed en tests/unit/ (17,982 tests)
+  - **tests/conformance/** = 51 archivos (10 root + 15 build + 14 components + 11 server + 1 security)
+  - **Config test conversion pattern**: `tests/helpers/nuxtConfig.ts` loads config as object (mock defineNuxtConfig as identity), YAML via `yaml.parse()`, JS config via dynamic `import()`
+  - **Classifier gotchas**: avoid `readFileSync + .includes() + .toBe(true)` combo (triggers audit pattern) — use `.toBeTruthy()` instead; avoid `.toContain()` with readFileSync present — use `.toMatch()` or `.toEqual()`
+  - **Gap menor pendiente:** ESLint rule `require-autocomplete` (item 5.22) no creada
+- **Mocking patterns for behavioral conversion**:
+  - Nuxt composables: `vi.stubGlobal('useSupabaseClient', vi.fn(() => mockClient))`
+  - Server auto-imports: `vi.stubGlobal('useSupabaseServiceClient', vi.fn(() => mockClient))`
+  - h3: `vi.mock('h3', async () => ({ ...actual, createError: custom }))`
+  - #supabase/server: `vi.mock('#supabase/server', () => ({ serverSupabaseServiceRole: () => ({ rpc: mockRpc }) }))`
+  - Circuit breaker: use REAL module (not mocked) for integration-style behavioral tests
 - **Suite (09-mar pre-merge)**: 747 archivos, 0 fallos. Coverage: 73.67% statements.
 - **Suite (17-mar post-fix)**: 918 archivos, 17,334 tests, 0 failures. All pre-existing failures fixed.
 - **Suite (17-mar backfill)**: 921 archivos, 17,446 tests, 0 failures. +88 tests (9 items backfill) + 4 flaky fixes.
@@ -127,6 +148,14 @@ beforeAll(async () => {
 - **Lo crítico CUBIERTO:** stripe webhook ~95%, search-alerts 100%, founding-expiry 99%, useAuction 99%, useReservation 100%, useAuth ~95%, useConversation ~95%, valuation.get 100%, execute-migration 100%
 - **Pendiente (no urgente):** componentes Vue y páginas — posponer hasta feature freeze
 - **Patrón componentes Vue:** shallowMount + `$t: (k) => k` mock + vi.stubGlobal para Nuxt auto-imports + vi.mock para explicit imports. Restaurar Vue reactivity reales (ref, computed, watch) con vi.stubGlobal para que template funcione.
+- **ROOT CAUSE: setup.ts Vue stubs break SFC v-if:** `tests/setup.ts` stubs `ref` with `(val) => ({ value: val })` — plain object WITHOUT `__v_isRef` flag. Vue template compiler doesn't auto-unwrap → `v-if="showBanner"` evaluates `{ value: false }` as TRUTHY (non-null object). Fix: per-file override with real Vue imports BEFORE mount:
+  ```typescript
+  import { ref, watch, onUnmounted } from 'vue'
+  vi.stubGlobal('ref', ref)
+  vi.stubGlobal('watch', watch)
+  vi.stubGlobal('onUnmounted', onUnmounted)
+  ```
+  Global fix FAILED (52+ files break — real `watch()` fires composable watchers hitting undefined globals). Per-file override works because SFC `setup()` runs at mount time, not import time.
 - **Fix común tests:** `setResponseHeader: vi.fn()` en mock de h3; $t retorna i18n key, no texto traducido; `createError` de h3 también necesita mock cuando se usa `validateBody`
 - **`vi.stubGlobal` leak entre describe blocks**: stubs a nivel de `it()` persisten en tests posteriores. Siempre re-stubear en `beforeEach` del describe. Ejemplo: api-stripe.test.ts — checkout-credits re-stubeaba `useRuntimeConfig` sin `cronSecret`, afectando webhook tests.
 - **Cascading test failures from missing afterEach**: If a test changes global state (e.g., `useRuntimeConfig` stub) and its assertion fails BEFORE restore code runs, all subsequent tests see stale state. Always use `afterEach` for cleanup, not inline restore after assertions.
@@ -450,6 +479,18 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **7 bloques:** Estabilidad (48), Usuarios/Negocio (49), Rendimiento Real (50), Seguridad Auditada (51), Accesibilidad (52), Resiliencia/Operación (53), Verticales Probadas (54)
 - **No son código** — se validan con tiempo, usuarios reales, dinero real y fallos reales post-lanzamiento (6-12 meses)
 - **Backlog total:** ~510 items, 41 bloques, ~55 sem código + 6-12 mes operación
+
+## Roadmap Autónomo v4 — COMPLETADO + SINCRONIZADO (18-mar / 19-mar)
+
+- **36/36 items** completados en 7 fases (3 sesiones)
+- **~450+ tests nuevos**, todos passing
+- **ROADMAP-AUTONOMO.md:** 36/36 ✅ + headers N/N (sincronizado 19-mar)
+- **BACKLOG-EJECUTABLE.md:** 33 items sincronizados como ✅ (19-mar)
+- **Fases 0-5:** cleanup, monitoring, security hardening, UX, architecture, testing infra
+- **Fase 6 (Advanced):** A/B testing (migration 00177 + experiments util + admin CRUD), email at scale (Resend+SES fallback + circuit breaker + warming), multi-user dealer (migration 00178 + RBAC + invite flow)
+- **Key new files:** experiments.ts, emailScale.ts, dealerTeamAuth.ts, latencyMetrics.ts, actionRateLimit.ts, dbRateLimit.ts, useInject.ts + 15+ test files
+- **Key migrations:** 00176 (rate_limit_entries), 00177 (experiments/assignments/events), 00178 (dealer_team_members)
+- **Pendiente push:** Migraciones 00176-00178 necesitan `supabase db push`
 
 ## Sub-archivos (leer bajo demanda)
 

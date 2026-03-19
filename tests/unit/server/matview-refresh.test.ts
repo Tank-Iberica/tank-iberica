@@ -1,91 +1,89 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync, readdirSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'server/api/cron/refresh-matviews.post.ts'), 'utf-8')
+vi.hoisted(() => {
+  ;(globalThis as any).defineEventHandler = (fn: Function) => fn
+})
+
+vi.mock('h3', () => ({
+  defineEventHandler: (fn: Function) => fn,
+}))
+
+const mockRpc = vi.fn()
+vi.mock('#supabase/server', () => ({
+  serverSupabaseServiceRole: () => ({ rpc: mockRpc }),
+}))
+
+vi.mock('../../../server/utils/logger', () => ({
+  logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
+}))
+
+vi.mock('../../../server/utils/verifyCronSecret', () => ({
+  verifyCronSecret: vi.fn(),
+}))
+
+import handler from '../../../server/api/cron/refresh-matviews.post'
+import { logger } from '../../../server/utils/logger'
+import { verifyCronSecret } from '../../../server/utils/verifyCronSecret'
+
+const mockEvent = { context: {} } as any
 
 describe('Materialized views refresh schedule (#144)', () => {
-  describe('Cron endpoint structure', () => {
-    it('is a POST endpoint (cron-triggered)', () => {
-      expect(SRC).toContain('defineEventHandler')
-    })
-
-    it('requires CRON_SECRET auth', () => {
-      expect(SRC).toContain('verifyCronSecret')
-    })
-
-    it('defines MATVIEWS list', () => {
-      expect(SRC).toContain('MATVIEWS')
-    })
-
-    it('refreshes mv_dashboard_kpis', () => {
-      expect(SRC).toContain('mv_dashboard_kpis')
-    })
-
-    it('refreshes mv_search_facets', () => {
-      expect(SRC).toContain('mv_search_facets')
-    })
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockRpc.mockResolvedValue({ error: null })
   })
 
-  describe('Refresh mechanics', () => {
-    it('uses RPC to refresh views', () => {
-      expect(SRC).toContain(".rpc('refresh_matview'")
-    })
-
-    it('passes view_name parameter', () => {
-      expect(SRC).toContain('view_name: view')
-    })
-
-    it('iterates over all matviews', () => {
-      expect(SRC).toContain('for (const view of MATVIEWS)')
-    })
-
-    it('tracks duration per view', () => {
-      expect(SRC).toContain('Date.now()')
-      expect(SRC).toContain('ms')
-    })
+  it('verifies cron secret', async () => {
+    await handler(mockEvent)
+    expect(verifyCronSecret).toHaveBeenCalledWith(mockEvent)
   })
 
-  describe('Error handling', () => {
-    it('logs errors per view', () => {
-      expect(SRC).toContain("results[view] = 'error'")
-      expect(SRC).toContain('logger.error')
-    })
-
-    it('counts failed refreshes', () => {
-      expect(SRC).toContain('failed')
-      expect(SRC).toContain("r === 'error'")
-    })
-
-    it('returns ok: false when any view fails', () => {
-      expect(SRC).toContain('ok: failed === 0')
-    })
+  it('refreshes mv_dashboard_kpis', async () => {
+    await handler(mockEvent)
+    expect(mockRpc).toHaveBeenCalledWith('refresh_matview', { view_name: 'mv_dashboard_kpis' })
   })
 
-  describe('Response shape', () => {
-    it('returns results per view', () => {
-      expect(SRC).toContain('results')
-    })
-
-    it('returns total duration', () => {
-      expect(SRC).toContain('durationMs')
-    })
-
-    it('returns failed count', () => {
-      expect(SRC).toContain('failed')
-    })
+  it('refreshes mv_search_facets', async () => {
+    await handler(mockEvent)
+    expect(mockRpc).toHaveBeenCalledWith('refresh_matview', { view_name: 'mv_search_facets' })
   })
 
-  describe('Migration for matviews', () => {
-    const migrationsDir = resolve(ROOT, 'supabase/migrations')
-    const migrationFiles = readdirSync(migrationsDir).filter((f) => f.endsWith('.sql'))
-    const allMigrations = migrationFiles
-      .map((f) => readFileSync(resolve(migrationsDir, f), 'utf-8'))
-      .join('\n')
+  it('returns ok=true when all views refresh successfully', async () => {
+    const result = (await handler(mockEvent)) as any
+    expect(result.ok).toBe(true)
+    expect(result.failed).toBe(0)
+  })
 
-    it('refresh_matview SQL function exists', () => {
-      expect(allMigrations).toContain('refresh_matview')
-    })
+  it('returns results map for each view', async () => {
+    const result = (await handler(mockEvent)) as any
+    expect(result.results.mv_dashboard_kpis).toBe('ok')
+    expect(result.results.mv_search_facets).toBe('ok')
+  })
+
+  it('returns durationMs', async () => {
+    const result = (await handler(mockEvent)) as any
+    expect(typeof result.durationMs).toBe('number')
+  })
+
+  it('handles partial failure (one view errors)', async () => {
+    mockRpc
+      .mockResolvedValueOnce({ error: null })
+      .mockResolvedValueOnce({ error: { message: 'view not found' } })
+    const result = (await handler(mockEvent)) as any
+    expect(result.ok).toBe(false)
+    expect(result.failed).toBe(1)
+    expect(result.results.mv_dashboard_kpis).toBe('ok')
+    expect(result.results.mv_search_facets).toBe('error')
+  })
+
+  it('logs error on view refresh failure', async () => {
+    mockRpc.mockResolvedValueOnce({ error: { message: 'timeout' } })
+    await handler(mockEvent)
+    expect(logger.error).toHaveBeenCalled()
+  })
+
+  it('logs success info for each refreshed view', async () => {
+    await handler(mockEvent)
+    expect(logger.info).toHaveBeenCalled()
   })
 })

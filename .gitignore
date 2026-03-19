@@ -65,4 +65,9 @@ nul
 
 # Local / private
 Contratos/
+Contratos 2/
+gen_pdf.*
+gen-contract-pdf.*
+gen-pdf-recibo.*
+pdf-generator.*
 *.vue.new

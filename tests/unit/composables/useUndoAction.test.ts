@@ -1,165 +1,210 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { ref } from 'vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'app/composables/useUndoAction.ts'), 'utf-8')
+// Mock Nuxt auto-imports
+vi.stubGlobal('ref', ref)
+vi.stubGlobal('readonly', (r: any) => r)
+vi.stubGlobal(
+  'useState',
+  vi.fn((_key: string, init?: () => unknown) => ref(init ? init() : null)),
+)
+
+import { useUndoAction } from '../../../app/composables/useUndoAction'
 
 describe('useUndoAction — Undo snackbar (N4)', () => {
-  describe('Source code structure', () => {
-    it('defines UNDO_TIMEOUT_MS at 8 seconds', () => {
-      expect(SRC).toContain('UNDO_TIMEOUT_MS = 8000')
-    })
-
-    it('exports performWithUndo function', () => {
-      expect(SRC).toContain('performWithUndo')
-    })
-
-    it('exports cancelAction function', () => {
-      expect(SRC).toContain('cancelAction')
-    })
-
-    it('exports pendingActions state', () => {
-      expect(SRC).toContain('pendingActions')
-    })
-
-    it('exports hasPending helper', () => {
-      expect(SRC).toContain('hasPending')
-    })
-
-    it('supports optimistic UI updates', () => {
-      expect(SRC).toContain('optimistic')
-      expect(SRC).toContain('config.optimistic?.()')
-    })
-
-    it('supports rollback on undo', () => {
-      expect(SRC).toContain('rollback')
-      expect(SRC).toContain('handlers.rollback?.()')
-    })
-
-    it('clears timeout on undo to prevent permanent execution', () => {
-      expect(SRC).toContain('clearTimeout(action.timerId)')
-    })
-
-    it('uses setTimeout for delayed permanent execution', () => {
-      expect(SRC).toContain('setTimeout')
-      expect(SRC).toContain('config.execute()')
-    })
-
-    it('handles execute failure with rollback', () => {
-      expect(SRC).toContain('Permanent execution failed')
-      expect(SRC).toContain('config.rollback?.()')
-    })
-
-    it('stores undo handlers in closure map', () => {
-      expect(SRC).toContain('_undoHandlers')
-    })
-
-    it('uses useState for SSR-safe pending list', () => {
-      expect(SRC).toContain('useState')
-    })
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    vi.mocked(useState).mockImplementation(
+      (_key: string, init?: () => unknown) => ref(init ? init() : []) as any,
+    )
   })
 
-  describe('UndoActionConfig interface', () => {
-    it('requires message, execute, and undo', () => {
-      expect(SRC).toContain('message: string')
-      expect(SRC).toContain('execute: () =>')
-      expect(SRC).toContain('undo: () =>')
-    })
-
-    it('supports optional timeoutMs override', () => {
-      expect(SRC).toContain('timeoutMs?: number')
-      expect(SRC).toContain('config.timeoutMs ?? UNDO_TIMEOUT_MS')
-    })
-
-    it('supports optional optimistic and rollback', () => {
-      expect(SRC).toContain('optimistic?: () => void')
-      expect(SRC).toContain('rollback?: () => void')
-    })
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
-  describe('PendingAction shape', () => {
-    it('has id, message, createdAt, timeoutMs, timerId', () => {
-      expect(SRC).toContain('id: number')
-      expect(SRC).toContain('message: string')
-      expect(SRC).toContain('createdAt: number')
-      expect(SRC).toContain('timeoutMs: number')
-      expect(SRC).toContain('timerId:')
-    })
-  })
-
-  describe('Behavioral logic (simulated)', () => {
-    // Simulate the core undo pattern
-    let executed: boolean
-    let undone: boolean
-    let rolledBack: boolean
-    let optimisticApplied: boolean
-
-    beforeEach(() => {
-      vi.useFakeTimers()
-      executed = false
-      undone = false
-      rolledBack = false
-      optimisticApplied = false
-    })
-
-    afterEach(() => {
-      vi.useRealTimers()
-    })
-
-    function simulatePerformWithUndo(timeoutMs = 8000) {
-      optimisticApplied = true
-      const timerId = setTimeout(() => {
-        executed = true
-      }, timeoutMs)
-      return {
-        cancel() {
-          clearTimeout(timerId)
-          rolledBack = true
-          undone = true
-        },
-      }
+  function makeConfig(overrides: Record<string, any> = {}) {
+    return {
+      message: 'Item eliminado',
+      execute: vi.fn(),
+      undo: vi.fn(),
+      optimistic: vi.fn(),
+      rollback: vi.fn(),
+      ...overrides,
     }
+  }
 
-    it('applies optimistic update immediately', () => {
-      simulatePerformWithUndo()
-      expect(optimisticApplied).toBe(true)
-      expect(executed).toBe(false)
+  describe('Return shape', () => {
+    it('returns expected API', () => {
+      const result = useUndoAction()
+      expect(result).toHaveProperty('performWithUndo')
+      expect(result).toHaveProperty('cancelAction')
+      expect(result).toHaveProperty('pendingActions')
+      expect(result).toHaveProperty('hasPending')
+      expect(result).toHaveProperty('UNDO_TIMEOUT_MS')
     })
 
-    it('executes permanently after 8s timeout', () => {
-      simulatePerformWithUndo()
+    it('default timeout is 8000ms', () => {
+      const { UNDO_TIMEOUT_MS } = useUndoAction()
+      expect(UNDO_TIMEOUT_MS).toBe(8000)
+    })
+  })
+
+  describe('performWithUndo', () => {
+    it('returns an action id', () => {
+      const { performWithUndo } = useUndoAction()
+      const id = performWithUndo(makeConfig())
+      expect(typeof id).toBe('number')
+      expect(id).toBeGreaterThan(0)
+    })
+
+    it('calls optimistic immediately', () => {
+      const { performWithUndo } = useUndoAction()
+      const config = makeConfig()
+      performWithUndo(config)
+      expect(config.optimistic).toHaveBeenCalledOnce()
+    })
+
+    it('does NOT call execute immediately', () => {
+      const { performWithUndo } = useUndoAction()
+      const config = makeConfig()
+      performWithUndo(config)
+      expect(config.execute).not.toHaveBeenCalled()
+    })
+
+    it('executes permanently after default timeout', () => {
+      const { performWithUndo } = useUndoAction()
+      const config = makeConfig()
+      performWithUndo(config)
+
       vi.advanceTimersByTime(8000)
-      expect(executed).toBe(true)
+      expect(config.execute).toHaveBeenCalledOnce()
     })
 
     it('does NOT execute before timeout', () => {
-      simulatePerformWithUndo()
+      const { performWithUndo } = useUndoAction()
+      const config = makeConfig()
+      performWithUndo(config)
+
       vi.advanceTimersByTime(7999)
-      expect(executed).toBe(false)
+      expect(config.execute).not.toHaveBeenCalled()
     })
 
-    it('undo cancels permanent execution', () => {
-      const action = simulatePerformWithUndo()
-      vi.advanceTimersByTime(3000)
-      action.cancel()
-      vi.advanceTimersByTime(10000)
-      expect(executed).toBe(false)
-      expect(undone).toBe(true)
-    })
+    it('supports custom timeout', () => {
+      const { performWithUndo } = useUndoAction()
+      const config = makeConfig({ timeoutMs: 3000 })
+      performWithUndo(config)
 
-    it('undo triggers rollback', () => {
-      const action = simulatePerformWithUndo()
-      action.cancel()
-      expect(rolledBack).toBe(true)
-    })
-
-    it('custom timeout works', () => {
-      simulatePerformWithUndo(3000)
       vi.advanceTimersByTime(2999)
-      expect(executed).toBe(false)
+      expect(config.execute).not.toHaveBeenCalled()
       vi.advanceTimersByTime(1)
-      expect(executed).toBe(true)
+      expect(config.execute).toHaveBeenCalledOnce()
+    })
+
+    it('adds to pendingActions', () => {
+      const { performWithUndo, pendingActions } = useUndoAction()
+      performWithUndo(makeConfig())
+      expect(pendingActions.value.length).toBe(1)
+      expect(pendingActions.value[0].message).toBe('Item eliminado')
+    })
+
+    it('tracks multiple pending actions', () => {
+      const { performWithUndo, pendingActions } = useUndoAction()
+      performWithUndo(makeConfig({ message: 'First' }))
+      performWithUndo(makeConfig({ message: 'Second' }))
+      expect(pendingActions.value.length).toBe(2)
+    })
+
+    it('removes from pending after execution', () => {
+      const { performWithUndo, pendingActions } = useUndoAction()
+      performWithUndo(makeConfig())
+      expect(pendingActions.value.length).toBe(1)
+
+      vi.advanceTimersByTime(8000)
+      expect(pendingActions.value.length).toBe(0)
+    })
+
+    it('calls rollback if execute throws', () => {
+      const { performWithUndo } = useUndoAction()
+      const config = makeConfig({
+        execute: vi.fn(() => {
+          throw new Error('DB error')
+        }),
+      })
+      performWithUndo(config)
+
+      vi.advanceTimersByTime(8000)
+      expect(config.rollback).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('cancelAction', () => {
+    it('prevents permanent execution', async () => {
+      const { performWithUndo, cancelAction } = useUndoAction()
+      const config = makeConfig()
+      const id = performWithUndo(config)
+
+      vi.advanceTimersByTime(3000)
+      await cancelAction(id)
+
+      vi.advanceTimersByTime(10000)
+      expect(config.execute).not.toHaveBeenCalled()
+    })
+
+    it('calls rollback and undo handler on cancel', async () => {
+      // Must use same instance because pendingActions is per-useState call
+      const actionsRef = ref<any[]>([])
+      vi.mocked(useState).mockReturnValue(actionsRef as any)
+      const { performWithUndo, cancelAction } = useUndoAction()
+      const config = makeConfig()
+      const id = performWithUndo(config)
+
+      await cancelAction(id)
+      expect(config.rollback).toHaveBeenCalledOnce()
+      expect(config.undo).toHaveBeenCalledOnce()
+    })
+
+    it('removes from pendingActions', async () => {
+      const { performWithUndo, cancelAction, pendingActions } = useUndoAction()
+      const config = makeConfig()
+      const id = performWithUndo(config)
+      expect(pendingActions.value.length).toBe(1)
+
+      await cancelAction(id)
+      expect(pendingActions.value.length).toBe(0)
+    })
+
+    it('returns false for non-existent action', async () => {
+      const { cancelAction } = useUndoAction()
+      const result = await cancelAction(99999)
+      expect(result).toBe(false)
+    })
+
+    it('returns true for valid cancel', async () => {
+      const { performWithUndo, cancelAction } = useUndoAction()
+      const id = performWithUndo(makeConfig())
+      const result = await cancelAction(id)
+      expect(result).toBe(true)
+    })
+  })
+
+  describe('hasPending', () => {
+    it('returns false when no actions', () => {
+      const { hasPending } = useUndoAction()
+      expect(hasPending()).toBe(false)
+    })
+
+    it('returns true when action is pending', () => {
+      const { performWithUndo, hasPending } = useUndoAction()
+      performWithUndo(makeConfig())
+      expect(hasPending()).toBe(true)
+    })
+
+    it('returns false after action completes', () => {
+      const { performWithUndo, hasPending } = useUndoAction()
+      performWithUndo(makeConfig())
+      vi.advanceTimersByTime(8000)
+      expect(hasPending()).toBe(false)
     })
   })
 })

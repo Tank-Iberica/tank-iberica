@@ -105,10 +105,10 @@ export function useUndoAction() {
 
     // Clear timeout to prevent permanent execution
     clearTimeout(action.timerId)
-    removePending(actionId)
 
-    // Execute undo + rollback
+    // Read handlers BEFORE removePending (which deletes them)
     const handlers = _undoHandlers.get(actionId)
+    removePending(actionId)
     if (handlers) {
       handlers.rollback?.()
       try {
@@ -144,7 +144,4 @@ export function useUndoAction() {
 }
 
 /** Internal map of undo handlers (not reactive, just closures) */
-const _undoHandlers = new Map<
-  number,
-  { undo: () => void | Promise<void>; rollback?: () => void }
->()
+const _undoHandlers = new Map<number, { undo: () => void | Promise<void>; rollback?: () => void }>()

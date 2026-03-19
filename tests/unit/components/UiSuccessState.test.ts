@@ -1,104 +1,165 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync, existsSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import UiSuccessState from '../../../app/components/ui/SuccessState.vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const COMPONENT = readFileSync(resolve(ROOT, 'app/components/ui/SuccessState.vue'), 'utf-8')
+const NuxtLinkStub = {
+  template: '<a :href="to" :class="$attrs.class"><slot /></a>',
+  props: ['to'],
+}
+
+const UiSuccessCheckmarkStub = {
+  template: '<span class="checkmark-stub" />',
+  props: ['show'],
+}
+
+const stubs = {
+  NuxtLink: NuxtLinkStub,
+  UiSuccessCheckmark: UiSuccessCheckmarkStub,
+  Transition: {
+    template: '<div><slot /></div>',
+  },
+}
 
 describe('UiSuccessState', () => {
-  describe('Props', () => {
-    it('has show prop (boolean)', () => {
-      expect(COMPONENT).toContain('show: boolean')
-    })
-
-    it('has message prop (string)', () => {
-      expect(COMPONENT).toContain('message: string')
-    })
-
-    it('has actions prop (SuccessAction[])', () => {
-      expect(COMPONENT).toContain('actions?: SuccessAction[]')
-    })
-  })
-
-  describe('SuccessAction interface', () => {
-    it('has label field', () => {
-      expect(COMPONENT).toContain('label: string')
-    })
-
-    it('supports navigation with to field', () => {
-      expect(COMPONENT).toContain('to?: string')
-    })
-
-    it('supports click handler', () => {
-      expect(COMPONENT).toContain('onClick?: () => void')
-    })
-
-    it('supports primary/secondary variant', () => {
-      expect(COMPONENT).toContain("variant?: 'primary' | 'secondary'")
-    })
-  })
-
   describe('Conditional rendering', () => {
-    it('renders only when show is true', () => {
-      expect(COMPONENT).toContain('v-if="show"')
+    it('renders when show is true', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: true, message: 'Done!' },
+        global: { stubs },
+      })
+      expect(wrapper.find('.success-state').exists()).toBe(true)
     })
 
-    it('uses Vue Transition', () => {
-      expect(COMPONENT).toContain('<Transition name="success-state">')
+    it('does not render when show is false', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: false, message: 'Done!' },
+        global: { stubs },
+      })
+      expect(wrapper.find('.success-state').exists()).toBe(false)
+    })
+  })
+
+  describe('Message', () => {
+    it('displays the message text', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: true, message: 'Vehicle published!' },
+        global: { stubs },
+      })
+      expect(wrapper.find('.success-state__message').text()).toBe('Vehicle published!')
     })
   })
 
   describe('Accessibility', () => {
-    it('has role="status"', () => {
-      expect(COMPONENT).toContain('role="status"')
+    it('has role=status', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: true, message: 'OK' },
+        global: { stubs },
+      })
+      expect(wrapper.find('.success-state').attributes('role')).toBe('status')
     })
 
-    it('has aria-live="polite"', () => {
-      expect(COMPONENT).toContain('aria-live="polite"')
-    })
-
-    it('buttons meet touch target min-height (2.75rem)', () => {
-      expect(COMPONENT).toContain('min-height: 2.75rem')
-    })
-  })
-
-  describe('Actions rendering', () => {
-    it('renders NuxtLink for actions with to', () => {
-      expect(COMPONENT).toContain('v-if="action.to"')
-      expect(COMPONENT).toContain('<NuxtLink')
-      expect(COMPONENT).toContain(':to="action.to"')
-    })
-
-    it('renders button for actions with onClick', () => {
-      expect(COMPONENT).toContain('v-else')
-      expect(COMPONENT).toContain('action.onClick?.()')
-    })
-
-    it('applies variant classes', () => {
-      expect(COMPONENT).toContain('success-state__btn--primary')
-      expect(COMPONENT).toContain('success-state__btn--secondary')
+    it('has aria-live=polite', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: true, message: 'OK' },
+        global: { stubs },
+      })
+      expect(wrapper.find('.success-state').attributes('aria-live')).toBe('polite')
     })
   })
 
-  describe('Animated checkmark', () => {
-    it('uses UiSuccessCheckmark subcomponent', () => {
-      expect(COMPONENT).toContain('<UiSuccessCheckmark')
-    })
-
-    it('SuccessCheckmark component exists', () => {
-      expect(existsSync(resolve(ROOT, 'app/components/ui/SuccessCheckmark.vue'))).toBe(true)
+  describe('Checkmark', () => {
+    it('renders UiSuccessCheckmark subcomponent', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: true, message: 'OK' },
+        global: { stubs },
+      })
+      expect(wrapper.find('.checkmark-stub').exists()).toBe(true)
     })
   })
 
-  describe('Transition CSS', () => {
-    it('has enter transition', () => {
-      expect(COMPONENT).toContain('.success-state-enter-active')
-      expect(COMPONENT).toContain('.success-state-enter-from')
+  describe('Actions', () => {
+    it('renders no actions when empty', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: { show: true, message: 'OK', actions: [] },
+        global: { stubs },
+      })
+      expect(wrapper.find('.success-state__actions').exists()).toBe(false)
     })
 
-    it('enter-from includes opacity and transform', () => {
-      expect(COMPONENT).toContain('opacity: 0')
-      expect(COMPONENT).toContain('translateY')
+    it('renders NuxtLink for action with to', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: {
+          show: true,
+          message: 'OK',
+          actions: [{ label: 'View', to: '/vehicles/123' }],
+        },
+        global: { stubs },
+      })
+      const link = wrapper.find('a')
+      expect(link.exists()).toBe(true)
+      expect(link.attributes('href')).toBe('/vehicles/123')
+      expect(link.text()).toBe('View')
+    })
+
+    it('renders button for action with onClick', async () => {
+      const onClick = vi.fn()
+      const wrapper = mount(UiSuccessState, {
+        props: {
+          show: true,
+          message: 'OK',
+          actions: [{ label: 'Continue', onClick }],
+        },
+        global: { stubs },
+      })
+      const btn = wrapper.find('button')
+      expect(btn.exists()).toBe(true)
+      expect(btn.text()).toBe('Continue')
+      await btn.trigger('click')
+      expect(onClick).toHaveBeenCalled()
+    })
+
+    it('applies primary variant class by default', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: {
+          show: true,
+          message: 'OK',
+          actions: [{ label: 'Go', to: '/next' }],
+        },
+        global: { stubs },
+      })
+      const link = wrapper.find('a')
+      expect(link.classes()).toContain('success-state__btn--primary')
+    })
+
+    it('applies secondary variant class', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: {
+          show: true,
+          message: 'OK',
+          actions: [{ label: 'Skip', to: '/skip', variant: 'secondary' }],
+        },
+        global: { stubs },
+      })
+      const link = wrapper.find('a')
+      expect(link.classes()).toContain('success-state__btn--secondary')
+    })
+
+    it('renders multiple actions', () => {
+      const wrapper = mount(UiSuccessState, {
+        props: {
+          show: true,
+          message: 'OK',
+          actions: [
+            { label: 'View', to: '/view' },
+            { label: 'New', to: '/new', variant: 'secondary' },
+          ],
+        },
+        global: { stubs },
+      })
+      const links = wrapper.findAll('a')
+      expect(links).toHaveLength(2)
+      expect(links[0].text()).toBe('View')
+      expect(links[1].text()).toBe('New')
     })
   })
 })

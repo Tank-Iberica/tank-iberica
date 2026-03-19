@@ -113,6 +113,8 @@ export function useUserProfile() {
   /**
    * Export all user data as JSON (GDPR compliance).
    * Includes profile, favorites, leads, and vehicle views.
+   * NOTE: Uses select('*') intentionally — GDPR requires exporting ALL personal data columns.
+   * Adding specific columns would risk omitting new PII columns added by migrations.
    */
   async function exportData(): Promise<ExportedData | null> {
     if (!user.value?.id) return null

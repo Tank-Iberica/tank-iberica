@@ -91,6 +91,7 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
   }
 
   // ── Fetch source and target clusters ───────────────────────────────────
+  // select('*') intentional — cluster migration needs all columns for data integrity
   const [sourceResult, targetResult] = await Promise.all([
     supabase.from('infra_clusters').select('*').eq('id', sourceClusterId).single(),
     supabase.from('infra_clusters').select('*').eq('id', body.targetClusterId).single(),

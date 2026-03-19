@@ -1,129 +1,228 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { ref, computed, readonly } from 'vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'app/composables/useRetryOperation.ts'), 'utf-8')
+// Mock Nuxt auto-imports
+vi.stubGlobal('ref', ref)
+vi.stubGlobal('computed', computed)
+vi.stubGlobal('readonly', readonly)
+
+import { useRetryOperation } from '../../../app/composables/useRetryOperation'
 
 describe('useRetryOperation — Error recovery with retry (N42)', () => {
-  describe('Source code structure', () => {
-    it('exports execute function', () => {
-      expect(SRC).toContain('execute')
-    })
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['setTimeout'] })
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
-    it('exports retry function', () => {
-      expect(SRC).toContain('retry')
-    })
-
-    it('exports reset function', () => {
-      expect(SRC).toContain('reset')
-    })
-
-    it('exports isLoading state', () => {
-      expect(SRC).toContain('isLoading')
-    })
-
-    it('exports error state', () => {
-      expect(SRC).toContain('error')
-    })
-
-    it('exports retryCount', () => {
-      expect(SRC).toContain('retryCount')
-    })
-
-    it('exports canRetry computed', () => {
-      expect(SRC).toContain('canRetry')
+  describe('Return shape', () => {
+    it('returns expected API', () => {
+      const result = useRetryOperation()
+      expect(result).toHaveProperty('execute')
+      expect(result).toHaveProperty('retry')
+      expect(result).toHaveProperty('reset')
+      expect(result).toHaveProperty('isLoading')
+      expect(result).toHaveProperty('error')
+      expect(result).toHaveProperty('retryCount')
+      expect(result).toHaveProperty('canRetry')
+      expect(result).toHaveProperty('maxRetries')
     })
 
     it('defaults maxRetries to 3', () => {
-      expect(SRC).toContain('maxRetries = 3')
+      const { maxRetries } = useRetryOperation()
+      expect(maxRetries).toBe(3)
     })
 
-    it('defaults backoffMs to 1000', () => {
-      expect(SRC).toContain('backoffMs = 1000')
-    })
-
-    it('uses exponential backoff', () => {
-      expect(SRC).toContain('Math.pow(2')
-    })
-
-    it('supports autoRetry option', () => {
-      expect(SRC).toContain('autoRetry')
-    })
-
-    it('supports onFinalFailure callback', () => {
-      expect(SRC).toContain('onFinalFailure')
-    })
-
-    it('stores last operation for manual retry', () => {
-      expect(SRC).toContain('_lastOperation')
-    })
-
-    it('uses readonly for state exposure', () => {
-      expect(SRC).toContain('readonly(isLoading)')
-      expect(SRC).toContain('readonly(error)')
+    it('initial state is clean', () => {
+      const { isLoading, error, retryCount, canRetry } = useRetryOperation()
+      expect(isLoading.value).toBe(false)
+      expect(error.value).toBeNull()
+      expect(retryCount.value).toBe(0)
+      expect(canRetry.value).toBe(false)
     })
   })
 
-  describe('Retry logic (simulated)', () => {
-    beforeEach(() => {
-      vi.useFakeTimers()
-    })
-    afterEach(() => {
-      vi.useRealTimers()
-    })
-
-    it('canRetry is false when no error', () => {
-      const retryCount = 0
-      const maxRetries = 3
-      const error: string | null = null
-      const canRetry = retryCount < maxRetries && error !== null
-      expect(canRetry).toBe(false)
+  describe('execute', () => {
+    it('returns result on success', async () => {
+      const { execute } = useRetryOperation()
+      const result = await execute(() => Promise.resolve('ok'))
+      expect(result).toBe('ok')
     })
 
-    it('canRetry is true when error and retries available', () => {
-      const retryCount = 1
-      const maxRetries = 3
-      const error = 'Network error'
-      const canRetry = retryCount < maxRetries && error !== null
-      expect(canRetry).toBe(true)
+    it('sets isLoading during operation', async () => {
+      const { execute, isLoading } = useRetryOperation()
+      let loadingDuringExec = false
+
+      await execute(async () => {
+        loadingDuringExec = isLoading.value
+        return 'done'
+      })
+      expect(loadingDuringExec).toBe(true)
+      expect(isLoading.value).toBe(false)
     })
 
-    it('canRetry is false when maxRetries exhausted', () => {
-      const retryCount = 3
-      const maxRetries = 3
-      const error = 'Network error'
-      const canRetry = retryCount < maxRetries && error !== null
-      expect(canRetry).toBe(false)
+    it('captures Error message on failure', async () => {
+      const { execute, error } = useRetryOperation()
+      await execute(() => Promise.reject(new Error('Network failed')))
+      expect(error.value).toBe('Network failed')
     })
 
-    it('exponential backoff calculation is correct', () => {
-      function getBackoff(backoffMs: number, retryCount: number): number {
-        return backoffMs * Math.pow(2, retryCount - 1)
+    it('captures string error on failure', async () => {
+      const { execute, error } = useRetryOperation()
+      await execute(() => Promise.reject('string error'))
+      expect(error.value).toBe('string error')
+    })
+
+    it('sets isLoading to false on failure (manual mode)', async () => {
+      const { execute, isLoading } = useRetryOperation()
+      await execute(() => Promise.reject(new Error('fail')))
+      expect(isLoading.value).toBe(false)
+    })
+  })
+
+  describe('canRetry', () => {
+    it('is false when no error', async () => {
+      const { execute, canRetry } = useRetryOperation()
+      await execute(() => Promise.resolve('ok'))
+      expect(canRetry.value).toBe(false)
+    })
+
+    it('is true when error and retries available', async () => {
+      const { execute, canRetry } = useRetryOperation({ maxRetries: 3 })
+      await execute(() => Promise.reject(new Error('fail')))
+      expect(canRetry.value).toBe(true)
+    })
+
+    it('is false when maxRetries exhausted', async () => {
+      let callCount = 0
+      const { execute, canRetry } = useRetryOperation({
+        maxRetries: 2,
+        autoRetry: true,
+        backoffMs: 10,
+      })
+
+      const promise = execute(() => {
+        callCount++
+        return Promise.reject(new Error('fail'))
+      })
+
+      // Advance through retries
+      await vi.advanceTimersByTimeAsync(10) // retry 1
+      await vi.advanceTimersByTimeAsync(20) // retry 2
+      await promise
+
+      expect(canRetry.value).toBe(false)
+    })
+  })
+
+  describe('manual retry', () => {
+    it('re-executes last operation', async () => {
+      let callCount = 0
+      const operation = () => {
+        callCount++
+        if (callCount === 1) return Promise.reject(new Error('fail'))
+        return Promise.resolve('success')
       }
-      expect(getBackoff(1000, 1)).toBe(1000) // 1s
-      expect(getBackoff(1000, 2)).toBe(2000) // 2s
-      expect(getBackoff(1000, 3)).toBe(4000) // 4s
+
+      const { execute, retry, error } = useRetryOperation({ backoffMs: 10 })
+      await execute(operation)
+      expect(error.value).toBe('fail')
+
+      const retryPromise = retry()
+      await vi.advanceTimersByTimeAsync(10) // backoff delay
+      const result = await retryPromise
+
+      expect(result).toBe('success')
+      expect(error.value).toBeNull()
     })
 
-    it('captures error message from Error objects', () => {
-      const err = new Error('Network failed')
-      const errorMsg = err instanceof Error ? err.message : String(err)
-      expect(errorMsg).toBe('Network failed')
+    it('increments retryCount on each retry', async () => {
+      const { execute, retry, retryCount } = useRetryOperation({ backoffMs: 10 })
+      await execute(() => Promise.reject(new Error('fail')))
+      expect(retryCount.value).toBe(0)
+
+      const retryPromise = retry()
+      await vi.advanceTimersByTimeAsync(10)
+      await retryPromise
+      expect(retryCount.value).toBe(1)
     })
 
-    it('handles non-Error throws', () => {
-      const err = 'string error'
-      const errorMsg = err instanceof Error ? err.message : String(err)
-      expect(errorMsg).toBe('string error')
+    it('returns null if no last operation', async () => {
+      const { retry } = useRetryOperation()
+      const result = await retry()
+      expect(result).toBeNull()
     })
 
-    it('reset clears all state', () => {
-      // Verify reset function sets everything to initial values
-      expect(SRC).toContain('isLoading.value = false')
-      expect(SRC).toContain('error.value = null')
-      expect(SRC).toContain('retryCount.value = 0')
-      expect(SRC).toContain('_lastOperation = null')
+    it('returns null if canRetry is false', async () => {
+      const { execute, retry } = useRetryOperation({ maxRetries: 0 })
+      await execute(() => Promise.reject(new Error('fail')))
+      const result = await retry()
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('autoRetry', () => {
+    it('retries automatically with exponential backoff', async () => {
+      let callCount = 0
+      const operation = () => {
+        callCount++
+        if (callCount <= 2) return Promise.reject(new Error('fail'))
+        return Promise.resolve('recovered')
+      }
+
+      const { execute } = useRetryOperation({
+        maxRetries: 3,
+        backoffMs: 100,
+        autoRetry: true,
+      })
+
+      const promise = execute(operation)
+      await vi.advanceTimersByTimeAsync(100) // retry 1: 100ms
+      await vi.advanceTimersByTimeAsync(200) // retry 2: 200ms
+      const result = await promise
+
+      expect(result).toBe('recovered')
+      expect(callCount).toBe(3)
+    })
+
+    it('calls onFinalFailure when all retries exhausted', async () => {
+      const onFinalFailure = vi.fn()
+      const { execute } = useRetryOperation({
+        maxRetries: 2,
+        backoffMs: 10,
+        autoRetry: true,
+        onFinalFailure,
+      })
+
+      const promise = execute(() => Promise.reject(new Error('permanent fail')))
+      await vi.advanceTimersByTimeAsync(10) // retry 1
+      await vi.advanceTimersByTimeAsync(20) // retry 2
+      await promise
+
+      expect(onFinalFailure).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('reset', () => {
+    it('clears all state', async () => {
+      const { execute, reset, isLoading, error, retryCount, canRetry } = useRetryOperation()
+      await execute(() => Promise.reject(new Error('fail')))
+      expect(error.value).toBe('fail')
+
+      reset()
+      expect(isLoading.value).toBe(false)
+      expect(error.value).toBeNull()
+      expect(retryCount.value).toBe(0)
+      expect(canRetry.value).toBe(false)
+    })
+
+    it('prevents retry after reset', async () => {
+      const { execute, reset, retry } = useRetryOperation()
+      await execute(() => Promise.reject(new Error('fail')))
+      reset()
+      const result = await retry()
+      expect(result).toBeNull()
     })
   })
 })

@@ -1,123 +1,232 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ref } from 'vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'app/composables/useVerticalConfig.ts'), 'utf-8')
+// Mock Nuxt auto-imports
+vi.stubGlobal('ref', ref)
+vi.stubGlobal(
+  'useState',
+  vi.fn((_key: string, init?: () => unknown) => ref(init ? init() : null)),
+)
+vi.stubGlobal(
+  'useRuntimeConfig',
+  vi.fn(() => ({
+    public: { vertical: 'tracciona' },
+  })),
+)
+vi.stubGlobal(
+  'useI18n',
+  vi.fn(() => ({
+    locale: { value: 'es' },
+  })),
+)
 
-describe('i18n genérica por vertical (#248) + localizedTerm (#249)', () => {
-  describe('localizedTerm function', () => {
-    it('exports localizedTerm in return object', () => {
-      expect(SRC).toContain('localizedTerm,')
+const mockSupabase = {
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+      })),
+    })),
+  })),
+}
+vi.stubGlobal(
+  'useSupabaseClient',
+  vi.fn(() => mockSupabase),
+)
+
+import { useVerticalConfig, getVerticalSlug } from '../../../app/composables/useVerticalConfig'
+
+describe('Vertical config composable (#248, #249)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(useRuntimeConfig).mockReturnValue({
+      public: { vertical: 'tracciona' },
+    } as any)
+    vi.mocked(useState).mockImplementation(
+      (_key: string, init?: () => unknown) => ref(init ? init() : null) as any,
+    )
+  })
+
+  describe('getVerticalSlug', () => {
+    it('returns slug from runtime config', () => {
+      expect(getVerticalSlug()).toBe('tracciona')
     })
 
-    it('accepts key and form (singular/plural)', () => {
-      expect(SRC).toContain("form: 'singular' | 'plural'")
+    it('defaults to tracciona when config is empty', () => {
+      vi.mocked(useRuntimeConfig).mockReturnValue({ public: { vertical: '' } } as any)
+      expect(getVerticalSlug()).toBe('tracciona')
     })
 
-    it('defaults to singular form', () => {
-      expect(SRC).toContain("= 'singular'")
+    it('defaults to tracciona when useRuntimeConfig throws', () => {
+      vi.mocked(useRuntimeConfig).mockImplementation(() => {
+        throw new Error('config unavailable')
+      })
+      expect(getVerticalSlug()).toBe('tracciona')
+    })
+  })
+
+  describe('useVerticalConfig return shape', () => {
+    it('returns config, loadConfig, helpers, and localizedTerm', () => {
+      const result = useVerticalConfig()
+      expect(result).toHaveProperty('config')
+      expect(result).toHaveProperty('loadConfig')
+      expect(result).toHaveProperty('applyTheme')
+      expect(result).toHaveProperty('isSectionActive')
+      expect(result).toHaveProperty('isLocaleActive')
+      expect(result).toHaveProperty('isActionActive')
+      expect(result).toHaveProperty('getCurrency')
+      expect(result).toHaveProperty('localizedTerm')
     })
 
-    it('accepts optional locale parameter', () => {
-      expect(SRC).toContain('locale?: string')
+    it('config starts as null', () => {
+      const { config } = useVerticalConfig()
+      expect(config.value).toBeNull()
+    })
+  })
+
+  describe('isSectionActive', () => {
+    it('returns false when config is null', () => {
+      const { isSectionActive } = useVerticalConfig()
+      expect(isSectionActive('hero')).toBe(false)
     })
 
-    it('reads from vertical_config.terms JSONB', () => {
-      expect(SRC).toContain('config.value')
-      expect(SRC).toContain('terms')
+    it('returns true when section is active in config', () => {
+      const configRef = ref({ homepage_sections: { hero: true, testimonials: false } })
+      vi.mocked(useState).mockReturnValue(configRef as any)
+      const { isSectionActive } = useVerticalConfig()
+      expect(isSectionActive('hero')).toBe(true)
+      expect(isSectionActive('testimonials')).toBe(false)
+    })
+  })
+
+  describe('isLocaleActive', () => {
+    it('returns false when config is null', () => {
+      const { isLocaleActive } = useVerticalConfig()
+      expect(isLocaleActive('es')).toBe(false)
     })
 
-    it('has Tracciona defaults (vehículo/vehicles)', () => {
-      expect(SRC).toContain("singular: { es: 'vehículo', en: 'vehicle' }")
-      expect(SRC).toContain("plural: { es: 'vehículos', en: 'vehicles' }")
+    it('checks active_locales array', () => {
+      const configRef = ref({ active_locales: ['es', 'en'] })
+      vi.mocked(useState).mockReturnValue(configRef as any)
+      const { isLocaleActive } = useVerticalConfig()
+      expect(isLocaleActive('es')).toBe(true)
+      expect(isLocaleActive('fr')).toBe(false)
+    })
+  })
+
+  describe('isActionActive', () => {
+    it('returns false when config is null', () => {
+      const { isActionActive } = useVerticalConfig()
+      expect(isActionActive('sell')).toBe(false)
     })
 
-    it('has Horecaria defaults (equipo/equipment)', () => {
-      expect(SRC).toContain("singular: { es: 'equipo', en: 'equipment' }")
-      expect(SRC).toContain("plural: { es: 'equipos', en: 'equipment' }")
+    it('checks active_actions array', () => {
+      const configRef = ref({ active_actions: ['sell', 'rent'] })
+      vi.mocked(useState).mockReturnValue(configRef as any)
+      const { isActionActive } = useVerticalConfig()
+      expect(isActionActive('sell')).toBe(true)
+      expect(isActionActive('auction')).toBe(false)
+    })
+  })
+
+  describe('getCurrency', () => {
+    it('defaults to EUR when config is null', () => {
+      const { getCurrency } = useVerticalConfig()
+      expect(getCurrency()).toBe('EUR')
+    })
+
+    it('returns configured currency', () => {
+      const configRef = ref({ default_currency: 'USD' })
+      vi.mocked(useState).mockReturnValue(configRef as any)
+      const { getCurrency } = useVerticalConfig()
+      expect(getCurrency()).toBe('USD')
+    })
+
+    it('falls back to EUR when default_currency is null', () => {
+      const configRef = ref({ default_currency: null })
+      vi.mocked(useState).mockReturnValue(configRef as any)
+      const { getCurrency } = useVerticalConfig()
+      expect(getCurrency()).toBe('EUR')
+    })
+  })
+
+  describe('localizedTerm', () => {
+    it('returns default Tracciona term in Spanish', () => {
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('product')).toBe('vehículo')
+    })
+
+    it('returns plural form when specified', () => {
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('product', 'plural')).toBe('vehículos')
+    })
+
+    it('returns English term when locale specified', () => {
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('product', 'singular', 'en')).toBe('vehicle')
+      expect(localizedTerm('product', 'plural', 'en')).toBe('vehicles')
+    })
+
+    it('returns Horecaria defaults for horecaria vertical', () => {
+      vi.mocked(useRuntimeConfig).mockReturnValue({ public: { vertical: 'horecaria' } } as any)
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('product')).toBe('equipo')
+      expect(localizedTerm('product', 'plural')).toBe('equipos')
     })
 
     it('falls back to Tracciona defaults for unknown verticals', () => {
-      expect(SRC).toContain('defaults.tracciona')
+      vi.mocked(useRuntimeConfig).mockReturnValue({ public: { vertical: 'unknown' } } as any)
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('product')).toBe('vehículo')
     })
 
-    it('falls back to key name as last resort', () => {
-      expect(SRC).toContain('?? key')
-    })
-  })
-
-  describe('useVerticalConfig composable', () => {
-    it('exports useVerticalConfig function', () => {
-      expect(SRC).toContain('export function useVerticalConfig()')
+    it('falls back to key name for unknown terms', () => {
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('nonexistent')).toBe('nonexistent')
     })
 
-    it('exports getVerticalSlug function', () => {
-      expect(SRC).toContain('export function getVerticalSlug()')
-    })
-
-    it('reads NUXT_PUBLIC_VERTICAL env', () => {
-      expect(SRC).toContain('public.vertical')
-    })
-
-    it('defaults to tracciona slug', () => {
-      expect(SRC).toContain("|| 'tracciona'")
-    })
-
-    it('loads config from vertical_config table', () => {
-      expect(SRC).toContain("from('vertical_config')")
-    })
-
-    it('caches config in useState', () => {
-      expect(SRC).toContain("useState<VerticalConfig | null>('vertical_config'")
+    it('reads from vertical_config.terms when available', () => {
+      const configRef = ref({
+        terms: {
+          product: {
+            singular: { es: 'máquina', en: 'machine' },
+            plural: { es: 'máquinas', en: 'machines' },
+          },
+        },
+      })
+      vi.mocked(useState).mockReturnValue(configRef as any)
+      const { localizedTerm } = useVerticalConfig()
+      expect(localizedTerm('product')).toBe('máquina')
+      expect(localizedTerm('product', 'plural', 'en')).toBe('machines')
     })
   })
 
-  describe('VerticalConfig interface', () => {
-    it('has name field (multi-lang)', () => {
-      expect(SRC).toContain('name: Record<string, string>')
+  describe('loadConfig', () => {
+    it('queries vertical_config table', async () => {
+      const mockSingle = vi.fn(() =>
+        Promise.resolve({
+          data: { name: { es: 'Tracciona' }, theme: {}, active_locales: ['es'] },
+          error: null,
+        }),
+      )
+      const mockEq = vi.fn(() => ({ single: mockSingle }))
+      const mockSelect = vi.fn(() => ({ eq: mockEq }))
+      mockSupabase.from.mockReturnValue({ select: mockSelect } as any)
+
+      const { loadConfig } = useVerticalConfig()
+      await loadConfig()
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('vertical_config')
     })
 
-    it('has theme field', () => {
-      expect(SRC).toContain('theme: Record<string, string>')
-    })
+    it('skips query if config already loaded', async () => {
+      const configRef = ref({ name: { es: 'Already loaded' } })
+      vi.mocked(useState).mockReturnValue(configRef as any)
 
-    it('has active_locales', () => {
-      expect(SRC).toContain('active_locales: string[]')
-    })
+      const { loadConfig } = useVerticalConfig()
+      await loadConfig()
 
-    it('has default_locale', () => {
-      expect(SRC).toContain('default_locale: string')
-    })
-
-    it('has subscription_prices', () => {
-      expect(SRC).toContain('subscription_prices')
-    })
-
-    it('has commission_rates', () => {
-      expect(SRC).toContain('commission_rates')
-    })
-  })
-
-  describe('Helper functions', () => {
-    it('has isSectionActive', () => {
-      expect(SRC).toContain('isSectionActive')
-    })
-
-    it('has isLocaleActive', () => {
-      expect(SRC).toContain('isLocaleActive')
-    })
-
-    it('has isActionActive', () => {
-      expect(SRC).toContain('isActionActive')
-    })
-
-    it('has getCurrency', () => {
-      expect(SRC).toContain('getCurrency')
-    })
-
-    it('has applyTheme', () => {
-      expect(SRC).toContain('applyTheme')
+      expect(mockSupabase.from).not.toHaveBeenCalled()
     })
   })
 })

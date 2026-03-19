@@ -8,9 +8,15 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {}
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
-    removeItem: vi.fn((key: string) => { delete store[key] }),
-    clear: vi.fn(() => { store = {} }),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key]
+    }),
+    clear: vi.fn(() => {
+      store = {}
+    }),
   }
 })()
 
@@ -122,7 +128,7 @@ describe('useSavedFilters', () => {
       savePreset('Segundo', {}, null)
       // savedPresets: [Segundo (index 0), Primero (index 1)] — newest first
       expect(savedPresets.value).toHaveLength(2)
-      const idToDelete = savedPresets.value[1].id  // 'Primero' id
+      const idToDelete = savedPresets.value[1].id // 'Primero' id
       // IDs are unique (counter-based), so only 'Primero' is removed
       deletePreset(idToDelete)
 
@@ -190,16 +196,17 @@ describe('useSavedFilters', () => {
     // In the Vitest env, import.meta.client is false for composables (only plugins get
     // the Vite transform). These tests verify the write path and guard behaviour.
 
-    it('does NOT hydrate from localStorage in test env (import.meta.client guard)', () => {
+    it('hydrates from localStorage when stored data exists', () => {
       const stored = [{ id: '1', name: 'Stored', filters: {}, locationLevel: null, savedAt: 0 }]
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify(stored))
+      // Get reset function first (this call triggers hydration with empty store)
       const { _resetForTesting, savedPresets } = useSavedFilters()
       _resetForTesting()
-      useSavedFilters() // import.meta.client is false → no hydration
-      // In test env the list stays empty — hydration is covered by E2E tests
-      expect(savedPresets.value).toHaveLength(0)
-      // localStorage.getItem should NOT have been called by the hydration guard
-      expect(localStorageMock.getItem).not.toHaveBeenCalled()
+      // Set up mock AFTER reset so the next hydration reads it
+      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify(stored))
+      useSavedFilters() // import.meta.client → (true), hydration runs with mock data
+      expect(savedPresets.value).toHaveLength(1)
+      expect(savedPresets.value[0].name).toBe('Stored')
+      expect(localStorageMock.getItem).toHaveBeenCalledWith('tracciona:saved-filters')
     })
 
     it('writes serialised presets to localStorage on save', () => {

@@ -99,11 +99,11 @@ describe('loadFromStorage (import.meta.client guard)', () => {
     expect(c.count()).toBe(0)
   })
 
-  it('count stays 0 even when localStorage has data (guarded by import.meta.client)', async () => {
+  it('loads favorites from localStorage when data exists', async () => {
     localStorageStore.set('userFavorites', JSON.stringify(['a', 'b']))
     const c = await getFavorites()
-    // In test env, import.meta.client is falsy → loadFromStorage skips read
-    expect(c.count()).toBe(0)
+    // import.meta.client → (true) via vitest transform, so localStorage is read
+    expect(c.count()).toBe(2)
   })
 })
 

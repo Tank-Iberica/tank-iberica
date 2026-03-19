@@ -171,6 +171,62 @@ STATUS.md se lee SIEMPRE al inicio. El resto bajo demanda tras confirmar tarea e
 
 **Objetivo:** Que el coverage crezca con cada sesión. Nunca acumular deuda de tests que requiera sesiones masivas de backfill.
 
+## Estándares de testing (obligatorio)
+
+### Clasificación de tests
+
+- **tests/unit/**: SOLO behavioral. Importa código fuente, lo ejecuta, verifica output.
+- **tests/integration/**: Tests contra servicios reales (Supabase local en CI).
+- **tests/e2e/**: Playwright. User journeys completos.
+- **tests/security/**: IDOR, rate limiting, auth bypass.
+
+### Decisión al crear un test nuevo
+
+| ¿Qué testo?                                | Dónde va                            | Cómo se testa                                                 |
+| ------------------------------------------ | ----------------------------------- | ------------------------------------------------------------- |
+| Composable, util, server route, handler    | `tests/unit/`                       | Importar módulo, mockear deps, ejecutar, verificar output     |
+| Componente Vue                             | `tests/unit/`                       | shallowMount/mount, mockear deps, verificar render/eventos    |
+| Migración SQL nueva                        | `tests/integration/migrations/`     | Ejecutar contra Supabase local, query `information_schema`    |
+| Patrón de código (select star, hardcoding) | NO crear test — añadir regla ESLint | `eslint-plugin-tracciona/rules/`                              |
+| Config build (nuxt.config, CI yaml)        | `tests/unit/build/`                 | Parsear config como objeto (JSON/YAML), verificar propiedades |
+| User journey completo                      | `tests/e2e/`                        | Playwright                                                    |
+| Seguridad (IDOR, auth bypass)              | `tests/security/`                   | MSW + fetch                                                   |
+
+### Reglas para tests/unit/ (behavioral)
+
+1. **Importar** la función/composable/handler del source code
+2. **Mockear** dependencias externas (Supabase, h3, Nuxt composables) con `vi.mock()` / `vi.stubGlobal()`
+3. **Ejecutar** la función con inputs controlados
+4. **Verificar** output, side effects, errores con `expect()`
+5. **PROHIBIDO**: `readFileSync` + `toContain` sobre source code. El quality gate lo bloquea.
+6. **PROHIBIDO**: tests que solo verifican que un string existe en un archivo fuente
+7. **Si necesitas verificar que un archivo contiene algo** → eso es una regla ESLint, no un test
+
+### Reglas para migraciones SQL
+
+- Tests en `tests/integration/migrations/`
+- Ejecutan contra Supabase local (Postgres real)
+- Verifican con `information_schema`: tablas, columnas, indexes, RLS, funciones
+- NUNCA verificar SQL leyendo el archivo .sql como texto
+
+### Code patterns
+
+- Enforced por `eslint-plugin-tracciona` (IDE + CI + pre-commit)
+- Reglas: `no-select-star`, `no-hardcoded-vertical`, `require-structured-logger`, etc.
+- NO escribir tests que lean archivos para buscar patrones de código
+
+### Quality gate
+
+- `scripts/classify-tests.mjs` clasifica tests como BEHAVIORAL/STRUCTURAL/MIXED
+- `test-quality-gate`: 0% structural permitido en tests/unit/
+- CI bloquea si aparece un test structural nuevo en tests/unit/
+
+### Roadmap de conversión
+
+- **Roadmap completo:** `.claude/ROADMAP-TEST-PROFESIONALIZACION.md`
+- Ejecución autónoma sesión por sesión, 13 sesiones estimadas
+- Cada sesión: leer roadmap → ejecutar siguiente fase → marcar ✅ → actualizar STATUS.md
+
 ## Convenciones
 
 Ver `CONTRIBUTING.md` para stack, estructura, convenciones, comandos, tests, git workflow.

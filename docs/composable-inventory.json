@@ -1,0 +1,3302 @@
+[
+  {
+    "name": "useAdminAdDashboard",
+    "file": "app/composables/admin/useAdminAdDashboard.ts",
+    "lines": 385,
+    "domain": "admin",
+    "exports": [
+      "function useAdminAdDashboard",
+      "type DashboardSummary",
+      "type RevenueBySource",
+      "type PositionPerformance",
+      "type FormatCTR",
+      "type TopAd",
+      "type AudienceSegment"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminAdDashboard.test.ts"
+  },
+  {
+    "name": "useAdminAdvertisements",
+    "file": "app/composables/admin/useAdminAdvertisements.ts",
+    "lines": 289,
+    "domain": "admin",
+    "exports": [
+      "function useAdminAdvertisements",
+      "const ADVERTISEMENT_STATUSES",
+      "type AdvertisementStatus",
+      "type AdminAdvertisement",
+      "type AdvertisementFilters"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminAdvertisements.test.ts"
+  },
+  {
+    "name": "useAdminAgenda",
+    "file": "app/composables/admin/useAdminAgenda.ts",
+    "lines": 158,
+    "domain": "admin",
+    "exports": ["function useAdminAgenda", "type AgendaModal"],
+    "dependencies": ["useAdminContacts"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminAgenda.test.ts"
+  },
+  {
+    "name": "useAdminAnunciantes",
+    "file": "app/composables/admin/useAdminAnunciantes.ts",
+    "lines": 197,
+    "domain": "admin",
+    "exports": ["function useAdminAnunciantes", "type DeleteModalState", "type DetailModalState"],
+    "dependencies": ["useAdminAdvertisements"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminAnunciantes.test.ts"
+  },
+  {
+    "name": "useAdminArticleGenerate",
+    "file": "app/composables/admin/useAdminArticleGenerate.ts",
+    "lines": 60,
+    "domain": "admin",
+    "exports": ["function useAdminArticleGenerate", "type ArticleType"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAdminAuctionDetail",
+    "file": "app/composables/admin/useAdminAuctionDetail.ts",
+    "lines": 421,
+    "domain": "admin",
+    "exports": ["function useAdminAuctionDetail", "type ModalType"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminAuctionDetail.test.ts"
+  },
+  {
+    "name": "useAdminAuctionList",
+    "file": "app/composables/admin/useAdminAuctionList.ts",
+    "lines": 561,
+    "domain": "admin",
+    "exports": [
+      "function useAdminAuctionList",
+      "const STATUS_TABS",
+      "const STATUS_COLORS",
+      "type AuctionListVehicle",
+      "type AuctionWithVehicle",
+      "type AuctionRegistrationRow",
+      "type AuctionForm",
+      "type CancelModal"
+    ],
+    "dependencies": ["useToast"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminAuctionList.test.ts"
+  },
+  {
+    "name": "useAdminBalance",
+    "file": "app/composables/admin/useAdminBalance.ts",
+    "lines": 397,
+    "domain": "admin",
+    "exports": [
+      "function useAdminBalance",
+      "const BALANCE_REASONS",
+      "const BALANCE_STATUS_LABELS",
+      "type BalanceType",
+      "type BalanceStatus",
+      "type BalanceReason",
+      "type BalanceEntry",
+      "type BalanceFormData",
+      "type BalanceFilters",
+      "type BalanceSummary"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminBalance.test.ts"
+  },
+  {
+    "name": "useAdminBalanceUI",
+    "file": "app/composables/admin/useAdminBalanceUI.ts",
+    "lines": 727,
+    "domain": "admin",
+    "exports": [
+      "function getEmptyForm",
+      "function fmt",
+      "function fmtDate",
+      "function fmtPercent",
+      "function useAdminBalanceUI"
+    ],
+    "dependencies": [
+      "useAdminBalance",
+      "useAdminSubcategories",
+      "useAdminTypes",
+      "useAdminVehicles",
+      "useSiteName",
+      "useSiteUrl",
+      "useToast"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminBalanceUI.test.ts"
+  },
+  {
+    "name": "useAdminBanner",
+    "file": "app/composables/admin/useAdminBanner.ts",
+    "lines": 423,
+    "domain": "admin",
+    "exports": [
+      "function useAdminBanner",
+      "type EmojiCategory",
+      "type UserPanelBannerForm",
+      "type BannerLang"
+    ],
+    "dependencies": ["useAdminConfig", "useToast"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminBanner.test.ts"
+  },
+  {
+    "name": "useAdminBrokerage",
+    "file": "app/composables/admin/useAdminBrokerage.ts",
+    "lines": 350,
+    "domain": "admin",
+    "exports": [
+      "function getStatusLabel",
+      "function getStatusColor",
+      "function getValidNextStatuses",
+      "function formatDealPrice",
+      "function formatDealDate",
+      "function getDealModeLabel",
+      "function useAdminBrokerage",
+      "const DEAL_STATUSES",
+      "const VALID_TRANSITIONS",
+      "type DealStatus",
+      "type DealMode",
+      "type BrokerageDeal",
+      "type DealFilters",
+      "type CreateDealPayload",
+      "type DealStatusDef"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminBrokerage.test.ts"
+  },
+  {
+    "name": "useAdminBrokerageDeal",
+    "file": "app/composables/admin/useAdminBrokerageDeal.ts",
+    "lines": 344,
+    "domain": "admin",
+    "exports": [
+      "function getDealPhase",
+      "function getActionLabel",
+      "function getActorLabel",
+      "function useAdminBrokerageDeal",
+      "type BrokerageMessage",
+      "type BrokerageAuditEntry",
+      "type SenderEntity",
+      "type RecipientEntity",
+      "type AddMessagePayload"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminBrokerageDeal.test.ts"
+  },
+  {
+    "name": "useAdminCapacityAlerts",
+    "file": "app/composables/admin/useAdminCapacityAlerts.ts",
+    "lines": 106,
+    "domain": "admin",
+    "exports": ["function useAdminCapacityAlerts", "type CapacityAlert"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminCapacityAlerts.test.ts"
+  },
+  {
+    "name": "useAdminCaptacion",
+    "file": "app/composables/admin/useAdminCaptacion.ts",
+    "lines": 543,
+    "domain": "admin",
+    "exports": [
+      "function useAdminCaptacion",
+      "const STATUS_OPTIONS",
+      "const SOURCE_LIST",
+      "type DealerLead",
+      "type AdminUser",
+      "type LeadStatus",
+      "type TabFilter"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminCaptacion.test.ts"
+  },
+  {
+    "name": "useAdminCaracteristicas",
+    "file": "app/composables/admin/useAdminCaracteristicas.ts",
+    "lines": 387,
+    "domain": "admin",
+    "exports": ["function useAdminCaracteristicas", "type DeleteModalState"],
+    "dependencies": ["useAdminFilters", "useToast"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminCaracteristicas.test.ts"
+  },
+  {
+    "name": "useAdminChat",
+    "file": "app/composables/admin/useAdminChat.ts",
+    "lines": 429,
+    "domain": "admin",
+    "exports": [
+      "function useAdminChat",
+      "type MessageDirection",
+      "type ChatMessage",
+      "type ChatUser",
+      "type Conversation"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminChat.test.ts"
+  },
+  {
+    "name": "useAdminChats",
+    "file": "app/composables/admin/useAdminChats.ts",
+    "lines": 160,
+    "domain": "admin",
+    "exports": ["function useAdminChats", "type MessageDateGroup"],
+    "dependencies": ["useAdminChat"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminChats.test.ts"
+  },
+  {
+    "name": "useAdminComentarios",
+    "file": "app/composables/admin/useAdminComentarios.ts",
+    "lines": 278,
+    "domain": "admin",
+    "exports": [
+      "function useAdminComentarios",
+      "const STATUS_TABS",
+      "const STATUS_COLORS",
+      "const STATUS_LABELS",
+      "type CommentArticle",
+      "type Comment",
+      "type CommentStatus",
+      "type StatusConfig",
+      "type DeleteModalState"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminComentarios.test.ts"
+  },
+  {
+    "name": "useAdminConfig",
+    "file": "app/composables/admin/useAdminConfig.ts",
+    "lines": 218,
+    "domain": "admin",
+    "exports": ["function useAdminConfig", "type BannerConfig", "type ConfigValue"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminConfig.test.ts"
+  },
+  {
+    "name": "useAdminConfigPricing",
+    "file": "app/composables/admin/useAdminConfigPricing.ts",
+    "lines": 279,
+    "domain": "admin",
+    "exports": [
+      "function useAdminConfigPricing",
+      "const planDefinitions",
+      "const commissionDefinitions",
+      "type AuctionDefaults",
+      "type PlanDefinition",
+      "type CommissionDefinition"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminConfigPricing.test.ts"
+  },
+  {
+    "name": "useAdminContacts",
+    "file": "app/composables/admin/useAdminContacts.ts",
+    "lines": 150,
+    "domain": "admin",
+    "exports": [
+      "function useAdminContacts",
+      "const CONTACT_TYPES",
+      "type ContactType",
+      "type ContactFormData",
+      "type Contact",
+      "type ContactFilters"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminContacts.test.ts"
+  },
+  {
+    "name": "useAdminDashboard",
+    "file": "app/composables/admin/useAdminDashboard.ts",
+    "lines": 419,
+    "domain": "admin",
+    "exports": [
+      "function useAdminDashboard",
+      "type NotificationStats",
+      "type ProductCategoryCount",
+      "type ProductStats",
+      "type UserStats",
+      "type MatchItem",
+      "type SectionsOpenState"
+    ],
+    "dependencies": ["useAdminMetrics"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminDashboard.test.ts"
+  },
+  {
+    "name": "useAdminDashboardPage",
+    "file": "app/composables/admin/useAdminDashboardPage.ts",
+    "lines": 346,
+    "domain": "admin",
+    "exports": [
+      "function formatCurrency",
+      "function formatNumber",
+      "function formatPercent",
+      "function useAdminDashboardPage",
+      "const CHART_COLORS",
+      "type DashboardChartColors"
+    ],
+    "dependencies": ["useAdminMetrics"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminDashboardPage.test.ts"
+  },
+  {
+    "name": "useAdminDealerConfig",
+    "file": "app/composables/admin/useAdminDealerConfig.ts",
+    "lines": 393,
+    "domain": "admin",
+    "exports": [
+      "function useAdminDealerConfig",
+      "type Certification",
+      "type PhoneMode",
+      "type CatalogSortOption",
+      "type IconOption",
+      "type SelectOption"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminDealerConfig.test.ts"
+  },
+  {
+    "name": "useAdminDealerSuscripciones",
+    "file": "app/composables/admin/useAdminDealerSuscripciones.ts",
+    "lines": 516,
+    "domain": "admin",
+    "exports": [
+      "function useAdminDealerSuscripciones",
+      "const PLANS",
+      "const STATUSES",
+      "const FOUNDING_MAX_PER_VERTICAL",
+      "type DealerInfo",
+      "type SubscriptionRow",
+      "type DealerSubscription",
+      "type PlanType",
+      "type StatusType",
+      "type CancelModalState",
+      "type NewModalState",
+      "type ExtendModalState",
+      "type ChangePlanModalState"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminDealerSuscripciones.test.ts"
+  },
+  {
+    "name": "useAdminDemands",
+    "file": "app/composables/admin/useAdminDemands.ts",
+    "lines": 286,
+    "domain": "admin",
+    "exports": [
+      "function useAdminDemands",
+      "const DEMAND_STATUSES",
+      "type DemandStatus",
+      "type AdminDemand",
+      "type DemandFilters"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminDemands.test.ts"
+  },
+  {
+    "name": "useAdminEditorialCalendar",
+    "file": "app/composables/admin/useAdminEditorialCalendar.ts",
+    "lines": 192,
+    "domain": "admin",
+    "exports": [
+      "function useAdminEditorialCalendar",
+      "type CalendarView",
+      "type ContentType",
+      "type CalendarEvent"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAdminEmails",
+    "file": "app/composables/admin/useAdminEmails.ts",
+    "lines": 326,
+    "domain": "admin",
+    "exports": ["function useAdminEmails"],
+    "dependencies": ["useAdminVerticalConfig", "useSanitize"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminEmails.test.ts"
+  },
+  {
+    "name": "useAdminFacturacion",
+    "file": "app/composables/admin/useAdminFacturacion.ts",
+    "lines": 248,
+    "domain": "admin",
+    "exports": [
+      "function formatAmount",
+      "function formatDate",
+      "function getServiceTypeLabel",
+      "function getStatusClass",
+      "function useAdminFacturacion",
+      "type InvoiceRow",
+      "type PeriodOption",
+      "type LeadMetricsData",
+      "type ChannelRevenueData"
+    ],
+    "dependencies": ["useRevenueMetrics"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminFacturacion.test.ts"
+  },
+  {
+    "name": "useAdminFeatureFlags",
+    "file": "app/composables/admin/useAdminFeatureFlags.ts",
+    "lines": 194,
+    "domain": "admin",
+    "exports": ["function useAdminFeatureFlags"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAdminFilters",
+    "file": "app/composables/admin/useAdminFilters.ts",
+    "lines": 359,
+    "domain": "admin",
+    "exports": [
+      "function getFilterTypeOptions",
+      "function getFilterStatusOptions",
+      "function useAdminFilters",
+      "const FILTER_TYPE_VALUES",
+      "const FILTER_STATUS_VALUES",
+      "type FilterType",
+      "type FilterStatus",
+      "type AdminFilter",
+      "type ChoicesSource",
+      "type FilterFormData"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminFilters.test.ts"
+  },
+  {
+    "name": "useAdminHistorico",
+    "file": "app/composables/admin/useAdminHistorico.ts",
+    "lines": 391,
+    "domain": "admin",
+    "exports": [
+      "function useAdminHistorico",
+      "const SALE_CATEGORIES",
+      "type HistoricoEntry",
+      "type MaintenanceRecord",
+      "type RentalRecord",
+      "type HistoricoFilters",
+      "type HistoricoSummary"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminHistorico.test.ts"
+  },
+  {
+    "name": "useAdminHistoricoPage",
+    "file": "app/composables/admin/useAdminHistoricoPage.ts",
+    "lines": 404,
+    "domain": "admin",
+    "exports": [
+      "function useAdminHistoricoPage",
+      "type SortColumn",
+      "type ExportFormat",
+      "type ExportScope",
+      "type HistoricoPageFilters"
+    ],
+    "dependencies": ["useAdminHistorico", "useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminHistoricoPage.test.ts"
+  },
+  {
+    "name": "useAdminHomepage",
+    "file": "app/composables/admin/useAdminHomepage.ts",
+    "lines": 227,
+    "domain": "admin",
+    "exports": [
+      "function useAdminHomepage",
+      "const sectionDefinitions",
+      "type BannerItem",
+      "type BannerField",
+      "type SectionDefinition"
+    ],
+    "dependencies": ["useAdminVerticalConfig"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminHomepage.test.ts"
+  },
+  {
+    "name": "useAdminInfrastructura",
+    "file": "app/composables/admin/useAdminInfrastructura.ts",
+    "lines": 335,
+    "domain": "admin",
+    "exports": ["function useAdminInfrastructura"],
+    "dependencies": ["useInfraMetrics", "useInfraRecommendations"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminInfrastructura.test.ts"
+  },
+  {
+    "name": "useAdminLanguages",
+    "file": "app/composables/admin/useAdminLanguages.ts",
+    "lines": 299,
+    "domain": "admin",
+    "exports": [
+      "function useAdminLanguages",
+      "const availableLocales",
+      "const translationEngines",
+      "type LocaleProgress",
+      "type LocaleOption",
+      "type EngineOption"
+    ],
+    "dependencies": ["useAdminVerticalConfig"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminLanguages.test.ts"
+  },
+  {
+    "name": "useAdminMetrics",
+    "file": "app/composables/admin/useAdminMetrics.ts",
+    "lines": 126,
+    "domain": "admin",
+    "exports": ["function useAdminMetrics"],
+    "dependencies": ["useAdminMetricsActivity", "useAdminMetricsRevenue"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminMetrics.test.ts"
+  },
+  {
+    "name": "useAdminMetricsActivity",
+    "file": "app/composables/admin/useAdminMetricsActivity.ts",
+    "lines": 355,
+    "domain": "admin",
+    "exports": ["function useAdminMetricsActivity"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminMetricsActivity.test.ts"
+  },
+  {
+    "name": "useAdminMetricsRevenue",
+    "file": "app/composables/admin/useAdminMetricsRevenue.ts",
+    "lines": 251,
+    "domain": "admin",
+    "exports": ["function useAdminMetricsRevenue"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminMetricsRevenue.test.ts"
+  },
+  {
+    "name": "useAdminNavigation",
+    "file": "app/composables/admin/useAdminNavigation.ts",
+    "lines": 189,
+    "domain": "admin",
+    "exports": ["function useAdminNavigation", "type LinkItem", "type LinkField"],
+    "dependencies": ["useAdminVerticalConfig"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminNavigation.test.ts"
+  },
+  {
+    "name": "useAdminNews",
+    "file": "app/composables/admin/useAdminNews.ts",
+    "lines": 251,
+    "domain": "admin",
+    "exports": ["function useAdminNews", "type AdminNewsFilters", "type NewsFormData"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminNews.test.ts"
+  },
+  {
+    "name": "useAdminNewsCreate",
+    "file": "app/composables/admin/useAdminNewsCreate.ts",
+    "lines": 280,
+    "domain": "admin",
+    "exports": ["function useAdminNewsCreate", "type CreateSections"],
+    "dependencies": ["useAdminNews", "useCloudinaryUpload", "useSeoScore"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminNewsCreate.test.ts"
+  },
+  {
+    "name": "useAdminNewsForm",
+    "file": "app/composables/admin/useAdminNewsForm.ts",
+    "lines": 369,
+    "domain": "admin",
+    "exports": ["function useAdminNewsForm"],
+    "dependencies": ["useAdminNews", "useCloudinaryUpload", "useSeoScore"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminNewsForm.test.ts"
+  },
+  {
+    "name": "useAdminNoticiaForm",
+    "file": "app/composables/admin/useAdminNoticiaForm.ts",
+    "lines": 361,
+    "domain": "admin",
+    "exports": ["function useAdminNoticiaForm", "type NoticiaFormSections"],
+    "dependencies": ["useAdminNews", "useCloudinaryUpload", "useSeoScore"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminNoticiaForm.test.ts"
+  },
+  {
+    "name": "useAdminNoticiasIndex",
+    "file": "app/composables/admin/useAdminNoticiasIndex.ts",
+    "lines": 234,
+    "domain": "admin",
+    "exports": [
+      "function useAdminNoticiasIndex",
+      "type SortField",
+      "type DeleteTarget",
+      "type StatusOption",
+      "type CategoryOption"
+    ],
+    "dependencies": ["useAdminNews"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminNoticiasIndex.test.ts"
+  },
+  {
+    "name": "useAdminPagos",
+    "file": "app/composables/admin/useAdminPagos.ts",
+    "lines": 276,
+    "domain": "admin",
+    "exports": [
+      "function formatCurrency",
+      "function formatDate",
+      "function truncateId",
+      "function getTypeBadgeClass",
+      "function getStatusBadgeClass",
+      "function getStripePaymentUrl",
+      "function getStripeAccountUrl",
+      "function useAdminPagos",
+      "const PAYMENT_TYPES",
+      "type Payment",
+      "type DealerStripeAccount",
+      "type StatusFilter",
+      "type DateRange",
+      "type RevenueStats",
+      "type TabCounts"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminPagos.test.ts"
+  },
+  {
+    "name": "useAdminProductForm",
+    "file": "app/composables/admin/useAdminProductForm.ts",
+    "lines": 462,
+    "domain": "admin",
+    "exports": [
+      "function useAdminProductForm",
+      "type CharacteristicEntry",
+      "type PendingImage",
+      "type SectionState"
+    ],
+    "dependencies": [
+      "useAdminFilters",
+      "useAdminProductRecords",
+      "useAdminSubcategories",
+      "useAdminTypes",
+      "useAdminVehicles",
+      "useCloudinaryUpload",
+      "useToast"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductForm.test.ts"
+  },
+  {
+    "name": "useAdminProductoDetail",
+    "file": "app/composables/admin/useAdminProductoDetail.ts",
+    "lines": 421,
+    "domain": "admin",
+    "exports": ["function useAdminProductoDetail", "type CharacteristicEntry"],
+    "dependencies": [
+      "useAdminFilters",
+      "useAdminProductoDetailImages",
+      "useAdminProductoDetailRecords",
+      "useAdminProductoDetailVerif",
+      "useAdminSubcategories",
+      "useAdminTypes",
+      "useAdminVehicles",
+      "useCloudinaryUpload",
+      "useToast"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductoDetail.test.ts"
+  },
+  {
+    "name": "useAdminProductoDetailImages",
+    "file": "app/composables/admin/useAdminProductoDetailImages.ts",
+    "lines": 144,
+    "domain": "admin",
+    "exports": ["function useAdminProductoDetailImages"],
+    "dependencies": ["useToast"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductoDetailImages.test.ts"
+  },
+  {
+    "name": "useAdminProductoDetailRecords",
+    "file": "app/composables/admin/useAdminProductoDetailRecords.ts",
+    "lines": 259,
+    "domain": "admin",
+    "exports": ["function useAdminProductoDetailRecords"],
+    "dependencies": ["useGoogleDrive"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductoDetailRecords.test.ts"
+  },
+  {
+    "name": "useAdminProductoDetailVerif",
+    "file": "app/composables/admin/useAdminProductoDetailVerif.ts",
+    "lines": 92,
+    "domain": "admin",
+    "exports": ["function useAdminProductoDetailVerif"],
+    "dependencies": ["useVehicleVerification"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductoDetailVerif.test.ts"
+  },
+  {
+    "name": "useAdminProductoNuevo",
+    "file": "app/composables/admin/useAdminProductoNuevo.ts",
+    "lines": 52,
+    "domain": "admin",
+    "exports": ["function useAdminProductoNuevo"],
+    "dependencies": ["useAdminProductForm"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductoNuevo.test.ts"
+  },
+  {
+    "name": "useAdminProductosColumns",
+    "file": "app/composables/admin/useAdminProductosColumns.ts",
+    "lines": 271,
+    "domain": "admin",
+    "exports": [
+      "function useAdminProductosColumns",
+      "const STATIC_COLUMNS",
+      "type ColumnDef",
+      "type ColumnGroup"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductosColumns.test.ts"
+  },
+  {
+    "name": "useAdminProductosPage",
+    "file": "app/composables/admin/useAdminProductosPage.ts",
+    "lines": 480,
+    "domain": "admin",
+    "exports": [
+      "function useAdminProductosPage",
+      "type OnlineFilter",
+      "type ModalType",
+      "type ModalData"
+    ],
+    "dependencies": [
+      "useAdminFilters",
+      "useAdminProductosColumns",
+      "useAdminProductosSort",
+      "useAdminSubcategories",
+      "useAdminTypes",
+      "useAdminVehicles",
+      "useGoogleDrive",
+      "useToast"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductosPage.test.ts"
+  },
+  {
+    "name": "useAdminProductosSort",
+    "file": "app/composables/admin/useAdminProductosSort.ts",
+    "lines": 72,
+    "domain": "admin",
+    "exports": ["function useAdminProductosSort", "type SortField", "type SortOrder"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminProductosSort.test.ts"
+  },
+  {
+    "name": "useAdminProductRecords",
+    "file": "app/composables/admin/useAdminProductRecords.ts",
+    "lines": 64,
+    "domain": "admin",
+    "exports": ["function useAdminProductRecords"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAdminPublicidad",
+    "file": "app/composables/admin/useAdminPublicidad.ts",
+    "lines": 580,
+    "domain": "admin",
+    "exports": [
+      "function formatDate",
+      "function formatNumber",
+      "function calcCTR",
+      "function getStatusColor",
+      "function csvToArray",
+      "function useAdminPublicidad",
+      "const AD_POSITIONS",
+      "const AD_FORMATS",
+      "const AD_STATUSES",
+      "const ADVERTISER_STATUSES",
+      "type Advertiser",
+      "type Ad"
+    ],
+    "dependencies": ["useAdminAdDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminPublicidad.test.ts"
+  },
+  {
+    "name": "useAdminReportes",
+    "file": "app/composables/admin/useAdminReportes.ts",
+    "lines": 189,
+    "domain": "admin",
+    "exports": [
+      "function formatReportDate",
+      "function truncateEmail",
+      "function useAdminReportes",
+      "const reportFilters",
+      "const statusColors",
+      "const statusLabels",
+      "type ReportStatus",
+      "type Report",
+      "type FilterOption"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminReportes.test.ts"
+  },
+  {
+    "name": "useAdminRole",
+    "file": "app/composables/useAdminRole.ts",
+    "lines": 46,
+    "domain": "admin",
+    "exports": ["function useAdminRole"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminRole.test.ts"
+  },
+  {
+    "name": "useAdminSearchAnalytics",
+    "file": "app/composables/admin/useAdminSearchAnalytics.ts",
+    "lines": 123,
+    "domain": "admin",
+    "exports": [
+      "function useAdminSearchAnalytics",
+      "type ZeroResultEntry",
+      "type DailyTrend",
+      "type SearchAnalyticsSummary",
+      "type SearchAnalyticsData"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAdminServicios",
+    "file": "app/composables/admin/useAdminServicios.ts",
+    "lines": 244,
+    "domain": "admin",
+    "exports": [
+      "function useAdminServicios",
+      "const STATUS_OPTIONS",
+      "const TYPE_TABS",
+      "type ServicioVehicleInfo",
+      "type ServiceRequest",
+      "type TypeFilter",
+      "type ServiceStatus"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminServicios.test.ts"
+  },
+  {
+    "name": "useAdminSidebar",
+    "file": "app/composables/admin/useAdminSidebar.ts",
+    "lines": 256,
+    "domain": "admin",
+    "exports": ["function useAdminSidebar", "type SidebarNavItem"],
+    "dependencies": ["useSiteName", "useVerticalConfig"],
+    "hasTests": true,
+    "testFile": "tests/unit/components/AdminSidebar.test.ts"
+  },
+  {
+    "name": "useAdminSocialCalendar",
+    "file": "app/composables/admin/useAdminSocialCalendar.ts",
+    "lines": 348,
+    "domain": "admin",
+    "exports": ["function useAdminSocialCalendar", "type CalendarPost", "type CalendarView"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAdminSolicitantes",
+    "file": "app/composables/admin/useAdminSolicitantes.ts",
+    "lines": 209,
+    "domain": "admin",
+    "exports": [
+      "function getStatusConfig",
+      "function getTypeLabel",
+      "function formatDate",
+      "function formatPriceRange",
+      "function formatYearRange",
+      "function useAdminSolicitantes",
+      "type DeleteModalState",
+      "type DetailModalState",
+      "type StatusConfigEntry"
+    ],
+    "dependencies": ["useAdminDemands"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminSolicitantes.test.ts"
+  },
+  {
+    "name": "useAdminSubcategoriasPage",
+    "file": "app/composables/admin/useAdminSubcategoriasPage.ts",
+    "lines": 291,
+    "domain": "admin",
+    "exports": [
+      "function useAdminSubcategoriasPage",
+      "const VEHICLE_CATEGORIES",
+      "type DeleteModalState",
+      "type VehicleCategory"
+    ],
+    "dependencies": ["useAdminFilters", "useAdminSubcategories", "useToast"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminSubcategoriasPage.test.ts"
+  },
+  {
+    "name": "useAdminSubcategories",
+    "file": "app/composables/admin/useAdminSubcategories.ts",
+    "lines": 376,
+    "domain": "admin",
+    "exports": [
+      "function useAdminSubcategories",
+      "type AdminSubcategory",
+      "type SubcategoryFormData"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminSubcategories.test.ts"
+  },
+  {
+    "name": "useAdminSubscriptions",
+    "file": "app/composables/admin/useAdminSubscriptions.ts",
+    "lines": 144,
+    "domain": "admin",
+    "exports": [
+      "function useAdminSubscriptions",
+      "const SUBSCRIPTION_PREFS",
+      "type AdminSubscription",
+      "type SubscriptionFilters"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminSubscriptions.test.ts"
+  },
+  {
+    "name": "useAdminTiposPage",
+    "file": "app/composables/admin/useAdminTiposPage.ts",
+    "lines": 360,
+    "domain": "admin",
+    "exports": ["function useAdminTiposPage", "type TiposFormData", "type DeleteModalState"],
+    "dependencies": ["useAdminFilters", "useAdminSubcategories", "useAdminTypes", "useToast"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminTiposPage.test.ts"
+  },
+  {
+    "name": "useAdminTransporte",
+    "file": "app/composables/admin/useAdminTransporte.ts",
+    "lines": 256,
+    "domain": "admin",
+    "exports": [
+      "function useAdminTransporte",
+      "const STATUS_OPTIONS",
+      "type VehicleInfo",
+      "type TransportRequest",
+      "type TabFilter"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminTransporte.test.ts"
+  },
+  {
+    "name": "useAdminTypes",
+    "file": "app/composables/admin/useAdminTypes.ts",
+    "lines": 298,
+    "domain": "admin",
+    "exports": ["function useAdminTypes", "type AdminType", "type TypeFormData"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminTypes.test.ts"
+  },
+  {
+    "name": "useAdminUsers",
+    "file": "app/composables/admin/useAdminUsers.ts",
+    "lines": 206,
+    "domain": "admin",
+    "exports": [
+      "function useAdminUsers",
+      "const USER_ROLES",
+      "type UserRole",
+      "type AdminUser",
+      "type UserFilters"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminUsers.test.ts"
+  },
+  {
+    "name": "useAdminUsuariosPage",
+    "file": "app/composables/admin/useAdminUsuariosPage.ts",
+    "lines": 227,
+    "domain": "admin",
+    "exports": [
+      "function getRoleConfig",
+      "function formatDate",
+      "function getDisplayName",
+      "function getInitials",
+      "function getProviderLabel",
+      "function useAdminUsuariosPage",
+      "type DeleteModalState",
+      "type DetailModalState",
+      "type UserStats",
+      "type RoleConfig"
+    ],
+    "dependencies": ["useAdminUsers"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminUsuariosPage.test.ts"
+  },
+  {
+    "name": "useAdminVehicleDetail",
+    "file": "app/composables/admin/useAdminVehicleDetail.ts",
+    "lines": 566,
+    "domain": "admin",
+    "exports": [
+      "function useAdminVehicleDetail",
+      "const statusOptions",
+      "const categoryOptions",
+      "type VehicleImage",
+      "type SellFormData",
+      "type RentalFormData",
+      "type StatusOption",
+      "type CategoryOption",
+      "type SubcategoryRecord",
+      "type TypeRecord",
+      "type FilterOptionValue",
+      "type FilterDefinition",
+      "type ExtendedVehicleFormData"
+    ],
+    "dependencies": ["useAdminVehicles"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminVehicleDetail.test.ts"
+  },
+  {
+    "name": "useAdminVehicles",
+    "file": "app/composables/admin/useAdminVehicles.ts",
+    "lines": 495,
+    "domain": "admin",
+    "exports": [
+      "function useAdminVehicles",
+      "type AdminVehicleFilters",
+      "type VehicleFormData",
+      "type AdminVehicle",
+      "type MaintenanceEntry",
+      "type RentalEntry",
+      "type DocumentEntry"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminVehicles.test.ts"
+  },
+  {
+    "name": "useAdminVerificaciones",
+    "file": "app/composables/admin/useAdminVerificaciones.ts",
+    "lines": 377,
+    "domain": "admin",
+    "exports": [
+      "function useAdminVerificaciones",
+      "type VehicleImage",
+      "type DealerInfo",
+      "type VehicleInfo",
+      "type VerificationDocument",
+      "type StatusFilter",
+      "type VerificationLevelInfo",
+      "type VehicleVerificationEntry"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminVerificaciones.test.ts"
+  },
+  {
+    "name": "useAdminVerticalConfig",
+    "file": "app/composables/admin/useAdminVerticalConfig.ts",
+    "lines": 122,
+    "domain": "admin",
+    "exports": ["function useAdminVerticalConfig", "type VerticalConfigRow"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminVerticalConfig.test.ts"
+  },
+  {
+    "name": "useAdminWhatsApp",
+    "file": "app/composables/admin/useAdminWhatsApp.ts",
+    "lines": 360,
+    "domain": "admin",
+    "exports": [
+      "function useAdminWhatsApp",
+      "type DealerInfo",
+      "type WhatsAppSubmission",
+      "type StatusFilter"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdminWhatsApp.test.ts"
+  },
+  {
+    "name": "useCloudinaryUpload",
+    "file": "app/composables/admin/useCloudinaryUpload.ts",
+    "lines": 145,
+    "domain": "admin",
+    "exports": [
+      "function useCloudinaryUpload",
+      "type CloudinaryUploadResult",
+      "type CloudinaryUploadOptions"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useCloudinaryUpload.test.ts"
+  },
+  {
+    "name": "useContractForm",
+    "file": "app/composables/admin/useContractForm.ts",
+    "lines": 236,
+    "domain": "admin",
+    "exports": ["function useContractForm", "type VehicleOption"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useContractForm.test.ts"
+  },
+  {
+    "name": "useContractGenerator",
+    "file": "app/composables/admin/useContractGenerator.ts",
+    "lines": 454,
+    "domain": "admin",
+    "exports": ["function useContractGenerator", "type ContractType", "type VehicleOption"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/contractGenerator.test.ts"
+  },
+  {
+    "name": "useFunnelAnalysis",
+    "file": "app/composables/admin/useFunnelAnalysis.ts",
+    "lines": 113,
+    "domain": "admin",
+    "exports": ["function useFunnelAnalysis", "type FunnelStage", "type FunnelData"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useGoogleDrive",
+    "file": "app/composables/admin/useGoogleDrive.ts",
+    "lines": 410,
+    "domain": "admin",
+    "exports": ["function useGoogleDrive"],
+    "dependencies": ["useGoogleDriveFolders"],
+    "hasTests": true,
+    "testFile": "tests/unit/useGoogleDrive.test.ts"
+  },
+  {
+    "name": "useGoogleDriveFolders",
+    "file": "app/composables/admin/useGoogleDriveFolders.ts",
+    "lines": 97,
+    "domain": "admin",
+    "exports": ["function useGoogleDriveFolders"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInvoiceGenerator",
+    "file": "app/composables/admin/useInvoiceGenerator.ts",
+    "lines": 376,
+    "domain": "admin",
+    "exports": ["function useInvoiceGenerator", "type InvoiceLine", "type VehicleOption"],
+    "dependencies": ["useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useInvoiceGenerator.test.ts"
+  },
+  {
+    "name": "useSeoScore",
+    "file": "app/composables/admin/useSeoScore.ts",
+    "lines": 713,
+    "domain": "admin",
+    "exports": [
+      "function useSeoScore",
+      "function calculateMiniSeoScore",
+      "type SeoLevel",
+      "type SeoCriterion",
+      "type SeoSnippetPreview",
+      "type SeoAnalysis",
+      "type SeoInput"
+    ],
+    "dependencies": ["useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useSeoScore.test.ts"
+  },
+  {
+    "name": "useSocialAdminUI",
+    "file": "app/composables/admin/useSocialAdminUI.ts",
+    "lines": 306,
+    "domain": "admin",
+    "exports": ["function useSocialAdminUI", "type StatusFilter", "type VehicleSearchResult"],
+    "dependencies": ["useSocialPublisher"],
+    "hasTests": true,
+    "testFile": "tests/unit/useSocialAdminUI.test.ts"
+  },
+  {
+    "name": "useAnalyticsTracking",
+    "file": "app/composables/useAnalyticsTracking.ts",
+    "lines": 418,
+    "domain": "analytics",
+    "exports": [
+      "function useAnalyticsTracking",
+      "const ANALYTICS_EVENTS",
+      "type AnalyticsEventType"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAnalyticsTracking.test.ts"
+  },
+  {
+    "name": "useLeadTracking",
+    "file": "app/composables/useLeadTracking.ts",
+    "lines": 43,
+    "domain": "analytics",
+    "exports": ["function useLeadTracking"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useLeadTracking.test.ts"
+  },
+  {
+    "name": "useProductAnalytics",
+    "file": "app/composables/useProductAnalytics.ts",
+    "lines": 242,
+    "domain": "analytics",
+    "exports": [
+      "function calcConversionRate",
+      "function classifyPerformance",
+      "function useProductAnalytics",
+      "type VehicleMetrics",
+      "type VehicleMetricsSummary",
+      "type MetricsPeriod"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useProductAnalytics.test.ts"
+  },
+  {
+    "name": "useAuth",
+    "file": "app/composables/useAuth.ts",
+    "lines": 350,
+    "domain": "auth",
+    "exports": ["function useAuth", "type UserType"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAuth.test.ts"
+  },
+  {
+    "name": "useMfa",
+    "file": "app/composables/useMfa.ts",
+    "lines": 158,
+    "domain": "auth",
+    "exports": ["function useMfa", "type MfaStatus"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useMfa.test.ts"
+  },
+  {
+    "name": "useAbTest",
+    "file": "app/composables/useAbTest.ts",
+    "lines": 85,
+    "domain": "core",
+    "exports": ["function useAbTest"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAbTest.test.ts"
+  },
+  {
+    "name": "useAdaptiveLoading",
+    "file": "app/composables/useAdaptiveLoading.ts",
+    "lines": 64,
+    "domain": "core",
+    "exports": ["function useAdaptiveLoading"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useAds",
+    "file": "app/composables/useAds.ts",
+    "lines": 231,
+    "domain": "core",
+    "exports": ["function useAds", "type AdPosition", "type AdFormat", "type Ad"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAds.test.ts"
+  },
+  {
+    "name": "useAdvertiseModal",
+    "file": "app/composables/modals/useAdvertiseModal.ts",
+    "lines": 342,
+    "domain": "core",
+    "exports": [
+      "function useAdvertiseModal",
+      "const CONTACT_PREFERENCES",
+      "const MAX_PHOTOS",
+      "const MIN_PHOTOS",
+      "type AdvertiseFormData"
+    ],
+    "dependencies": ["useVehicleTypeSelector"],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdvertiseModal.test.ts"
+  },
+  {
+    "name": "useAdViewability",
+    "file": "app/composables/useAdViewability.ts",
+    "lines": 140,
+    "domain": "core",
+    "exports": ["function useAdViewability"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAdViewability.test.ts"
+  },
+  {
+    "name": "useAuction",
+    "file": "app/composables/useAuction.ts",
+    "lines": 333,
+    "domain": "core",
+    "exports": [
+      "function formatAuctionCents",
+      "function useAuction",
+      "type AuctionDisplayStatus",
+      "type Auction",
+      "type AuctionBid"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAuction.test.ts"
+  },
+  {
+    "name": "useAuctionDetail",
+    "file": "app/composables/useAuctionDetail.ts",
+    "lines": 280,
+    "domain": "core",
+    "exports": ["function useAuctionDetail"],
+    "dependencies": [
+      "useCloudinaryUpload",
+      "useAuction",
+      "useAuctionRegistration",
+      "useSiteUrl",
+      "useToast"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useAuctionDetail.test.ts"
+  },
+  {
+    "name": "useAuctionRegistration",
+    "file": "app/composables/useAuctionRegistration.ts",
+    "lines": 210,
+    "domain": "core",
+    "exports": [
+      "function useAuctionRegistration",
+      "type IdType",
+      "type DepositStatus",
+      "type RegistrationStatus",
+      "type AuctionRegistration",
+      "type RegistrationFormData"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAuctionRegistration.test.ts"
+  },
+  {
+    "name": "useAudienceSegmentation",
+    "file": "app/composables/useAudienceSegmentation.ts",
+    "lines": 203,
+    "domain": "core",
+    "exports": ["function useAudienceSegmentation"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useAudienceSegmentation.test.ts"
+  },
+  {
+    "name": "useCacheAside",
+    "file": "app/composables/useCacheAside.ts",
+    "lines": 144,
+    "domain": "core",
+    "exports": [
+      "function useCacheAside",
+      "function useCacheCategories",
+      "function useCacheVerticalConfig",
+      "function useCacheVehicleCounts"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useCacheCategories",
+    "file": "app/composables/useCacheAside.ts",
+    "lines": 144,
+    "domain": "core",
+    "exports": [
+      "function useCacheAside",
+      "function useCacheCategories",
+      "function useCacheVerticalConfig",
+      "function useCacheVehicleCounts"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useCacheVehicleCounts",
+    "file": "app/composables/useCacheAside.ts",
+    "lines": 144,
+    "domain": "core",
+    "exports": [
+      "function useCacheAside",
+      "function useCacheCategories",
+      "function useCacheVerticalConfig",
+      "function useCacheVehicleCounts"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useCacheVerticalConfig",
+    "file": "app/composables/useCacheAside.ts",
+    "lines": 144,
+    "domain": "core",
+    "exports": [
+      "function useCacheAside",
+      "function useCacheCategories",
+      "function useCacheVerticalConfig",
+      "function useCacheVehicleCounts"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useConfirmModal",
+    "file": "app/composables/useConfirmModal.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": ["function useConfirmModal"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useConfirmModal.test.ts"
+  },
+  {
+    "name": "useConsent",
+    "file": "app/composables/useConsent.ts",
+    "lines": 230,
+    "domain": "core",
+    "exports": ["function useConsent", "const CURRENT_POLICY_VERSION", "type ConsentState"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useConsent.test.ts"
+  },
+  {
+    "name": "useConversation",
+    "file": "app/composables/useConversation.ts",
+    "lines": 505,
+    "domain": "core",
+    "exports": ["function useConversation"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useConversation.test.ts"
+  },
+  {
+    "name": "useCopyToClipboard",
+    "file": "app/composables/useCopyToClipboard.ts",
+    "lines": 48,
+    "domain": "core",
+    "exports": ["function useCopyToClipboard"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useCopyToClipboard.test.ts"
+  },
+  {
+    "name": "useCorrelationId",
+    "file": "app/composables/useCorrelationId.ts",
+    "lines": 56,
+    "domain": "core",
+    "exports": ["function useCorrelationId"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useCorrelationId.test.ts"
+  },
+  {
+    "name": "useDatos",
+    "file": "app/composables/useDatos.ts",
+    "lines": 334,
+    "domain": "core",
+    "exports": ["function useDatos"],
+    "dependencies": ["useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDatos.test.ts"
+  },
+  {
+    "name": "useEmailPreferences",
+    "file": "app/composables/useEmailPreferences.ts",
+    "lines": 246,
+    "domain": "core",
+    "exports": [
+      "function useEmailPreferences",
+      "const DIGEST_FREQUENCY_OPTIONS",
+      "type DigestFrequency"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useEmailPreferences.test.ts"
+  },
+  {
+    "name": "useFavorites",
+    "file": "app/composables/useFavorites.ts",
+    "lines": 216,
+    "domain": "core",
+    "exports": ["function useFavorites"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useFavorites.test.ts"
+  },
+  {
+    "name": "useFeatureFlag",
+    "file": "app/composables/useFeatureFlags.ts",
+    "lines": 80,
+    "domain": "core",
+    "exports": ["function useFeatureFlag", "function refreshFeatureFlags"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useFeatureGate",
+    "file": "app/composables/useFeatureGate.ts",
+    "lines": 98,
+    "domain": "core",
+    "exports": [
+      "function planMeetsMinimum",
+      "function useFeatureGate",
+      "type GateReason",
+      "type FeatureGateOptions"
+    ],
+    "dependencies": ["useFeatureFlag", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/components/FeatureGate.test.ts"
+  },
+  {
+    "name": "useFilterBar",
+    "file": "app/composables/catalog/useFilterBar.ts",
+    "lines": 267,
+    "domain": "core",
+    "exports": ["function useFilterBar", "type EuropeanCountriesData"],
+    "dependencies": ["useAuth", "useCatalogState", "useFilters", "useUserLocation"],
+    "hasTests": true,
+    "testFile": "tests/unit/useFilterBar.test.ts"
+  },
+  {
+    "name": "useFilters",
+    "file": "app/composables/useFilters.ts",
+    "lines": 234,
+    "domain": "core",
+    "exports": ["function useFilters"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useFilters.test.ts"
+  },
+  {
+    "name": "useFinanceCalculator",
+    "file": "app/composables/useFinanceCalculator.ts",
+    "lines": 32,
+    "domain": "core",
+    "exports": ["function useFinanceCalculator"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/helpers/financeCalculator.test.ts"
+  },
+  {
+    "name": "useFocusTrap",
+    "file": "app/composables/useFocusTrap.ts",
+    "lines": 96,
+    "domain": "core",
+    "exports": ["function useFocusTrap"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useFormAutosave",
+    "file": "app/composables/useFormAutosave.ts",
+    "lines": 121,
+    "domain": "core",
+    "exports": ["function useFormAutosave", "type FormAutosaveOptions"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useFormAutosave.test.ts"
+  },
+  {
+    "name": "useFormValidation",
+    "file": "app/composables/useFormValidation.ts",
+    "lines": 67,
+    "domain": "core",
+    "exports": ["function useFormValidation"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useFormValidation.test.ts"
+  },
+  {
+    "name": "useGeoFallback",
+    "file": "app/composables/catalog/useGeoFallback.ts",
+    "lines": 155,
+    "domain": "core",
+    "exports": ["function useGeoFallback"],
+    "dependencies": ["useCatalogState", "useUserLocation", "useVehicles"],
+    "hasTests": true,
+    "testFile": "tests/unit/useGeoFallback.test.ts"
+  },
+  {
+    "name": "useGlossary",
+    "file": "app/composables/useGlossary.ts",
+    "lines": 115,
+    "domain": "core",
+    "exports": ["function useGlossary", "type GlossaryTerm"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useGtag",
+    "file": "app/composables/useGtag.ts",
+    "lines": 188,
+    "domain": "core",
+    "exports": ["function useGtag"],
+    "dependencies": ["useConsent"],
+    "hasTests": true,
+    "testFile": "tests/unit/useGtag.test.ts"
+  },
+  {
+    "name": "useHorizontalScroll",
+    "file": "app/composables/catalog/useHorizontalScroll.ts",
+    "lines": 84,
+    "domain": "core",
+    "exports": ["function useHorizontalScroll"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useHorizontalScroll.test.ts"
+  },
+  {
+    "name": "useHreflang",
+    "file": "app/composables/useHreflang.ts",
+    "lines": 40,
+    "domain": "core",
+    "exports": ["function useHreflang"],
+    "dependencies": ["useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useHreflang.test.ts"
+  },
+  {
+    "name": "useImageUrl",
+    "file": "app/composables/useImageUrl.ts",
+    "lines": 73,
+    "domain": "core",
+    "exports": ["function useImageUrl"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useImageUrl.test.ts"
+  },
+  {
+    "name": "useInfraMetrics",
+    "file": "app/composables/useInfraMetrics.ts",
+    "lines": 215,
+    "domain": "core",
+    "exports": [
+      "function useInfraMetrics",
+      "type InfraMetric",
+      "type InfraAlert",
+      "type InfraCluster"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useInfraMetrics.test.ts"
+  },
+  {
+    "name": "useInfraRecommendations",
+    "file": "app/composables/useInfraRecommendations.ts",
+    "lines": 226,
+    "domain": "core",
+    "exports": ["function useInfraRecommendations", "type InfraRecommendation"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useInfraRecommendations.test.ts"
+  },
+  {
+    "name": "useInjectConfig",
+    "file": "app/composables/useInject.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": [
+      "function useInjectSupabase",
+      "function useInjectRoute",
+      "function useInjectRouter",
+      "function useInjectUser",
+      "function useInjectConfig",
+      "function useInjectOrDefault"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInjectOrDefault",
+    "file": "app/composables/useInject.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": [
+      "function useInjectSupabase",
+      "function useInjectRoute",
+      "function useInjectRouter",
+      "function useInjectUser",
+      "function useInjectConfig",
+      "function useInjectOrDefault"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInjectRoute",
+    "file": "app/composables/useInject.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": [
+      "function useInjectSupabase",
+      "function useInjectRoute",
+      "function useInjectRouter",
+      "function useInjectUser",
+      "function useInjectConfig",
+      "function useInjectOrDefault"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInjectRouter",
+    "file": "app/composables/useInject.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": [
+      "function useInjectSupabase",
+      "function useInjectRoute",
+      "function useInjectRouter",
+      "function useInjectUser",
+      "function useInjectConfig",
+      "function useInjectOrDefault"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInjectSupabase",
+    "file": "app/composables/useInject.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": [
+      "function useInjectSupabase",
+      "function useInjectRoute",
+      "function useInjectRouter",
+      "function useInjectUser",
+      "function useInjectConfig",
+      "function useInjectOrDefault"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInjectUser",
+    "file": "app/composables/useInject.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": [
+      "function useInjectSupabase",
+      "function useInjectRoute",
+      "function useInjectRouter",
+      "function useInjectUser",
+      "function useInjectConfig",
+      "function useInjectOrDefault"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useInvoicing",
+    "file": "app/composables/useInvoicing.ts",
+    "lines": 75,
+    "domain": "core",
+    "exports": ["function useInvoicing"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useInvoicing.test.ts"
+  },
+  {
+    "name": "useJsonLd",
+    "file": "app/composables/useStructuredData.ts",
+    "lines": 149,
+    "domain": "core",
+    "exports": [
+      "function buildVehicleSchema",
+      "function buildOrganizationSchema",
+      "function buildBreadcrumbSchema",
+      "function buildWebSiteSchema",
+      "function useJsonLd"
+    ],
+    "dependencies": ["useSiteName", "useSiteUrl"],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useListingLifecycle",
+    "file": "app/composables/useListingLifecycle.ts",
+    "lines": 297,
+    "domain": "core",
+    "exports": [
+      "function isValidTransition",
+      "function getValidTargets",
+      "function getStatusLabel",
+      "function useListingLifecycle",
+      "const STATUS_TRANSITIONS",
+      "const STATUS_META",
+      "type ListingStatus",
+      "type StatusMeta",
+      "type TransitionResult"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useListingLifecycle.test.ts"
+  },
+  {
+    "name": "useListingQuality",
+    "file": "app/composables/useListingQuality.ts",
+    "lines": 159,
+    "domain": "core",
+    "exports": [
+      "function calcPhotoScore",
+      "function calcDescriptionScore",
+      "function calcAttributesScore",
+      "function calcListingQuality",
+      "function getQualityLevel",
+      "function getQualityTips",
+      "function useListingQuality",
+      "type ListingQualityInput",
+      "type QualityBreakdown",
+      "type QualityLevel",
+      "type QualityTip"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useListingQuality.test.ts"
+  },
+  {
+    "name": "useListingRenewal",
+    "file": "app/composables/useListingRenewal.ts",
+    "lines": 142,
+    "domain": "core",
+    "exports": [
+      "function isRenewable",
+      "function useListingRenewal",
+      "type RenewalResult",
+      "type BulkRenewalSummary"
+    ],
+    "dependencies": ["useListingLifecycle"],
+    "hasTests": true,
+    "testFile": "tests/unit/useListingRenewal.test.ts"
+  },
+  {
+    "name": "useLocalStorageCache",
+    "file": "app/composables/useLocalStorageCache.ts",
+    "lines": 76,
+    "domain": "core",
+    "exports": [
+      "function useLocalStorageCache",
+      "function clearAllTraccionaCache",
+      "type CacheEntry"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useNegotiation",
+    "file": "app/composables/useNegotiation.ts",
+    "lines": 184,
+    "domain": "core",
+    "exports": ["function useNegotiation", "type OfferStatus", "type NegotiationOffer"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useNews",
+    "file": "app/composables/useNews.ts",
+    "lines": 145,
+    "domain": "core",
+    "exports": ["function useNews", "type News"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useNews.test.ts"
+  },
+  {
+    "name": "useOfflineSync",
+    "file": "app/composables/useOfflineSync.ts",
+    "lines": 173,
+    "domain": "core",
+    "exports": ["function useOfflineSync", "type OfflineAction"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useOfflineSync.test.ts"
+  },
+  {
+    "name": "useOnboarding",
+    "file": "app/composables/useOnboarding.ts",
+    "lines": 266,
+    "domain": "core",
+    "exports": ["function useOnboarding"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useOnboarding.test.ts"
+  },
+  {
+    "name": "useOnboardingTour",
+    "file": "app/composables/useOnboardingTour.ts",
+    "lines": 128,
+    "domain": "core",
+    "exports": [
+      "function useOnboardingTour",
+      "const DEALER_TOUR_KEY",
+      "const BUYER_TOUR_KEY",
+      "type TourStep"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useOnboardingTour.test.ts"
+  },
+  {
+    "name": "useOperationTimeline",
+    "file": "app/composables/useOperationTimeline.ts",
+    "lines": 141,
+    "domain": "core",
+    "exports": ["function useOperationTimeline", "type OperationStage", "type TimelineEntry"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "usePageSeo",
+    "file": "app/composables/usePageSeo.ts",
+    "lines": 74,
+    "domain": "core",
+    "exports": ["function usePageSeo"],
+    "dependencies": ["useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/usePageSeo.test.ts"
+  },
+  {
+    "name": "usePerfilAlertas",
+    "file": "app/composables/usePerfilAlertas.ts",
+    "lines": 152,
+    "domain": "core",
+    "exports": ["function usePerfilAlertas", "type SearchAlert", "type AlertEditForm"],
+    "dependencies": ["useAuth"],
+    "hasTests": true,
+    "testFile": "tests/unit/usePerfilAlertas.test.ts"
+  },
+  {
+    "name": "usePerfilComparador",
+    "file": "app/composables/usePerfilComparador.ts",
+    "lines": 227,
+    "domain": "core",
+    "exports": [
+      "function getBestVehicleIds",
+      "function usePerfilComparador",
+      "const specKeys",
+      "type ComparisonVehicle",
+      "type SpecKey"
+    ],
+    "dependencies": ["useVehicleComparator"],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/usePerfilComparador.test.ts"
+  },
+  {
+    "name": "usePerfilMensajes",
+    "file": "app/composables/usePerfilMensajes.ts",
+    "lines": 253,
+    "domain": "core",
+    "exports": [
+      "function formatTimestamp",
+      "function formatMessageTime",
+      "function usePerfilMensajes",
+      "type MessagesListExposed"
+    ],
+    "dependencies": ["useConversation", "useImageUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/usePerfilMensajes.test.ts"
+  },
+  {
+    "name": "usePerfilReservas",
+    "file": "app/composables/usePerfilReservas.ts",
+    "lines": 145,
+    "domain": "core",
+    "exports": ["function usePerfilReservas", "type ReservationItem"],
+    "dependencies": ["useReservation"],
+    "hasTests": true,
+    "testFile": "tests/unit/usePerfilReservas.test.ts"
+  },
+  {
+    "name": "usePrebid",
+    "file": "app/composables/usePrebid.ts",
+    "lines": 256,
+    "domain": "core",
+    "exports": ["function usePrebid"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePrebid.test.ts"
+  },
+  {
+    "name": "usePrecios",
+    "file": "app/composables/usePrecios.ts",
+    "lines": 291,
+    "domain": "core",
+    "exports": [
+      "function usePrecios",
+      "type PlanCardData",
+      "type ComparisonRow",
+      "type BillingInterval"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePrecios.test.ts"
+  },
+  {
+    "name": "usePresence",
+    "file": "app/composables/usePresence.ts",
+    "lines": 88,
+    "domain": "core",
+    "exports": ["function usePresence"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePresence.test.ts"
+  },
+  {
+    "name": "usePricingSuggestion",
+    "file": "app/composables/usePricingSuggestion.ts",
+    "lines": 90,
+    "domain": "core",
+    "exports": ["function usePricingSuggestion"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePricingSuggestion.test.ts"
+  },
+  {
+    "name": "usePushNotifications",
+    "file": "app/composables/usePushNotifications.ts",
+    "lines": 232,
+    "domain": "core",
+    "exports": ["function usePushNotifications"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePushNotifications.test.ts"
+  },
+  {
+    "name": "useQueryBudget",
+    "file": "app/composables/useQueryBudget.ts",
+    "lines": 76,
+    "domain": "core",
+    "exports": ["function useQueryBudget"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useQueryBudget.test.ts"
+  },
+  {
+    "name": "useQueryCostEstimation",
+    "file": "app/composables/useQueryCostEstimation.ts",
+    "lines": 107,
+    "domain": "core",
+    "exports": ["function useQueryCostEstimation"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useQueryCostEstimation.test.ts"
+  },
+  {
+    "name": "useReferral",
+    "file": "app/composables/useReferral.ts",
+    "lines": 181,
+    "domain": "core",
+    "exports": ["function useReferral"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useReferral.test.ts"
+  },
+  {
+    "name": "useReports",
+    "file": "app/composables/useReports.ts",
+    "lines": 56,
+    "domain": "core",
+    "exports": ["function useReports"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useReports.test.ts"
+  },
+  {
+    "name": "useReservation",
+    "file": "app/composables/useReservation.ts",
+    "lines": 397,
+    "domain": "core",
+    "exports": [
+      "function useReservation",
+      "type ReservationStatus",
+      "type Reservation",
+      "type DepositInfo"
+    ],
+    "dependencies": ["useAnalyticsTracking", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useReservation.test.ts"
+  },
+  {
+    "name": "useRetryOperation",
+    "file": "app/composables/useRetryOperation.ts",
+    "lines": 172,
+    "domain": "core",
+    "exports": ["function useRetryOperation", "type RetryOperationOptions"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useRetryOperation.test.ts"
+  },
+  {
+    "name": "useRevenueMetrics",
+    "file": "app/composables/useRevenueMetrics.ts",
+    "lines": 172,
+    "domain": "core",
+    "exports": ["function useRevenueMetrics"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useRevenueMetrics.test.ts"
+  },
+  {
+    "name": "useSanitize",
+    "file": "app/composables/useSanitize.ts",
+    "lines": 25,
+    "domain": "core",
+    "exports": ["function useSanitize"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useSanitize.test.ts"
+  },
+  {
+    "name": "useSavedFilters",
+    "file": "app/composables/catalog/useSavedFilters.ts",
+    "lines": 109,
+    "domain": "core",
+    "exports": ["function useSavedFilters", "type SavedFilterPreset"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useSavedFilters.test.ts"
+  },
+  {
+    "name": "useScrollDepth",
+    "file": "app/composables/useScrollDepth.ts",
+    "lines": 52,
+    "domain": "core",
+    "exports": ["function useScrollDepth"],
+    "dependencies": ["useAnalyticsTracking"],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useScrollLock",
+    "file": "app/composables/useScrollLock.ts",
+    "lines": 19,
+    "domain": "core",
+    "exports": ["function useScrollLock"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useSearchAutocomplete",
+    "file": "app/composables/useSearchAutocomplete.ts",
+    "lines": 102,
+    "domain": "core",
+    "exports": ["function useSearchAutocomplete", "type AutocompleteResult"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useSearchAutocomplete.test.ts"
+  },
+  {
+    "name": "useSearchHistory",
+    "file": "app/composables/useSearchHistory.ts",
+    "lines": 55,
+    "domain": "core",
+    "exports": ["function useSearchHistory"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useSellerProfile",
+    "file": "app/composables/useSellerProfile.ts",
+    "lines": 265,
+    "domain": "core",
+    "exports": ["function useSellerProfile"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useSellerProfile.test.ts"
+  },
+  {
+    "name": "useSessionTimeout",
+    "file": "app/composables/useSessionTimeout.ts",
+    "lines": 146,
+    "domain": "core",
+    "exports": ["function useSessionTimeout"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useSessionTimeout.test.ts"
+  },
+  {
+    "name": "useSimilarSearches",
+    "file": "app/composables/catalog/useSimilarSearches.ts",
+    "lines": 262,
+    "domain": "core",
+    "exports": ["function useSimilarSearches", "type SearchSuggestion", "type CascadeLevel"],
+    "dependencies": ["useGeoFallback", "useCatalogState", "useVehicles"],
+    "hasTests": true,
+    "testFile": "tests/unit/useSimilarSearches.test.ts"
+  },
+  {
+    "name": "useSiteName",
+    "file": "app/composables/useSiteName.ts",
+    "lines": 14,
+    "domain": "core",
+    "exports": ["function useSiteName"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useSiteUrl",
+    "file": "app/composables/useSiteUrl.ts",
+    "lines": 14,
+    "domain": "core",
+    "exports": ["function useSiteUrl"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useSocialPublisher",
+    "file": "app/composables/useSocialPublisher.ts",
+    "lines": 604,
+    "domain": "core",
+    "exports": [
+      "function useSocialPublisher",
+      "type SocialPlatform",
+      "type SocialPost",
+      "type SocialPostWithVehicle"
+    ],
+    "dependencies": ["useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useSocialPublisher.test.ts"
+  },
+  {
+    "name": "useSubastasIndex",
+    "file": "app/composables/useSubastasIndex.ts",
+    "lines": 200,
+    "domain": "core",
+    "exports": ["function useSubastasIndex", "type SubastasTab"],
+    "dependencies": ["useAuction", "usePageSeo", "useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useSubastasIndex.test.ts"
+  },
+  {
+    "name": "useSubscriptionPlan",
+    "file": "app/composables/useSubscriptionPlan.ts",
+    "lines": 296,
+    "domain": "core",
+    "exports": [
+      "function useSubscriptionPlan",
+      "const PLAN_LIMITS",
+      "type PlanType",
+      "type StatsLevel",
+      "type BadgeType",
+      "type PlanLimitsConfig"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useSubscriptionPlan.test.ts"
+  },
+  {
+    "name": "useSwrQuery",
+    "file": "app/composables/useSwrQuery.ts",
+    "lines": 111,
+    "domain": "core",
+    "exports": ["function useSwrQuery", "type SwrOptions"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useTableOfContents",
+    "file": "app/composables/useTableOfContents.ts",
+    "lines": 91,
+    "domain": "core",
+    "exports": ["function useTableOfContents", "type TocItem", "type UseTableOfContents"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useTableOfContents.test.ts"
+  },
+  {
+    "name": "useToast",
+    "file": "app/composables/useToast.ts",
+    "lines": 113,
+    "domain": "core",
+    "exports": ["function useToast", "type ToastType", "type Toast"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useToast.test.ts"
+  },
+  {
+    "name": "useTransactionHistory",
+    "file": "app/composables/useTransactionHistory.ts",
+    "lines": 95,
+    "domain": "core",
+    "exports": [
+      "function useTransactionHistory",
+      "type TransactionRecord",
+      "type UseTransactionHistory"
+    ],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useTransport",
+    "file": "app/composables/useTransport.ts",
+    "lines": 229,
+    "domain": "core",
+    "exports": [
+      "function useTransport",
+      "type TransportZone",
+      "type TransportRequest",
+      "type CalculationResult"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/helpers/transport.test.ts"
+  },
+  {
+    "name": "useUndoAction",
+    "file": "app/composables/useUndoAction.ts",
+    "lines": 151,
+    "domain": "core",
+    "exports": ["function useUndoAction", "type UndoActionConfig", "type PendingAction"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useUndoAction.test.ts"
+  },
+  {
+    "name": "useUnreadMessages",
+    "file": "app/composables/useUnreadMessages.ts",
+    "lines": 105,
+    "domain": "core",
+    "exports": ["function useUnreadMessages"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useUnreadMessages.test.ts"
+  },
+  {
+    "name": "useUnsavedChanges",
+    "file": "app/composables/useUnsavedChanges.ts",
+    "lines": 35,
+    "domain": "core",
+    "exports": ["function useUnsavedChanges"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useUnsavedChanges.test.ts"
+  },
+  {
+    "name": "useUserChat",
+    "file": "app/composables/useUserChat.ts",
+    "lines": 214,
+    "domain": "core",
+    "exports": ["function useUserChat", "type MessageDirection", "type ChatMessage"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useUserChat.test.ts"
+  },
+  {
+    "name": "useUserLocation",
+    "file": "app/composables/useUserLocation.ts",
+    "lines": 338,
+    "domain": "core",
+    "exports": ["function useUserLocation", "type UserLocation"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useUserLocation.test.ts"
+  },
+  {
+    "name": "useUserPanel",
+    "file": "app/composables/user/useUserPanel.ts",
+    "lines": 460,
+    "domain": "core",
+    "exports": [
+      "function useUserPanel",
+      "type ProfileFormData",
+      "type PanelBanner",
+      "type UserDemand",
+      "type UserAd"
+    ],
+    "dependencies": ["useAuth", "useFavorites", "useUserChat"],
+    "hasTests": true,
+    "testFile": "tests/unit/useUserPanel.test.ts"
+  },
+  {
+    "name": "useUserProfile",
+    "file": "app/composables/useUserProfile.ts",
+    "lines": 193,
+    "domain": "core",
+    "exports": ["function useUserProfile"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useUserProfile.test.ts"
+  },
+  {
+    "name": "useValoracion",
+    "file": "app/composables/useValoracion.ts",
+    "lines": 291,
+    "domain": "core",
+    "exports": ["function useValoracion"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useValoracion.test.ts"
+  },
+  {
+    "name": "useVendedorDetail",
+    "file": "app/composables/useVendedorDetail.ts",
+    "lines": 292,
+    "domain": "core",
+    "exports": [
+      "function renderStars",
+      "function useVendedorDetail",
+      "type VendedorProfile",
+      "type VendedorReview",
+      "type VendedorVehicle"
+    ],
+    "dependencies": ["useSellerProfile", "useSiteUrl"],
+    "hasTests": true,
+    "testFile": "tests/unit/useVendedorDetail.test.ts"
+  },
+  {
+    "name": "useViewHistory",
+    "file": "app/composables/useViewHistory.ts",
+    "lines": 123,
+    "domain": "core",
+    "exports": ["function useViewHistory"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/helpers/viewHistory.test.ts"
+  },
+  {
+    "name": "useVirtualList",
+    "file": "app/composables/useVirtualList.ts",
+    "lines": 126,
+    "domain": "core",
+    "exports": ["function useVirtualList"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useVirtualList.test.ts"
+  },
+  {
+    "name": "useVoiceSearch",
+    "file": "app/composables/useVoiceSearch.ts",
+    "lines": 118,
+    "domain": "core",
+    "exports": ["function useVoiceSearch", "type UseVoiceSearch"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useVoiceSearch.test.ts"
+  },
+  {
+    "name": "useBuyerDashboard",
+    "file": "app/composables/useBuyerDashboard.ts",
+    "lines": 373,
+    "domain": "dashboard",
+    "exports": ["function useBuyerDashboard"],
+    "dependencies": ["useAuth"],
+    "hasTests": true,
+    "testFile": "tests/unit/useBuyerDashboard.test.ts"
+  },
+  {
+    "name": "useDashboardAlquileres",
+    "file": "app/composables/dashboard/useDashboardAlquileres.ts",
+    "lines": 461,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardAlquileres",
+      "type DealerVehicleOption",
+      "type RentalStatus",
+      "type RentalRecord",
+      "type RentalFormData"
+    ],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardAlquileres.test.ts"
+  },
+  {
+    "name": "useDashboardCalculadora",
+    "file": "app/composables/dashboard/useDashboardCalculadora.ts",
+    "lines": 458,
+    "domain": "dashboard",
+    "exports": [
+      "function formatCurrency",
+      "function formatCurrencyDecimals",
+      "function formatCompact",
+      "function formatPercent",
+      "function metricColorClass",
+      "function roiColorClass",
+      "function useDashboardCalculadora",
+      "type TabId",
+      "type TabItem",
+      "type AmortizationRow",
+      "type FinancingResultView",
+      "type TotalCostResultView",
+      "type ItpRateEntry"
+    ],
+    "dependencies": ["useFinanceCalculator"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardCalculadora.test.ts"
+  },
+  {
+    "name": "useDashboardContrato",
+    "file": "app/composables/dashboard/useDashboardContrato.ts",
+    "lines": 624,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardContrato",
+      "type ContractType",
+      "type ClientType",
+      "type ActiveTab",
+      "type VehicleOption"
+    ],
+    "dependencies": [
+      "useDashboardContratoHistory",
+      "useAuth",
+      "useDealerDashboard",
+      "useFormAutosave",
+      "useSubscriptionPlan"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardContrato.test.ts"
+  },
+  {
+    "name": "useDashboardContratoHistory",
+    "file": "app/composables/dashboard/useDashboardContratoHistory.ts",
+    "lines": 94,
+    "domain": "dashboard",
+    "exports": ["function useDashboardContratoHistory", "type ContractStatus", "type ContractRow"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useDashboardCrm",
+    "file": "app/composables/dashboard/useDashboardCrm.ts",
+    "lines": 337,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardCrm",
+      "const CONTACT_TYPES",
+      "type ContactType",
+      "type ContactFormData",
+      "type Contact",
+      "type ContactFilters",
+      "type ContactTypeConfig"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardCrm.test.ts"
+  },
+  {
+    "name": "useDashboardExportar",
+    "file": "app/composables/dashboard/useDashboardExportar.ts",
+    "lines": 596,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardExportar",
+      "type ExportVehicle",
+      "type CsvColumn",
+      "type CsvColumnOption"
+    ],
+    "dependencies": [
+      "useAuth",
+      "useDealerDashboard",
+      "useSiteName",
+      "useSiteUrl",
+      "useSubscriptionPlan"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardExportar.test.ts"
+  },
+  {
+    "name": "useDashboardExportarAnuncio",
+    "file": "app/composables/dashboard/useDashboardExportarAnuncio.ts",
+    "lines": 321,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardExportarAnuncio",
+      "const PLATFORMS",
+      "type PlatformKey",
+      "type PlatformConfig",
+      "type DealerVehicleForExport"
+    ],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSiteUrl", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardExportarAnuncio.test.ts"
+  },
+  {
+    "name": "useDashboardFactura",
+    "file": "app/composables/dashboard/useDashboardFactura.ts",
+    "lines": 234,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardFactura",
+      "type DealerField",
+      "type ClientField",
+      "type SettingsField"
+    ],
+    "dependencies": ["useInvoice"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardFactura.test.ts"
+  },
+  {
+    "name": "useDashboardHistorico",
+    "file": "app/composables/dashboard/useDashboardHistorico.ts",
+    "lines": 479,
+    "domain": "dashboard",
+    "exports": [
+      "function getProfit",
+      "function getMarginPercent",
+      "function getTotalCost",
+      "function useDashboardHistorico",
+      "type SoldVehicle",
+      "type DealerHistoricoFilters",
+      "type DealerHistoricoSummary",
+      "type HistoricoSortCol"
+    ],
+    "dependencies": ["useDealerDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardHistorico.test.ts"
+  },
+  {
+    "name": "useDashboardImportar",
+    "file": "app/composables/dashboard/useDashboardImportar.ts",
+    "lines": 386,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardImportar",
+      "type CategoryOption",
+      "type SubcategoryOption",
+      "type ParsedRow",
+      "type ImportStep"
+    ],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardImportar.test.ts"
+  },
+  {
+    "name": "useDashboardIndex",
+    "file": "app/composables/dashboard/useDashboardIndex.ts",
+    "lines": 164,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardIndex",
+      "type OnboardingStep",
+      "type DashboardKpiStats",
+      "type DashboardLead",
+      "type DashboardVehicle"
+    ],
+    "dependencies": [
+      "useAuth",
+      "useDealerDashboard",
+      "useDealerHealthScore",
+      "useSubscriptionPlan"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardIndex.test.ts"
+  },
+  {
+    "name": "useDashboardMantenimientos",
+    "file": "app/composables/dashboard/useDashboardMantenimientos.ts",
+    "lines": 472,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardMantenimientos",
+      "type MaintenanceType",
+      "type DealerVehicleOption",
+      "type MaintenanceRecord",
+      "type MaintenanceFormData",
+      "type SortColumn"
+    ],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardMantenimientos.test.ts"
+  },
+  {
+    "name": "useDashboardMercado",
+    "file": "app/composables/dashboard/useDashboardMercado.ts",
+    "lines": 123,
+    "domain": "dashboard",
+    "exports": [
+      "function positionClass",
+      "function positionIcon",
+      "function formatDeviation",
+      "function useDashboardMercado",
+      "type VehicleInsight",
+      "type MarketReport"
+    ],
+    "dependencies": ["useDealerDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardMercado.test.ts"
+  },
+  {
+    "name": "useDashboardMerchandising",
+    "file": "app/composables/dashboard/useDashboardMerchandising.ts",
+    "lines": 183,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardMerchandising",
+      "const products",
+      "type MerchProduct",
+      "type MerchForm"
+    ],
+    "dependencies": ["useDealerDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardMerchandising.test.ts"
+  },
+  {
+    "name": "useDashboardNuevoVehiculo",
+    "file": "app/composables/dashboard/useDashboardNuevoVehiculo.ts",
+    "lines": 232,
+    "domain": "dashboard",
+    "exports": ["function useDashboardNuevoVehiculo"],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardNuevoVehiculo.test.ts"
+  },
+  {
+    "name": "useDashboardObservatorio",
+    "file": "app/composables/dashboard/useDashboardObservatorio.ts",
+    "lines": 483,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardObservatorio",
+      "const STATUS_OPTIONS",
+      "type CompetitorStatus",
+      "type Platform",
+      "type DealerPlatform",
+      "type CompetitorVehicle",
+      "type CompetitorVehicleForm"
+    ],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardObservatorio.test.ts"
+  },
+  {
+    "name": "useDashboardPipeline",
+    "file": "app/composables/dashboard/useDashboardPipeline.ts",
+    "lines": 455,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardPipeline",
+      "const STAGES",
+      "const STAGE_COLORS",
+      "type PipelineStage",
+      "type PipelineItem",
+      "type PipelineItemForm"
+    ],
+    "dependencies": ["useAuth", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardPipeline.test.ts"
+  },
+  {
+    "name": "useDashboardPresupuesto",
+    "file": "app/composables/dashboard/useDashboardPresupuesto.ts",
+    "lines": 481,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardPresupuesto",
+      "type DealerVehicleOption",
+      "type OptionalService"
+    ],
+    "dependencies": ["useDealerDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardPresupuesto.test.ts"
+  },
+  {
+    "name": "useDashboardTransaccion",
+    "file": "app/composables/dashboard/useDashboardTransaccion.ts",
+    "lines": 339,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardTransaccion",
+      "type TabKey",
+      "type RentFormField",
+      "type SellFormField",
+      "type VehicleData",
+      "type RentFormData",
+      "type SellFormData"
+    ],
+    "dependencies": ["useAuth", "useDealerDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardTransaccion.test.ts"
+  },
+  {
+    "name": "useDashboardVehiculoDetail",
+    "file": "app/composables/dashboard/useDashboardVehiculoDetail.ts",
+    "lines": 383,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardVehiculoDetail",
+      "type CategoryOption",
+      "type SubcategoryOption",
+      "type VehicleFormData",
+      "type UploadFormData"
+    ],
+    "dependencies": [
+      "useCloudinaryUpload",
+      "useAuth",
+      "useDealerDashboard",
+      "useSubscriptionPlan",
+      "useVehicleVerification"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardVehiculoDetail.test.ts"
+  },
+  {
+    "name": "useDashboardVisitas",
+    "file": "app/composables/dashboard/useDashboardVisitas.ts",
+    "lines": 328,
+    "domain": "dashboard",
+    "exports": [
+      "function useDashboardVisitas",
+      "const DAYS_KEYS",
+      "type BookingStatus",
+      "type VisitSlot",
+      "type VisitBooking",
+      "type SlotFormData"
+    ],
+    "dependencies": ["useDealerDashboard"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardVisitas.test.ts"
+  },
+  {
+    "name": "useDashboardWidget",
+    "file": "app/composables/dashboard/useDashboardWidget.ts",
+    "lines": 129,
+    "domain": "dashboard",
+    "exports": ["function useDashboardWidget", "type CategoryOption"],
+    "dependencies": ["useAuth", "useDealerDashboard", "useSiteUrl", "useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDashboardWidget.test.ts"
+  },
+  {
+    "name": "useDealerDashboard",
+    "file": "app/composables/useDealerDashboard.ts",
+    "lines": 176,
+    "domain": "dashboard",
+    "exports": ["function mapLeads", "function useDealerDashboard"],
+    "dependencies": ["useAuth"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDealerDashboard.test.ts"
+  },
+  {
+    "name": "useDealerHealthScore",
+    "file": "app/composables/useDealerHealthScore.ts",
+    "lines": 254,
+    "domain": "dashboard",
+    "exports": ["function useDealerHealthScore", "type HealthScoreBreakdown"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useDealerHealthScore.test.ts"
+  },
+  {
+    "name": "useDealerLeads",
+    "file": "app/composables/useDealerLeads.ts",
+    "lines": 384,
+    "domain": "dashboard",
+    "exports": [
+      "function useDealerLeads",
+      "const LEAD_STATUSES",
+      "type LeadStatus",
+      "type Lead",
+      "type StatusChange",
+      "type LeadFilters"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useDealerLeads.test.ts"
+  },
+  {
+    "name": "useDealerPortal",
+    "file": "app/composables/dashboard/useDealerPortal.ts",
+    "lines": 423,
+    "domain": "dashboard",
+    "exports": [
+      "function useDealerPortal",
+      "type PhoneMode",
+      "type CatalogSortOption",
+      "type DealerCertification"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/components/DealerPortal.test.ts"
+  },
+  {
+    "name": "useDealerReviews",
+    "file": "app/composables/useDealerReviews.ts",
+    "lines": 122,
+    "domain": "dashboard",
+    "exports": ["function useDealerReviews", "type DealerReview", "type ReviewFormData"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useDealerReviews.test.ts"
+  },
+  {
+    "name": "useDealerStats",
+    "file": "app/composables/useDealerStats.ts",
+    "lines": 226,
+    "domain": "dashboard",
+    "exports": ["function useDealerStats"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/helpers/dealerStats.test.ts"
+  },
+  {
+    "name": "useDealerTheme",
+    "file": "app/composables/useDealerTheme.ts",
+    "lines": 48,
+    "domain": "dashboard",
+    "exports": ["function useDealerTheme"],
+    "dependencies": ["useVerticalConfig"],
+    "hasTests": true,
+    "testFile": "tests/unit/useDealerTheme.test.ts"
+  },
+  {
+    "name": "useDealerTrustScore",
+    "file": "app/composables/useDealerTrustScore.ts",
+    "lines": 117,
+    "domain": "dashboard",
+    "exports": ["function useDealerTrustScore", "type TrustBadgeTier", "type TrustScoreData"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useDealerTrustScore.test.ts"
+  },
+  {
+    "name": "useInvoice",
+    "file": "app/composables/dashboard/useInvoice.ts",
+    "lines": 414,
+    "domain": "dashboard",
+    "exports": ["function useInvoice"],
+    "dependencies": [
+      "useInvoiceData",
+      "useAuth",
+      "useDealerDashboard",
+      "useFormAutosave",
+      "useSubscriptionPlan"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useInvoice.test.ts"
+  },
+  {
+    "name": "useInvoiceData",
+    "file": "app/composables/dashboard/useInvoiceData.ts",
+    "lines": 212,
+    "domain": "dashboard",
+    "exports": ["function useInvoiceData"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useTopDealers",
+    "file": "app/composables/useTopDealers.ts",
+    "lines": 94,
+    "domain": "dashboard",
+    "exports": ["function useTopDealers", "type TopDealerPublic"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useTopDealers.test.ts"
+  },
+  {
+    "name": "useMarketData",
+    "file": "app/composables/useMarketData.ts",
+    "lines": 296,
+    "domain": "market",
+    "exports": ["function useMarketData"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useMarketData.test.ts"
+  },
+  {
+    "name": "useMarketIntelligence",
+    "file": "app/composables/useMarketIntelligence.ts",
+    "lines": 90,
+    "domain": "market",
+    "exports": ["function useMarketIntelligence"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useMarketIntelligence.test.ts"
+  },
+  {
+    "name": "usePriceHistory",
+    "file": "app/composables/usePriceHistory.ts",
+    "lines": 231,
+    "domain": "market",
+    "exports": ["function usePriceHistory", "type PricePoint", "type PriceTrend"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePriceHistory.test.ts"
+  },
+  {
+    "name": "usePriceRelativeToMarket",
+    "file": "app/composables/usePriceRelativeToMarket.ts",
+    "lines": 120,
+    "domain": "market",
+    "exports": [
+      "function calcDeviation",
+      "function calcMean",
+      "function classifyDeviation",
+      "function usePriceRelativeToMarket",
+      "type MarketComparison"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/usePriceRelativeToMarket.test.ts"
+  },
+  {
+    "name": "useVerticalConfig",
+    "file": "app/composables/useVerticalConfig.ts",
+    "lines": 146,
+    "domain": "multi-vertical",
+    "exports": ["function getVerticalSlug", "function useVerticalConfig"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useVerticalConfig.test.ts"
+  },
+  {
+    "name": "useCursorPagination",
+    "file": "app/composables/shared/cursorPagination.ts",
+    "lines": 119,
+    "domain": "shared",
+    "exports": [
+      "function useCursorPagination",
+      "type CursorPaginationOptions",
+      "type CursorPaginationReturn"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/cursorPagination.test.ts"
+  },
+  {
+    "name": "useHydratedState",
+    "file": "app/composables/shared/useHydratedState.ts",
+    "lines": 78,
+    "domain": "shared",
+    "exports": ["function useHydratedState", "type HydratedStateOptions"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useHydratedState.test.ts"
+  },
+  {
+    "name": "useQueryDedup",
+    "file": "app/composables/shared/useQueryDedup.ts",
+    "lines": 94,
+    "domain": "shared",
+    "exports": ["function useQueryDedup"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useQueryDedup.test.ts"
+  },
+  {
+    "name": "useStaleFallback",
+    "file": "app/composables/shared/useStaleFallback.ts",
+    "lines": 105,
+    "domain": "shared",
+    "exports": ["function useStaleFallback"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useCatalogState",
+    "file": "app/composables/useCatalogState.ts",
+    "lines": 201,
+    "domain": "vehicles",
+    "exports": [
+      "function useCatalogState",
+      "type SortOption",
+      "type ViewMode",
+      "type CatalogState"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useCatalogState.test.ts"
+  },
+  {
+    "name": "useHiddenVehicles",
+    "file": "app/composables/catalog/useHiddenVehicles.ts",
+    "lines": 150,
+    "domain": "vehicles",
+    "exports": ["function useHiddenVehicles"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useHiddenVehicles.test.ts"
+  },
+  {
+    "name": "useVehicleComparator",
+    "file": "app/composables/useVehicleComparator.ts",
+    "lines": 619,
+    "domain": "vehicles",
+    "exports": ["function useVehicleComparator"],
+    "dependencies": ["useSubscriptionPlan"],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicleComparator.test.ts"
+  },
+  {
+    "name": "useVehicleDetail",
+    "file": "app/composables/useVehicleDetail.ts",
+    "lines": 319,
+    "domain": "vehicles",
+    "exports": ["function useVehicleDetail", "type SellerInfo", "type VehicleDetail"],
+    "dependencies": [
+      "useFavorites",
+      "useLeadTracking",
+      "useToast",
+      "useUserLocation",
+      "useVehicleComparator",
+      "useVehicles"
+    ],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicleDetail.test.ts"
+  },
+  {
+    "name": "useVehicleGroups",
+    "file": "app/composables/useVehicleGroups.ts",
+    "lines": 212,
+    "domain": "vehicles",
+    "exports": [
+      "function useVehicleGroups",
+      "type GroupType",
+      "type GroupStatus",
+      "type VehicleGroup",
+      "type VehicleGroupWithCount"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicleGroups.test.ts"
+  },
+  {
+    "name": "useVehicles",
+    "file": "app/composables/useVehicles.ts",
+    "lines": 186,
+    "domain": "vehicles",
+    "exports": ["function useVehicles"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicles.test.ts"
+  },
+  {
+    "name": "useVehicleTable",
+    "file": "app/composables/catalog/useVehicleTable.ts",
+    "lines": 305,
+    "domain": "vehicles",
+    "exports": ["function useVehicleTable", "type SortCol"],
+    "dependencies": ["useFavorites", "useUserLocation"],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicleTable.test.ts"
+  },
+  {
+    "name": "useVehicleTypeSelector",
+    "file": "app/composables/useVehicleTypeSelector.ts",
+    "lines": 257,
+    "domain": "vehicles",
+    "exports": [
+      "function useVehicleTypeSelector",
+      "type SelectorCategory",
+      "type SelectorSubcategory",
+      "type SelectorAttribute"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicleTypeSelector.test.ts"
+  },
+  {
+    "name": "useVehicleUnlock",
+    "file": "app/composables/useVehicleUnlock.ts",
+    "lines": 77,
+    "domain": "vehicles",
+    "exports": ["function useVehicleUnlock"],
+    "dependencies": [],
+    "hasTests": false,
+    "testFile": null
+  },
+  {
+    "name": "useVehicleVerification",
+    "file": "app/composables/useVehicleVerification.ts",
+    "lines": 430,
+    "domain": "vehicles",
+    "exports": [
+      "function getRequiredDocsForLevel",
+      "function useVehicleVerification",
+      "const VERIFICATION_LEVELS",
+      "const LEVEL_ORDER",
+      "type VerificationLevel",
+      "type VerificationDocType",
+      "type VerificationDocStatus",
+      "type VerificationDocument",
+      "type VerificationLevelDefinition"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/useVehicleVerification.test.ts"
+  }
+]

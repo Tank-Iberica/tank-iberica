@@ -47,6 +47,8 @@ interface MigrationResult {
   next_steps: string[]
 }
 
+// NOTE: select('*') used intentionally in this file — cluster migration must copy ALL columns
+// to preserve data integrity when migrating between clusters.
 async function exportVerticalData(
   supabase: SupabaseClient,
   vertical: string,

@@ -1,92 +1,95 @@
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-
-const ROOT = resolve(__dirname, '../../..')
-const CONFIG = readFileSync(resolve(ROOT, 'nuxt.config.ts'), 'utf-8')
+import { loadNuxtConfig } from '../../helpers/nuxtConfig'
 
 describe('Service Worker precache & runtime caching', () => {
+  let config: Record<string, any>
+
+  beforeAll(async () => {
+    config = await loadNuxtConfig()
+  })
+
   describe('PWA workbox config', () => {
     it('has workbox configuration', () => {
-      expect(CONFIG).toContain('workbox:')
+      expect(config.pwa.workbox).toBeDefined()
     })
 
     it('has globPatterns for static asset precaching', () => {
-      expect(CONFIG).toContain('globPatterns')
-      expect(CONFIG).toContain('js,css,html,png,svg,ico,woff2')
+      const patterns = config.pwa.workbox.globPatterns
+      expect(patterns).toBeDefined()
+      expect(patterns[0]).toContain('js')
+      expect(patterns[0]).toContain('css')
+      expect(patterns[0]).toContain('woff2')
     })
 
     it('has navigateFallback for offline page', () => {
-      expect(CONFIG).toContain("navigateFallback: '/offline'")
+      expect(config.pwa.workbox.navigateFallback).toBe('/offline')
     })
   })
 
   describe('Runtime caching strategies', () => {
     it('caches page navigations with NetworkFirst', () => {
-      expect(CONFIG).toContain("cacheName: 'page-navigations'")
-      expect(CONFIG).toContain("request.mode === 'navigate'")
+      const caches = config.pwa.workbox.runtimeCaching
+      const navCache = caches.find((c: any) => c.options?.cacheName === 'page-navigations')
+      expect(navCache).toBeDefined()
+      expect(navCache.handler).toBe('NetworkFirst')
     })
 
-    it('page cache has reasonable expiration (max 20 entries, 7 days)', () => {
-      // Verify maxEntries and 7-day TTL for navigations
-      const navCacheMatch = CONFIG.match(
-        // eslint-disable-next-line regexp/no-super-linear-backtracking
-        /page-navigations[\s\S]*?maxEntries:\s*(\d+)[\s\S]*?maxAgeSeconds:\s*([^,}]+)/,
-      )
-      expect(navCacheMatch).toBeTruthy()
-      if (navCacheMatch) {
-        expect(Number(navCacheMatch[1])).toBeLessThanOrEqual(30)
-        expect(Number(navCacheMatch[1])).toBeGreaterThanOrEqual(10)
-      }
+    it('page cache has reasonable expiration (10-30 entries, 7 days)', () => {
+      const caches = config.pwa.workbox.runtimeCaching
+      const navCache = caches.find((c: any) => c.options?.cacheName === 'page-navigations')
+      const { maxEntries, maxAgeSeconds } = navCache.options.expiration
+      expect(maxEntries).toBeGreaterThanOrEqual(10)
+      expect(maxEntries).toBeLessThanOrEqual(30)
+      expect(maxAgeSeconds).toBe(60 * 60 * 24 * 7) // 7 days
     })
 
     it('page cache uses network timeout fallback', () => {
-      // Verify networkTimeoutSeconds for navigations
-      const navSection = CONFIG.match(/page-navigations[\s\S]*?networkTimeoutSeconds:\s*(\d+)/)
-      expect(navSection).toBeTruthy()
-      if (navSection) {
-        expect(Number(navSection[1])).toBeLessThanOrEqual(10)
-        expect(Number(navSection[1])).toBeGreaterThanOrEqual(3)
-      }
+      const caches = config.pwa.workbox.runtimeCaching
+      const navCache = caches.find((c: any) => c.options?.cacheName === 'page-navigations')
+      const timeout = navCache.options.networkTimeoutSeconds
+      expect(timeout).toBeGreaterThanOrEqual(3)
+      expect(timeout).toBeLessThanOrEqual(10)
     })
 
     it('caches Cloudinary images with CacheFirst', () => {
-      expect(CONFIG).toContain("cacheName: 'cloudinary-images'")
-      expect(CONFIG).toContain('cloudinary.com')
-      expect(CONFIG).toMatch(/cloudinary[\s\S]*?handler:\s*'CacheFirst'/)
+      const caches = config.pwa.workbox.runtimeCaching
+      const cloudinaryCache = caches.find((c: any) => c.options?.cacheName === 'cloudinary-images')
+      expect(cloudinaryCache).toBeDefined()
+      expect(cloudinaryCache.handler).toBe('CacheFirst')
     })
 
     it('caches Google Fonts with CacheFirst', () => {
-      expect(CONFIG).toContain("cacheName: 'google-fonts'")
-      expect(CONFIG).toContain('googleapis|gstatic')
+      const caches = config.pwa.workbox.runtimeCaching
+      const fontsCache = caches.find((c: any) => c.options?.cacheName === 'google-fonts')
+      expect(fontsCache).toBeDefined()
+      expect(fontsCache.handler).toBe('CacheFirst')
     })
 
     it('caches Supabase API with NetworkFirst', () => {
-      expect(CONFIG).toContain("cacheName: 'supabase-api'")
-      expect(CONFIG).toContain('supabase.co')
+      const caches = config.pwa.workbox.runtimeCaching
+      const supabaseCache = caches.find((c: any) => c.options?.cacheName === 'supabase-api')
+      expect(supabaseCache).toBeDefined()
+      expect(supabaseCache.handler).toBe('NetworkFirst')
     })
 
     it('Supabase API cache has short TTL (5 min)', () => {
-      const supabaseMatch = CONFIG.match(/supabase-api[\s\S]*?maxAgeSeconds:\s*([^,}]+)/)
-      expect(supabaseMatch).toBeTruthy()
-      if (supabaseMatch) {
-        // 60 * 5 = 300
-        expect(supabaseMatch[1].trim()).toContain('60 * 5')
-      }
+      const caches = config.pwa.workbox.runtimeCaching
+      const supabaseCache = caches.find((c: any) => c.options?.cacheName === 'supabase-api')
+      expect(supabaseCache.options.expiration.maxAgeSeconds).toBe(300)
     })
   })
 
-  describe('PWA manifest', () => {
+  describe('PWA registration', () => {
     it('has autoUpdate register type', () => {
-      expect(CONFIG).toContain("registerType: 'autoUpdate'")
+      expect(config.pwa.registerType).toBe('autoUpdate')
     })
 
     it('has install prompt enabled', () => {
-      expect(CONFIG).toContain('installPrompt: true')
+      expect(config.pwa.client.installPrompt).toBe(true)
     })
 
     it('has standalone display mode', () => {
-      expect(CONFIG).toContain("display: 'standalone'")
+      expect(config.pwa.manifest.display).toBe('standalone')
     })
   })
 })

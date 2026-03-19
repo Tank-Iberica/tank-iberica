@@ -6,14 +6,21 @@ export default defineConfig({
   plugins: [
     vue(),
     {
-      name: 'nuxt-import-meta-plugins',
+      name: 'nuxt-import-meta-transform',
       enforce: 'pre' as const,
       transform(code: string, id: string) {
         const norm = id.replace(/\\/g, '/')
-        if (!norm.includes('app/plugins/')) return
-        if (!code.includes('import.meta.client') && !code.includes('import.meta.dev')) return
+        // Transform import.meta.client/server/dev in all app/ and server/ source files
+        if (!norm.includes('/app/') && !norm.includes('/server/')) return
+        if (
+          !code.includes('import.meta.client') &&
+          !code.includes('import.meta.dev') &&
+          !code.includes('import.meta.server')
+        )
+          return
         return code
           .replace(/import\.meta\.client/g, '(true)')
+          .replace(/import\.meta\.server/g, '(false)')
           .replace(/import\.meta\.dev/g, '(true)')
       },
     },
@@ -22,6 +29,7 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     include: ['tests/**/*.test.ts'],
+    exclude: ['tests/integration/**/*.test.ts'],
     setupFiles: ['tests/setup.ts'],
     coverage: {
       provider: 'v8',

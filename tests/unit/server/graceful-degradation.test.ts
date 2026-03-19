@@ -1,156 +1,162 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'server/utils/gracefulDegradation.ts'), 'utf-8')
+import {
+  reportSuccess,
+  reportFailure,
+  getServiceHealth,
+  isServiceAvailable,
+  getFallbackStrategy,
+  getAllServiceHealth,
+  clearHealthStore,
+  getImageUrlWithFallback,
+  FALLBACK_STRATEGIES,
+  type ExternalService,
+} from '../../../server/utils/gracefulDegradation'
 
 describe('Graceful degradation per external service (N31)', () => {
-  describe('Source structure', () => {
-    it('defines ExternalService type', () => {
-      expect(SRC).toContain('ExternalService')
-      expect(SRC).toContain("'cloudinary'")
-      expect(SRC).toContain("'stripe'")
-      expect(SRC).toContain("'resend'")
-      expect(SRC).toContain("'ai'")
-      expect(SRC).toContain("'supabase'")
+  beforeEach(() => {
+    clearHealthStore()
+  })
+
+  describe('FALLBACK_STRATEGIES', () => {
+    it('defines strategies for all 5 services', () => {
+      const services: ExternalService[] = ['cloudinary', 'stripe', 'resend', 'ai', 'supabase']
+      for (const s of services) {
+        expect(FALLBACK_STRATEGIES[s]).toBeDefined()
+        expect(FALLBACK_STRATEGIES[s].service).toBe(s)
+      }
     })
 
-    it('defines ServiceStatus type', () => {
-      expect(SRC).toContain("'healthy'")
-      expect(SRC).toContain("'degraded'")
-      expect(SRC).toContain("'down'")
+    it('each strategy has retryable, maxRetries, retryDelayMs', () => {
+      for (const strategy of Object.values(FALLBACK_STRATEGIES)) {
+        expect(typeof strategy.retryable).toBe('boolean')
+        expect(strategy.maxRetries).toBeGreaterThan(0)
+        expect(strategy.retryDelayMs).toBeGreaterThan(0)
+      }
     })
 
-    it('has FALLBACK_STRATEGIES for all services', () => {
-      expect(SRC).toContain('FALLBACK_STRATEGIES')
-    })
-
-    it('exports reportSuccess and reportFailure', () => {
-      expect(SRC).toContain('export function reportSuccess')
-      expect(SRC).toContain('export function reportFailure')
-    })
-
-    it('exports getServiceHealth and isServiceAvailable', () => {
-      expect(SRC).toContain('export function getServiceHealth')
-      expect(SRC).toContain('export function isServiceAvailable')
+    it('stripe has higher retry count than cloudinary', () => {
+      expect(FALLBACK_STRATEGIES.stripe.maxRetries).toBeGreaterThan(
+        FALLBACK_STRATEGIES.cloudinary.maxRetries,
+      )
     })
   })
 
-  describe('Fallback strategies', () => {
-    it('Cloudinary falls back to original URL', () => {
-      expect(SRC).toContain('Use original image URL without transforms')
-    })
-
-    it('Stripe queues payment for retry', () => {
-      expect(SRC).toContain('Queue payment for retry')
-    })
-
-    it('Resend queues email via jobQueue', () => {
-      expect(SRC).toContain('Queue email via jobQueue')
-    })
-
-    it('AI returns cached/default text', () => {
-      expect(SRC).toContain('Return cached or default text')
-    })
-
-    it('Supabase returns cached data with stale indicator', () => {
-      expect(SRC).toContain('Return cached data if available')
-    })
-  })
-
-  describe('Health tracking (unit tests)', () => {
-    let mod: typeof import('../../../server/utils/gracefulDegradation')
-
-    beforeEach(async () => {
-      mod = await import('../../../server/utils/gracefulDegradation')
-      mod.clearHealthStore()
-    })
-
-    it('new service defaults to healthy', () => {
-      const health = mod.getServiceHealth('cloudinary')
+  describe('reportSuccess', () => {
+    it('sets service to healthy with zero failures', () => {
+      reportSuccess('cloudinary')
+      const health = getServiceHealth('cloudinary')
       expect(health.status).toBe('healthy')
       expect(health.failureCount).toBe(0)
     })
 
-    it('reportSuccess resets to healthy', () => {
-      mod.reportFailure('stripe')
-      mod.reportFailure('stripe')
-      mod.reportFailure('stripe')
-      mod.reportSuccess('stripe')
-      expect(mod.getServiceHealth('stripe').status).toBe('healthy')
-      expect(mod.getServiceHealth('stripe').failureCount).toBe(0)
-    })
+    it('resets failure count after previous failures', () => {
+      reportFailure('stripe')
+      reportFailure('stripe')
+      reportFailure('stripe')
+      expect(getServiceHealth('stripe').failureCount).toBe(3)
 
-    it('3 failures → degraded', () => {
-      mod.reportFailure('resend')
-      mod.reportFailure('resend')
-      const status = mod.reportFailure('resend')
-      expect(status).toBe('degraded')
-    })
-
-    it('5 failures → down', () => {
-      for (let i = 0; i < 4; i++) mod.reportFailure('ai')
-      const status = mod.reportFailure('ai')
-      expect(status).toBe('down')
-    })
-
-    it('isServiceAvailable returns false when down', () => {
-      for (let i = 0; i < 5; i++) mod.reportFailure('cloudinary')
-      expect(mod.isServiceAvailable('cloudinary')).toBe(false)
-    })
-
-    it('isServiceAvailable returns true when healthy', () => {
-      mod.reportSuccess('stripe')
-      expect(mod.isServiceAvailable('stripe')).toBe(true)
-    })
-
-    it('isServiceAvailable returns true for never-checked service', () => {
-      expect(mod.isServiceAvailable('supabase')).toBe(true)
-    })
-
-    it('getAllServiceHealth returns all services', () => {
-      const all = mod.getAllServiceHealth()
-      expect(Object.keys(all)).toEqual(
-        expect.arrayContaining(['cloudinary', 'stripe', 'resend', 'ai', 'supabase']),
-      )
-    })
-
-    it('reportFailure stores error message', () => {
-      mod.reportFailure('resend', 'Connection timeout')
-      expect(mod.getServiceHealth('resend').lastError).toBe('Connection timeout')
+      reportSuccess('stripe')
+      expect(getServiceHealth('stripe').failureCount).toBe(0)
+      expect(getServiceHealth('stripe').status).toBe('healthy')
     })
   })
 
-  describe('Cloudinary fallback helper', () => {
-    let mod: typeof import('../../../server/utils/gracefulDegradation')
-
-    beforeEach(async () => {
-      mod = await import('../../../server/utils/gracefulDegradation')
-      mod.clearHealthStore()
+  describe('reportFailure', () => {
+    it('increments failure count', () => {
+      reportFailure('resend')
+      expect(getServiceHealth('resend').failureCount).toBe(1)
+      reportFailure('resend')
+      expect(getServiceHealth('resend').failureCount).toBe(2)
     })
 
-    it('returns transform URL when healthy', () => {
-      mod.reportSuccess('cloudinary')
-      const url = mod.getImageUrlWithFallback(
-        'https://example.com/image.jpg',
-        'https://res.cloudinary.com/transformed.jpg',
-      )
-      expect(url).toBe('https://res.cloudinary.com/transformed.jpg')
+    it('returns "healthy" for < 3 failures', () => {
+      const status = reportFailure('ai')
+      expect(status).toBe('healthy')
     })
 
-    it('returns original URL when Cloudinary is down', () => {
-      for (let i = 0; i < 5; i++) mod.reportFailure('cloudinary')
-      const url = mod.getImageUrlWithFallback(
-        'https://example.com/image.jpg',
-        'https://res.cloudinary.com/transformed.jpg',
-      )
-      expect(url).toBe('https://example.com/image.jpg')
+    it('returns "degraded" at 3 failures', () => {
+      reportFailure('ai')
+      reportFailure('ai')
+      const status = reportFailure('ai')
+      expect(status).toBe('degraded')
     })
 
-    it('returns original URL when no transform available', () => {
-      const url = mod.getImageUrlWithFallback('https://example.com/image.jpg', null)
-      expect(url).toBe('https://example.com/image.jpg')
+    it('returns "down" at 5 failures', () => {
+      for (let i = 0; i < 4; i++) reportFailure('supabase')
+      const status = reportFailure('supabase')
+      expect(status).toBe('down')
+    })
+
+    it('stores lastError message', () => {
+      reportFailure('cloudinary', 'Connection timeout')
+      expect(getServiceHealth('cloudinary').lastError).toBe('Connection timeout')
+    })
+  })
+
+  describe('getServiceHealth', () => {
+    it('returns default healthy state for unknown service', () => {
+      const health = getServiceHealth('cloudinary')
+      expect(health.status).toBe('healthy')
+      expect(health.failureCount).toBe(0)
+    })
+  })
+
+  describe('isServiceAvailable', () => {
+    it('returns true for never-checked service', () => {
+      expect(isServiceAvailable('cloudinary')).toBe(true)
+    })
+
+    it('returns true for healthy service', () => {
+      reportSuccess('stripe')
+      expect(isServiceAvailable('stripe')).toBe(true)
+    })
+
+    it('returns true for degraded service', () => {
+      for (let i = 0; i < 3; i++) reportFailure('resend')
+      expect(isServiceAvailable('resend')).toBe(true)
+    })
+
+    it('returns false for down service', () => {
+      for (let i = 0; i < 5; i++) reportFailure('ai')
+      expect(isServiceAvailable('ai')).toBe(false)
+    })
+  })
+
+  describe('getFallbackStrategy', () => {
+    it('returns correct strategy for cloudinary', () => {
+      const strategy = getFallbackStrategy('cloudinary')
+      expect(strategy.service).toBe('cloudinary')
+      expect(strategy.fallbackDescription).toContain('original image')
+    })
+  })
+
+  describe('getAllServiceHealth', () => {
+    it('returns health for all 5 services', () => {
+      const health = getAllServiceHealth()
+      expect(Object.keys(health)).toHaveLength(5)
+      expect(health.cloudinary).toBeDefined()
+      expect(health.stripe).toBeDefined()
+      expect(health.supabase).toBeDefined()
+    })
+  })
+
+  describe('getImageUrlWithFallback', () => {
+    it('returns cloudinary URL when service is available', () => {
+      reportSuccess('cloudinary')
+      const url = getImageUrlWithFallback('https://orig.jpg', 'https://cloudinary.jpg')
+      expect(url).toBe('https://cloudinary.jpg')
+    })
+
+    it('returns original URL when cloudinary is down', () => {
+      for (let i = 0; i < 5; i++) reportFailure('cloudinary')
+      const url = getImageUrlWithFallback('https://orig.jpg', 'https://cloudinary.jpg')
+      expect(url).toBe('https://orig.jpg')
+    })
+
+    it('returns original URL when cloudinary URL is null', () => {
+      const url = getImageUrlWithFallback('https://orig.jpg', null)
+      expect(url).toBe('https://orig.jpg')
     })
   })
 })

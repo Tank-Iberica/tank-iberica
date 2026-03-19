@@ -20,5 +20,5 @@ export default defineNitroPlugin(() => {
     })
   })
 
-  console.info('[security-alerts] Threat alert handler registered')
+  logger.info('[security-alerts] Threat alert handler registered')
 })

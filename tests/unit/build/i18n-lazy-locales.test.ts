@@ -1,34 +1,39 @@
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-
-const ROOT = resolve(__dirname, '../../..')
-const CONFIG = readFileSync(resolve(ROOT, 'nuxt.config.ts'), 'utf-8')
+import { loadNuxtConfig } from '../../helpers/nuxtConfig'
 
 describe('Lazy load i18n locales', () => {
+  let config: Record<string, any>
+
+  beforeAll(async () => {
+    config = await loadNuxtConfig()
+  })
+
   it('i18n lazy loading is enabled', () => {
-    expect(CONFIG).toContain('lazy: true')
+    expect(config.i18n.lazy).toBe(true)
   })
 
   it('locales use file references (not inline)', () => {
-    expect(CONFIG).toContain("file: 'es.json'")
-    expect(CONFIG).toContain("file: 'en.json'")
+    const locales = config.i18n.locales
+    const esLocale = locales.find((l: any) => l.code === 'es')
+    const enLocale = locales.find((l: any) => l.code === 'en')
+    expect(esLocale.file).toBe('es.json')
+    expect(enLocale.file).toBe('en.json')
   })
 
   it('langDir points to i18n directory', () => {
-    expect(CONFIG).toContain("langDir: '../i18n'")
+    expect(config.i18n.langDir).toBe('../i18n')
   })
 
   it('default locale is ES', () => {
-    expect(CONFIG).toContain("defaultLocale: 'es'")
+    expect(config.i18n.defaultLocale).toBe('es')
   })
 
   it('uses prefix_except_default strategy', () => {
-    expect(CONFIG).toContain("strategy: 'prefix_except_default'")
+    expect(config.i18n.strategy).toBe('prefix_except_default')
   })
 
   it('has browser language detection', () => {
-    expect(CONFIG).toContain('detectBrowserLanguage')
-    expect(CONFIG).toContain("fallbackLocale: 'es'")
+    expect(config.i18n.detectBrowserLanguage).toBeDefined()
+    expect(config.i18n.detectBrowserLanguage.fallbackLocale).toBe('es')
   })
 })

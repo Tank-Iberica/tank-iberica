@@ -63,6 +63,7 @@ export function useVerticalConfig() {
   async function loadConfig() {
     if (config.value) return config.value
     const supabase = useSupabaseClient()
+    // select('*') intentional — vertical_config is extensible (JSONB fields, dynamic columns per vertical)
     const { data } = await supabase
       .from('vertical_config')
       .select('*')

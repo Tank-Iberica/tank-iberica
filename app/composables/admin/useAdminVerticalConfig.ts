@@ -62,6 +62,7 @@ export function useAdminVerticalConfig() {
     loading.value = true
     error.value = null
     try {
+      // select('*') intentional — vertical_config is extensible (JSONB fields, dynamic columns)
       const { data, error: err } = await supabase
         .from('vertical_config')
         .select('*')

@@ -4,8 +4,13 @@
  * Adds Server-Timing header to responses for performance monitoring
  * Format: Server-Timing: db;dur=45, cache;dur=10, process;dur=5
  *
+ * Also records latency to the in-memory metrics store for p50/p95/p99 aggregation.
+ *
  * P1 § Request Tracing — Server-side latency visibility
+ * #140 — Per-endpoint latency metrics
  */
+
+import { recordLatency } from '../utils/latencyMetrics'
 
 export default defineEventHandler((event) => {
   const startTime = Date.now()
@@ -39,6 +44,13 @@ export default defineEventHandler((event) => {
 
     // Also add to X-Response-Time header for debugging
     setHeader(event, 'X-Response-Time', `${totalTime}ms`)
+
+    // Record to latency metrics store for aggregation
+    const path = event.path || event.node.req.url || '/'
+    if (path.startsWith('/api/')) {
+      const statusCode = event.node.res.statusCode
+      recordLatency(path, totalTime, statusCode >= 400)
+    }
   }
 
   // Register response hook via Node.js response finish event

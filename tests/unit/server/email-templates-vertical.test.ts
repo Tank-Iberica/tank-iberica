@@ -1,140 +1,213 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const ROOT = resolve(__dirname, '../../..')
-const SEND_SRC = readFileSync(resolve(ROOT, 'server/api/email/send.post.ts'), 'utf-8')
-const RENDERER_SRC = readFileSync(resolve(ROOT, 'server/services/emailRenderer.ts'), 'utf-8')
+// BRAND_COLORS, getSiteName, getSiteUrl are Nuxt auto-imports (server/utils/siteConfig)
+// Must be hoisted before emailRenderer.ts module-level code evaluates
+vi.hoisted(() => {
+  ;(globalThis as any).BRAND_COLORS = { primary: '#23424A', secondary: '#1a1a1a' }
+  ;(globalThis as any).getSiteName = () => 'Tracciona'
+  ;(globalThis as any).getSiteUrl = () => 'https://tracciona.com'
+})
+
+import {
+  substituteVariables,
+  markdownToEmailHtml,
+  buildEmailHtml,
+  resolveLocalizedField,
+  type EmailTheme,
+} from '../../../server/services/emailRenderer'
 
 describe('Email templates dinámicos per-vertical (N53)', () => {
-  describe('send.post.ts loads vertical_config', () => {
-    it('reads from vertical_config table', () => {
-      expect(SEND_SRC).toContain("from('vertical_config')")
+  describe('substituteVariables', () => {
+    it('replaces {{variable}} with values', () => {
+      const result = substituteVariables('Hello {{name}}!', { name: 'Carlos' })
+      expect(result).toBe('Hello Carlos!')
     })
 
-    it('selects email_templates, theme, logo_url, name', () => {
-      expect(SEND_SRC).toContain('email_templates')
-      expect(SEND_SRC).toContain('theme')
-      expect(SEND_SRC).toContain('logo_url')
-      expect(SEND_SRC).toContain('name')
+    it('replaces multiple variables', () => {
+      const result = substituteVariables('{{greeting}} {{name}}, welcome to {{site}}', {
+        greeting: 'Hola',
+        name: 'Ana',
+        site: 'Tracciona',
+      })
+      expect(result).toBe('Hola Ana, welcome to Tracciona')
     })
 
-    it('uses NUXT_PUBLIC_VERTICAL env', () => {
-      expect(SEND_SRC).toContain('NUXT_PUBLIC_VERTICAL')
+    it('replaces missing variables with empty string', () => {
+      const result = substituteVariables('Hello {{name}}, your id is {{id}}', { name: 'Test' })
+      expect(result).toBe('Hello Test, your id is ')
     })
 
-    it('resolves template by key from vertical_config', () => {
-      expect(SEND_SRC).toContain('loadEmailTemplate')
-      expect(SEND_SRC).toContain('templateKey')
+    it('converts numeric values to string', () => {
+      const result = substituteVariables('Price: {{price}}€', { price: 42000 })
+      expect(result).toBe('Price: 42000€')
     })
 
-    it('passes theme to buildEmailHtml', () => {
-      expect(SEND_SRC).toContain('theme: typedConfig.theme')
+    it('returns text unchanged when no placeholders', () => {
+      const result = substituteVariables('No variables here', {})
+      expect(result).toBe('No variables here')
     })
 
-    it('passes logo_url to buildEmailHtml', () => {
-      expect(SEND_SRC).toContain('logoUrl: typedConfig.logo_url')
-    })
-
-    it('resolves localized site name from vertical_config', () => {
-      expect(SEND_SRC).toContain('resolveLocalized(typedConfig.name, locale)')
-    })
-
-    it('supports locale-based template resolution', () => {
-      expect(SEND_SRC).toContain('resolveLocalized(template.subject, locale)')
-      expect(SEND_SRC).toContain('resolveLocalized(template.body, locale)')
+    it('handles empty text', () => {
+      const result = substituteVariables('', { name: 'test' })
+      expect(result).toBe('')
     })
   })
 
-  describe('buildEmailHtml uses vertical theme', () => {
-    it('uses theme.primary for brand color', () => {
-      expect(SEND_SRC).toContain("theme.primary ?? '#23424A'")
+  describe('markdownToEmailHtml', () => {
+    it('wraps text in paragraph tags', () => {
+      const result = markdownToEmailHtml('Hello world')
+      expect(result).toContain('<p')
+      expect(result).toContain('Hello world')
+      expect(result).toContain('</p>')
     })
 
-    it('uses theme.background for email background', () => {
-      expect(SEND_SRC).toContain("theme.background ?? '#f4f4f5'")
+    it('converts **bold** to <strong>', () => {
+      const result = markdownToEmailHtml('This is **bold** text')
+      expect(result).toContain('<strong>bold</strong>')
     })
 
-    it('uses theme.text for text color', () => {
-      expect(SEND_SRC).toContain("theme.text ?? '#1a1a1a'")
+    it('converts [links](url) to <a> tags', () => {
+      const result = markdownToEmailHtml('Click [here](https://example.com)')
+      expect(result).toContain('<a href="https://example.com"')
+      expect(result).toContain('>here</a>')
     })
 
-    it('uses logoUrl for header image', () => {
-      expect(SEND_SRC).toContain('logoUrl')
-      expect(SEND_SRC).toContain('<img src=')
+    it('converts double newlines to paragraph breaks', () => {
+      const result = markdownToEmailHtml('First paragraph\n\nSecond paragraph')
+      expect(result).toContain('</p><p')
     })
 
-    it('falls back to text siteName when no logo', () => {
-      expect(SEND_SRC).toContain('siteName')
-    })
-  })
-
-  describe('emailRenderer.ts shared utilities', () => {
-    it('exports EmailTheme interface', () => {
-      expect(RENDERER_SRC).toContain('export interface EmailTheme')
+    it('converts single newlines to <br />', () => {
+      const result = markdownToEmailHtml('Line one\nLine two')
+      expect(result).toContain('<br />')
     })
 
-    it('EmailTheme has primaryColor', () => {
-      expect(RENDERER_SRC).toContain('primaryColor: string')
-    })
-
-    it('EmailTheme has logoUrl', () => {
-      expect(RENDERER_SRC).toContain('logoUrl: string | null')
-    })
-
-    it('has DEFAULT_THEME from BRAND_COLORS', () => {
-      expect(RENDERER_SRC).toContain('DEFAULT_THEME')
-      expect(RENDERER_SRC).toContain('BRAND_COLORS.primary')
-    })
-
-    it('exports resolveLocalizedField', () => {
-      expect(RENDERER_SRC).toContain('export function resolveLocalizedField')
-    })
-
-    it('resolveLocalizedField falls back es → en → first', () => {
-      expect(RENDERER_SRC).toContain("field['es']")
-      expect(RENDERER_SRC).toContain("field['en']")
-    })
-
-    it('exports substituteVariables', () => {
-      expect(RENDERER_SRC).toContain('export function substituteVariables')
-    })
-
-    it('exports markdownToEmailHtml', () => {
-      expect(RENDERER_SRC).toContain('export function markdownToEmailHtml')
+    it('handles combined markdown elements', () => {
+      const result = markdownToEmailHtml('**Bold** and [link](https://x.com)')
+      expect(result).toContain('<strong>Bold</strong>')
+      expect(result).toContain('<a href="https://x.com"')
     })
   })
 
-  describe('Email preference check', () => {
-    it('checks email_preferences table', () => {
-      expect(SEND_SRC).toContain("from('email_preferences')")
+  describe('buildEmailHtml', () => {
+    it('returns a complete HTML document', () => {
+      const html = buildEmailHtml('<p>Test</p>')
+      expect(html).toContain('<!DOCTYPE html>')
+      expect(html).toContain('<html')
+      expect(html).toContain('</html>')
     })
 
-    it('skips email when preference is disabled', () => {
-      expect(SEND_SRC).toContain('skipped_preference')
+    it('includes the body content', () => {
+      const html = buildEmailHtml('<p>My content</p>')
+      expect(html).toContain('<p>My content</p>')
+    })
+
+    it('uses default primary color when no theme provided', () => {
+      const html = buildEmailHtml('<p>Test</p>')
+      expect(html).toContain('#23424A')
+    })
+
+    it('uses custom primary color from theme', () => {
+      const html = buildEmailHtml('<p>Test</p>', { primaryColor: '#FF5733' })
+      expect(html).toContain('#FF5733')
+    })
+
+    it('renders logo image when logoUrl is provided', () => {
+      const html = buildEmailHtml('<p>Test</p>', { logoUrl: 'https://cdn.test.com/logo.png' })
+      expect(html).toContain('<img src="https://cdn.test.com/logo.png"')
+    })
+
+    it('renders siteName as h1 when no logo', () => {
+      const html = buildEmailHtml('<p>Test</p>', { logoUrl: null })
+      expect(html).toContain('<h1')
+    })
+
+    it('uses custom siteName in fallback h1', () => {
+      const html = buildEmailHtml('<p>Test</p>', { siteName: 'MiSitio', logoUrl: null })
+      expect(html).toContain('MiSitio')
+    })
+
+    it('defaults to Spanish footer text', () => {
+      const html = buildEmailHtml('<p>Test</p>')
+      expect(html).toContain('Recibes este email')
+    })
+
+    it('uses English footer text when locale is en', () => {
+      const html = buildEmailHtml('<p>Test</p>', {}, { locale: 'en' })
+      expect(html).toContain('You received this email')
+    })
+
+    it('includes unsubscribe link when provided', () => {
+      const html = buildEmailHtml(
+        '<p>Test</p>',
+        {},
+        {
+          unsubscribeUrl: 'https://tracciona.com/api/email/unsubscribe?token=abc',
+        },
+      )
+      expect(html).toContain('href="https://tracciona.com/api/email/unsubscribe?token=abc"')
+      expect(html).toContain('Cancelar suscripción')
+    })
+
+    it('uses English unsubscribe label when locale is en', () => {
+      const html = buildEmailHtml(
+        '<p>Test</p>',
+        {},
+        {
+          locale: 'en',
+          unsubscribeUrl: 'https://example.com/unsub',
+        },
+      )
+      expect(html).toContain('Unsubscribe')
+    })
+
+    it('uses border-top with primary color', () => {
+      const html = buildEmailHtml('<p>Test</p>', { primaryColor: '#FF0000' })
+      expect(html).toContain('border-top: 4px solid #FF0000')
+    })
+
+    it('uses custom footer text when provided', () => {
+      const html = buildEmailHtml('<p>Test</p>', {}, { footerText: 'Custom footer' })
+      expect(html).toContain('Custom footer')
+    })
+
+    it('sets html lang attribute from locale', () => {
+      const html = buildEmailHtml('<p>Test</p>', {}, { locale: 'en' })
+      expect(html).toContain('lang="en"')
     })
   })
 
-  describe('Unsubscribe support', () => {
-    it('generates unsubscribe URL', () => {
-      expect(SEND_SRC).toContain('unsubscribeUrl')
-      expect(SEND_SRC).toContain('/api/email/unsubscribe')
+  describe('resolveLocalizedField', () => {
+    it('returns empty string for null field', () => {
+      expect(resolveLocalizedField(null, 'es')).toBe('')
     })
 
-    it('sets List-Unsubscribe header', () => {
-      expect(SEND_SRC).toContain('List-Unsubscribe')
-      expect(SEND_SRC).toContain('List-Unsubscribe-Post')
-    })
-  })
-
-  describe('Email logging', () => {
-    it('logs sent emails to email_logs', () => {
-      expect(SEND_SRC).toContain("from('email_logs')")
-      expect(SEND_SRC).toContain("status: 'sent'")
+    it('returns the string directly if field is a plain string', () => {
+      expect(resolveLocalizedField('Hello', 'es')).toBe('Hello')
     })
 
-    it('logs failed emails', () => {
-      expect(SEND_SRC).toContain("status: 'failed'")
+    it('returns the requested locale when available', () => {
+      const field = { es: 'Hola', en: 'Hello' }
+      expect(resolveLocalizedField(field, 'en')).toBe('Hello')
+    })
+
+    it('falls back to es when requested locale not found', () => {
+      const field = { es: 'Hola', en: 'Hello' }
+      expect(resolveLocalizedField(field, 'fr')).toBe('Hola')
+    })
+
+    it('falls back to en when es not found', () => {
+      const field = { en: 'Hello', de: 'Hallo' }
+      expect(resolveLocalizedField(field, 'fr')).toBe('Hello')
+    })
+
+    it('falls back to first value when neither es nor en found', () => {
+      const field = { de: 'Hallo', fr: 'Bonjour' }
+      expect(resolveLocalizedField(field, 'it')).toBe('Hallo')
+    })
+
+    it('returns empty string for empty object', () => {
+      expect(resolveLocalizedField({}, 'es')).toBe('')
     })
   })
 })

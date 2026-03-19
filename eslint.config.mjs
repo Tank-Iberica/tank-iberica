@@ -1,5 +1,6 @@
 import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
 import vueA11y from 'eslint-plugin-vuejs-accessibility'
+import tracciona from './eslint-plugin-tracciona/index.js'
 
 export default createConfigForNuxt({
   features: {
@@ -7,6 +8,42 @@ export default createConfigForNuxt({
   },
 })
   .append(vueA11y.configs['flat/recommended'])
+  // ── Tracciona custom rules ──────────────────────────────────────────────
+  .append({
+    plugins: { tracciona: { rules: tracciona.rules } },
+  })
+  // no-select-star: prevent .select('*') in Supabase queries
+  .append({
+    files: ['server/**/*.ts', 'app/**/*.ts', 'app/**/*.vue'],
+    ignores: ['**/*.test.ts', '**/*.spec.ts'],
+    rules: {
+      'tracciona/no-select-star': 'warn',
+    },
+  })
+  // no-hardcoded-vertical: prevent vertical-specific references
+  .append({
+    files: ['server/**/*.ts', 'app/**/*.ts', 'app/**/*.vue'],
+    ignores: ['**/*.test.ts', '**/siteConfig.*', '**/nuxt.config.*', '**/migrations/**'],
+    rules: {
+      'tracciona/no-hardcoded-vertical': 'warn',
+    },
+  })
+  // require-jsdoc-exports: enforce JSDoc on exported composables/utils
+  .append({
+    files: ['app/composables/**/*.ts', 'app/utils/**/*.ts', 'server/utils/**/*.ts'],
+    ignores: ['**/*.test.ts', '**/*.d.ts'],
+    rules: {
+      'tracciona/require-jsdoc-exports': 'warn',
+    },
+  })
+  // max-module-deps: warn when a module has too many imports
+  .append({
+    files: ['app/composables/**/*.ts', 'server/utils/**/*.ts', 'server/services/**/*.ts'],
+    ignores: ['**/*.test.ts'],
+    rules: {
+      'tracciona/max-module-deps': ['warn', { max: 15 }],
+    },
+  })
   // Enforce structured logging: no raw console.error/warn in server code.
   // Use logger from server/utils/logger.ts instead.
   .append({

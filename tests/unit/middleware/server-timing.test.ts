@@ -15,6 +15,7 @@ describe('Server-Timing Middleware', () => {
 
     // Source uses event.node.res.on('finish', closeHandler)
     mockEvent = {
+      path: '/test',
       context: {
         _timings: {
           db: 0,
@@ -24,7 +25,9 @@ describe('Server-Timing Middleware', () => {
         },
       },
       node: {
+        req: { url: '/test' },
         res: {
+          statusCode: 200,
           on: vi.fn((event: string, cb: Function) => {
             if (event === 'finish') finishCallback = cb
           }),

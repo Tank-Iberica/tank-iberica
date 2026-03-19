@@ -28,7 +28,7 @@ export function makeEtag(data: unknown): string {
   for (let i = 0; i < str.length; i++) {
     const char = str.codePointAt(i)!
     hash = (hash << 5) - hash + char
-    hash = hash & hash // Convert to 32-bit integer
+    hash = hash | 0 // Convert to 32-bit integer
   }
   const hex = Math.abs(hash).toString(16).padStart(8, '0')
   return `W/"${hex}"`

@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
   const dealersReady = dealers >= MIN_ACTIVE_DEALERS
   const conditionsMet = vehiclesReady && dealersReady
 
-  console.info(
+  logger.info(
     `[k6-readiness-check] vehicles=${vehicles}/${MIN_PUBLISHED_VEHICLES} dealers=${dealers}/${MIN_ACTIVE_DEALERS} ready=${conditionsMet}`,
   )
 
@@ -160,7 +160,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  console.info(`[k6-readiness-check] Notification sent to ${adminEmail}`)
+  logger.info(`[k6-readiness-check] Notification sent to ${adminEmail}`)
 
   return {
     conditionsMet: true,

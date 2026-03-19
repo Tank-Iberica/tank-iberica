@@ -25,7 +25,9 @@ function stubSupabase() {
 beforeEach(() => {
   vi.clearAllMocks()
   stubSupabase()
-  // useState stores location in stateStore (cleared by setup.ts beforeEach via stateStore.clear())
+  // Clear localStorage to avoid state leaking between tests (setManualLocation writes
+  // to localStorage since import.meta.client → (true) via vitest transform)
+  if (typeof localStorage !== 'undefined') localStorage.clear()
 })
 
 // ─── setManualLocation — basic behavior ───────────────────────────────────────

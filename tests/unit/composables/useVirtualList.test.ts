@@ -1,153 +1,217 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ref, computed, nextTick } from 'vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'app/composables/useVirtualList.ts'), 'utf-8')
+// Stub Nuxt auto-imports
+vi.stubGlobal('ref', ref)
+vi.stubGlobal('computed', computed)
+vi.stubGlobal('readonly', (r: any) => r)
+vi.stubGlobal('watch', vi.fn())
+vi.stubGlobal('onUnmounted', vi.fn())
+
+import { useVirtualList } from '../../../app/composables/useVirtualList'
 
 describe('Virtual scroll for large lists (#91)', () => {
-  describe('Source structure', () => {
-    it('exports useVirtualList function', () => {
-      expect(SRC).toContain('export function useVirtualList')
+  const makeItems = (n: number) =>
+    ref(Array.from({ length: n }, (_, i) => ({ id: i, title: `Item ${i}` })))
+
+  beforeEach(() => {
+    vi.mocked(watch).mockReset()
+    vi.mocked(onUnmounted).mockReset()
+  })
+
+  describe('Initialization', () => {
+    it('returns expected shape', () => {
+      const items = makeItems(100)
+      const result = useVirtualList(items, { itemHeight: 50 })
+
+      expect(result).toHaveProperty('containerRef')
+      expect(result).toHaveProperty('visibleItems')
+      expect(result).toHaveProperty('containerStyle')
+      expect(result).toHaveProperty('wrapperStyle')
+      expect(result).toHaveProperty('getItemStyle')
+      expect(result).toHaveProperty('totalHeight')
+      expect(result).toHaveProperty('scrollTop')
     })
 
-    it('accepts items ref and options', () => {
-      expect(SRC).toContain('items: Ref<T[]> | ComputedRef<T[]>')
-      expect(SRC).toContain('options: VirtualListOptions')
+    it('uses default overscan of 5', () => {
+      const items = makeItems(100)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50 })
+      // With scrollTop=0, containerHeight=0: startIndex=max(0, 0-5)=0, endIndex=min(100, 0+0+10)=10
+      expect(visibleItems.value.length).toBeLessThanOrEqual(10)
     })
 
-    it('defines VirtualListOptions interface with itemHeight', () => {
-      expect(SRC).toContain('interface VirtualListOptions')
-      expect(SRC).toContain('itemHeight: number')
-    })
-
-    it('supports overscan buffer', () => {
-      expect(SRC).toContain('overscan')
-      expect(SRC).toContain('overscan = 5')
-    })
-
-    it('defines VirtualItem with data and index', () => {
-      expect(SRC).toContain('interface VirtualItem')
-      expect(SRC).toContain('data: T')
-      expect(SRC).toContain('index: number')
+    it('accepts custom overscan', () => {
+      const items = makeItems(100)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50, overscan: 2 })
+      // With scrollTop=0, containerHeight=0: startIndex=max(0, 0-2)=0, endIndex=min(100, 0+0+4)=4
+      expect(visibleItems.value.length).toBeLessThanOrEqual(4)
     })
   })
 
-  describe('Rendering optimization', () => {
-    it('computes totalHeight from items × itemHeight', () => {
-      expect(SRC).toContain('totalHeight')
-      expect(SRC).toContain('items.value.length * itemHeight')
+  describe('totalHeight computation', () => {
+    it('computes total height as items × itemHeight', () => {
+      const items = makeItems(200)
+      const { totalHeight } = useVirtualList(items, { itemHeight: 60 })
+      expect(totalHeight.value).toBe(200 * 60)
     })
 
-    it('calculates startIndex from scrollTop', () => {
-      expect(SRC).toContain('startIndex')
-      expect(SRC).toContain('Math.floor(scrollTop.value / itemHeight)')
+    it('updates when items change', () => {
+      const items = ref([{ id: 1 }, { id: 2 }])
+      const { totalHeight } = useVirtualList(items, { itemHeight: 100 })
+      expect(totalHeight.value).toBe(200)
+
+      items.value = [{ id: 1 }, { id: 2 }, { id: 3 }]
+      expect(totalHeight.value).toBe(300)
     })
 
-    it('calculates endIndex from visible count', () => {
-      expect(SRC).toContain('endIndex')
-      expect(SRC).toContain('Math.ceil(containerHeight.value / itemHeight)')
-    })
-
-    it('clamps startIndex to minimum 0', () => {
-      expect(SRC).toContain('Math.max(0, raw - overscan)')
-    })
-
-    it('clamps endIndex to items.length', () => {
-      expect(SRC).toContain('Math.min(items.value.length')
-    })
-
-    it('returns only visible items slice', () => {
-      expect(SRC).toContain('visibleItems')
-      expect(SRC).toContain('for (let i = start; i < end; i++)')
+    it('is 0 for empty list', () => {
+      const items = ref<any[]>([])
+      const { totalHeight } = useVirtualList(items, { itemHeight: 50 })
+      expect(totalHeight.value).toBe(0)
     })
   })
 
-  describe('DOM performance', () => {
-    // With overscan=5, containerHeight/itemHeight visible items + 2*overscan buffer
-    // For a 600px container with 120px items: 5 visible + 10 buffer = 15 nodes max
-    it('renders limited DOM nodes with overscan buffer', () => {
-      // startIndex subtracts overscan, endIndex adds overscan*2
-      expect(SRC).toContain('raw - overscan')
-      expect(SRC).toContain('overscan * 2')
+  describe('visibleItems computation', () => {
+    it('returns VirtualItem objects with data and index', () => {
+      const items = makeItems(20)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50 })
+
+      for (const item of visibleItems.value) {
+        expect(item).toHaveProperty('data')
+        expect(item).toHaveProperty('index')
+        expect(typeof item.index).toBe('number')
+      }
+    })
+
+    it('limits rendered items with overscan buffer', () => {
+      const items = makeItems(1000)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50, overscan: 3 })
+      // At scrollTop=0, containerHeight=0: renders at most overscan*2 items
+      expect(visibleItems.value.length).toBeLessThanOrEqual(6)
+      expect(visibleItems.value.length).toBeLessThan(1000)
+    })
+
+    it('indices match original item positions', () => {
+      const items = makeItems(50)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50 })
+
+      for (const item of visibleItems.value) {
+        expect(item.data).toEqual(items.value[item.index])
+      }
+    })
+
+    it('never returns negative indices', () => {
+      const items = makeItems(5)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50, overscan: 100 })
+      for (const item of visibleItems.value) {
+        expect(item.index).toBeGreaterThanOrEqual(0)
+      }
+    })
+
+    it('never exceeds items length', () => {
+      const items = makeItems(10)
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50, overscan: 100 })
+      for (const item of visibleItems.value) {
+        expect(item.index).toBeLessThan(10)
+      }
     })
   })
 
-  describe('Scroll handling', () => {
-    it('tracks scrollTop from container', () => {
-      expect(SRC).toContain('scrollTop')
-      expect(SRC).toContain('containerRef.value.scrollTop')
+  describe('Style helpers', () => {
+    it('containerStyle has overflow auto and relative position', () => {
+      const items = makeItems(10)
+      const { containerStyle } = useVirtualList(items, { itemHeight: 50 })
+      expect(containerStyle.value).toEqual({
+        overflow: 'auto',
+        position: 'relative',
+      })
     })
 
-    it('uses passive scroll listener for performance', () => {
-      expect(SRC).toContain("{ passive: true }")
+    it('wrapperStyle height matches totalHeight', () => {
+      const items = makeItems(10)
+      const { wrapperStyle } = useVirtualList(items, { itemHeight: 50 })
+      expect(wrapperStyle.value).toEqual({
+        height: '500px',
+        position: 'relative',
+      })
     })
 
-    it('removes scroll listener on unmount', () => {
-      expect(SRC).toContain('removeEventListener')
-      expect(SRC).toContain('onUnmounted')
-    })
-  })
+    it('getItemStyle returns absolute positioning', () => {
+      const items = makeItems(10)
+      const { getItemStyle } = useVirtualList(items, { itemHeight: 80 })
 
-  describe('Container sizing', () => {
-    it('provides containerRef', () => {
-      expect(SRC).toContain('containerRef')
-    })
-
-    it('uses ResizeObserver for container height', () => {
-      expect(SRC).toContain('ResizeObserver')
-      expect(SRC).toContain('updateContainerHeight')
+      const style = getItemStyle(3)
+      expect(style).toEqual({
+        position: 'absolute',
+        top: '240px',
+        left: '0',
+        right: '0',
+        height: '80px',
+      })
     })
 
-    it('disconnects ResizeObserver on unmount', () => {
-      expect(SRC).toContain('ro.disconnect()')
-    })
-  })
+    it('getItemStyle top is index × itemHeight', () => {
+      const items = makeItems(10)
+      const { getItemStyle } = useVirtualList(items, { itemHeight: 120 })
 
-  describe('Styling helpers', () => {
-    it('provides containerStyle with overflow auto', () => {
-      expect(SRC).toContain('containerStyle')
-      expect(SRC).toContain("overflow: 'auto'")
-    })
-
-    it('provides wrapperStyle with total height', () => {
-      expect(SRC).toContain('wrapperStyle')
-      expect(SRC).toContain('totalHeight.value')
-    })
-
-    it('provides getItemStyle for absolute positioning', () => {
-      expect(SRC).toContain('getItemStyle')
-      expect(SRC).toContain("position: 'absolute'")
-      expect(SRC).toContain('index * itemHeight')
+      expect(getItemStyle(0).top).toBe('0px')
+      expect(getItemStyle(5).top).toBe('600px')
+      expect(getItemStyle(9).top).toBe('1080px')
     })
   })
 
-  describe('Return values', () => {
-    it('returns containerRef', () => {
-      expect(SRC).toContain('containerRef,')
-    })
-
-    it('returns visibleItems', () => {
-      expect(SRC).toContain('visibleItems,')
-    })
-
-    it('returns containerStyle and wrapperStyle', () => {
-      expect(SRC).toContain('containerStyle,')
-      expect(SRC).toContain('wrapperStyle,')
-    })
-
-    it('returns readonly scrollTop', () => {
-      expect(SRC).toContain('readonly(scrollTop)')
-    })
-
-    it('returns totalHeight', () => {
-      expect(SRC).toContain('totalHeight,')
+  describe('scrollTop tracking', () => {
+    it('initializes scrollTop at 0', () => {
+      const items = makeItems(10)
+      const { scrollTop } = useVirtualList(items, { itemHeight: 50 })
+      expect(scrollTop.value).toBe(0)
     })
   })
 
-  describe('Client-only execution', () => {
-    it('guards DOM operations with import.meta.client', () => {
-      expect(SRC).toContain('import.meta.client')
+  describe('Reactive updates', () => {
+    it('wrapperStyle updates when items change', () => {
+      const items = ref([{ id: 1 }])
+      const { wrapperStyle } = useVirtualList(items, { itemHeight: 100 })
+      expect(wrapperStyle.value.height).toBe('100px')
+
+      items.value = [{ id: 1 }, { id: 2 }, { id: 3 }]
+      expect(wrapperStyle.value.height).toBe('300px')
+    })
+
+    it('visibleItems updates when items change', () => {
+      const items = ref([{ id: 1 }])
+      const { visibleItems } = useVirtualList(items, { itemHeight: 50, overscan: 10 })
+      expect(visibleItems.value.length).toBe(1)
+
+      items.value = [{ id: 1 }, { id: 2 }, { id: 3 }]
+      expect(visibleItems.value.length).toBe(3)
+    })
+  })
+
+  describe('Edge cases', () => {
+    it('handles single item', () => {
+      const items = ref([{ id: 1 }])
+      const { totalHeight, visibleItems } = useVirtualList(items, { itemHeight: 50 })
+      expect(totalHeight.value).toBe(50)
+      expect(visibleItems.value.length).toBe(1)
+      expect(visibleItems.value[0].data).toEqual({ id: 1 })
+      expect(visibleItems.value[0].index).toBe(0)
+    })
+
+    it('handles empty list', () => {
+      const items = ref<any[]>([])
+      const { totalHeight, visibleItems, wrapperStyle } = useVirtualList(items, { itemHeight: 50 })
+      expect(totalHeight.value).toBe(0)
+      expect(visibleItems.value).toEqual([])
+      expect(wrapperStyle.value.height).toBe('0px')
+    })
+
+    it('handles very large lists efficiently', () => {
+      const items = makeItems(100_000)
+      const { visibleItems, totalHeight } = useVirtualList(items, { itemHeight: 50, overscan: 5 })
+      expect(totalHeight.value).toBe(5_000_000)
+      // Without scroll, only buffer items rendered
+      expect(visibleItems.value.length).toBeLessThan(20)
     })
   })
 })

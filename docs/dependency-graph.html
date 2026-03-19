@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracciona — Composable Dependency Graph</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, sans-serif; background: #f5f5f5; color: #23424A; }
+    .header { background: #23424A; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .stats { display: flex; gap: 24px; font-size: 14px; }
+    .stats span { opacity: 0.8; }
+    .stats strong { color: #4ade80; }
+    .controls { padding: 12px 24px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; gap: 12px; align-items: center; }
+    .controls input { padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 300px; }
+    .controls select { padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+    #graph { padding: 24px; overflow: auto; max-height: calc(100vh - 140px); }
+    .mermaid { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .cycles { padding: 12px 24px; background: #fef3cd; color: #856404; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Composable Dependency Graph</h1>
+    <div class="stats">
+      <span>Composables: <strong>248</strong></span>
+      <span>Dependencies: <strong>190</strong></span>
+      <span>Modules: <strong>1</strong></span>
+      <span>Cycles: <strong>0</strong></span>
+      <span>Generated: 2026-03-19</span>
+    </div>
+  </div>
+  
+  <div class="controls">
+    <input id="filter" type="text" placeholder="Filter composables..." oninput="filterGraph(this.value)">
+    <select id="module" onchange="filterModule(this.value)">
+      <option value="">All modules</option>
+      <option value="root">root (248)</option>
+    </select>
+  </div>
+  <div id="graph">
+    <pre class="mermaid">
+flowchart LR
+  subgraph root
+    useAdminAdDashboard
+    useAdminAdvertisements
+    useAdminAgenda
+    useAdminAnunciantes
+    useAdminArticleGenerate
+    useAdminAuctionDetail
+    useAdminAuctionList
+    useAdminBalance
+    useAdminBalanceUI
+    useAdminBanner
+    useAdminBrokerage
+    useAdminBrokerageDeal
+    useAdminCapacityAlerts
+    useAdminCaptacion
+    useAdminCaracteristicas
+    useAdminChat
+    useAdminChats
+    useAdminComentarios
+    useAdminConfig
+    useAdminConfigPricing
+    useAdminContacts
+    useAdminDashboard
+    useAdminDashboardPage
+    useAdminDealerConfig
+    useAdminDealerSuscripciones
+    useAdminDemands
+    useAdminEditorialCalendar
+    useAdminEmails
+    useAdminFacturacion
+    useAdminFeatureFlags
+    useAdminFilters
+    useAdminHistorico
+    useAdminHistoricoPage
+    useAdminHomepage
+    useAdminInfrastructura
+    useAdminLanguages
+    useAdminMetrics
+    useAdminMetricsActivity
+    useAdminMetricsRevenue
+    useAdminNavigation
+    useAdminNews
+    useAdminNewsCreate
+    useAdminNewsForm
+    useAdminNoticiaForm
+    useAdminNoticiasIndex
+    useAdminPagos
+    useAdminProductForm
+    useAdminProductoDetail
+    useAdminProductoDetailImages
+    useAdminProductoDetailRecords
+    useAdminProductoDetailVerif
+    useAdminProductoNuevo
+    useAdminProductosColumns
+    useAdminProductosPage
+    useAdminProductosSort
+    useAdminProductRecords
+    useAdminPublicidad
+    useAdminReportes
+    useAdminSearchAnalytics
+    useAdminServicios
+    useAdminSidebar
+    useAdminSocialCalendar
+    useAdminSolicitantes
+    useAdminSubcategoriasPage
+    useAdminSubcategories
+    useAdminSubscriptions
+    useAdminTiposPage
+    useAdminTransporte
+    useAdminTypes
+    useAdminUsers
+    useAdminUsuariosPage
+    useAdminVehicleDetail
+    useAdminVehicles
+    useAdminVerificaciones
+    useAdminVerticalConfig
+    useAdminWhatsApp
+    useCloudinaryUpload
+    useContractForm
+    useContractGenerator
+    useFunnelAnalysis
+    useGoogleDrive
+    useGoogleDriveFolders
+    useInvoiceGenerator
+    useSeoScore
+    useSocialAdminUI
+    useFilterBar
+    useGeoFallback
+    useHiddenVehicles
+    useHorizontalScroll
+    useSavedFilters
+    useSimilarSearches
+    useVehicleTable
+    useDashboardAlquileres
+    useDashboardCalculadora
+    useDashboardContrato
+    useDashboardContratoHistory
+    useDashboardCrm
+    useDashboardExportar
+    useDashboardExportarAnuncio
+    useDashboardFactura
+    useDashboardHistorico
+    useDashboardImportar
+    useDashboardIndex
+    useDashboardMantenimientos
+    useDashboardMercado
+    useDashboardMerchandising
+    useDashboardNuevoVehiculo
+    useDashboardObservatorio
+    useDashboardPipeline
+    useDashboardPresupuesto
+    useDashboardTransaccion
+    useDashboardVehiculoDetail
+    useDashboardVisitas
+    useDashboardWidget
+    useDealerPortal
+    useInvoice
+    useInvoiceData
+    useAdvertiseModal
+    useCursorPagination
+    useHydratedState
+    useQueryDedup
+    useStaleFallback
+    useAbTest
+    useAccessibility
+    useAdaptiveLoading
+    useAdminRole
+    useAds
+    useAdViewability
+    useAnalyticsTracking
+    useAuction
+    useAuctionDetail
+    useAuctionRegistration
+    useAudienceSegmentation
+    useAuth
+    useBuyerDashboard
+    useCacheAside
+    useCacheCategories
+    useCacheVerticalConfig
+    useCacheVehicleCounts
+    useCatalogState
+    useConfirmModal
+    useConsent
+    useConversation
+    useCopyToClipboard
+    useCorrelationId
+    useDatos
+    useDealerDashboard
+    useDealerHealthScore
+    useDealerLeads
+    useDealerReviews
+    useDealerStats
+    useDealerTheme
+    useDealerTrustScore
+    useEmailPreferences
+    useFavorites
+    useFeatureFlag
+    useFeatureGate
+    useFilters
+    useFinanceCalculator
+    useFocusTrap
+    useFormAutosave
+    useFormValidation
+    useGlossary
+    useGtag
+    useHreflang
+    useImageUrl
+    useInfraMetrics
+    useInfraRecommendations
+    useInjectSupabase
+    useInjectRoute
+    useInjectRouter
+    useInjectUser
+    useInjectConfig
+    useInjectOrDefault
+    useInvoicing
+    useLeadTracking
+    useListingLifecycle
+    useListingQuality
+    useListingRenewal
+    useLocalized
+    useLocalStorageCache
+    useMarketData
+    useMarketIntelligence
+    useMfa
+    useNegotiation
+    useNews
+    useOfflineSync
+    useOnboarding
+    useOnboardingTour
+    useOperationTimeline
+    usePageSeo
+    usePerfilAlertas
+    usePerfilComparador
+    usePerfilMensajes
+    usePerfilReservas
+    usePrebid
+    usePrecios
+    usePresence
+    usePriceHistory
+    usePriceRelativeToMarket
+    usePricingSuggestion
+    useProductAnalytics
+    usePushNotifications
+    useQueryBudget
+    useQueryCostEstimation
+    useUserPanel
+    useReferral
+    useReports
+    useReservation
+    useRetryOperation
+    useRevenueMetrics
+    useSanitize
+    useScrollDepth
+    useScrollLock
+    useSearchAutocomplete
+    useSearchHistory
+    useSellerProfile
+    useSessionTimeout
+    useSiteName
+    useSiteUrl
+    useSocialPublisher
+    useJsonLd
+    useSubastasIndex
+    useSubscriptionPlan
+    useSwrQuery
+    useTableOfContents
+    useToast
+    useTopDealers
+    useTransactionHistory
+    useTransport
+    useUndoAction
+    useUnreadMessages
+    useUnsavedChanges
+    useUserChat
+    useUserLocation
+    useUserProfile
+    useValoracion
+    useVehicleComparator
+    useVehicleGroups
+    useVehicles
+    useVehicleTypeSelector
+    useVehicleUnlock
+    useVehicleVerification
+    useVendedorDetail
+    useVerticalConfig
+    useViewHistory
+    useVirtualList
+    useVoiceSearch
+  end
+  useAdminAgenda --> useAdminContacts
+  useAdminAnunciantes --> useAdminAdvertisements
+  useAdminAuctionList --> useToast
+  useAdminBalanceUI --> useAdminBalance
+  useAdminBalanceUI --> useAdminSubcategories
+  useAdminBalanceUI --> useAdminTypes
+  useAdminBalanceUI --> useAdminVehicles
+  useAdminBalanceUI --> useSiteName
+  useAdminBalanceUI --> useSiteUrl
+  useAdminBalanceUI --> useToast
+  useAdminBanner --> useAdminConfig
+  useAdminBanner --> useToast
+  useAdminCaracteristicas --> useAdminFilters
+  useAdminCaracteristicas --> useToast
+  useAdminChats --> useAdminChat
+  useAdminDashboard --> useAdminMetrics
+  useAdminDashboardPage --> useAdminMetrics
+  useAdminEmails --> useAdminVerticalConfig
+  useAdminEmails --> useSanitize
+  useAdminFacturacion --> useRevenueMetrics
+  useAdminHistoricoPage --> useAdminHistorico
+  useAdminHistoricoPage --> useSiteUrl
+  useAdminHomepage --> useAdminVerticalConfig
+  useAdminInfrastructura --> useInfraMetrics
+  useAdminInfrastructura --> useInfraRecommendations
+  useAdminLanguages --> useAdminVerticalConfig
+  useAdminMetrics --> useAdminMetricsActivity
+  useAdminMetrics --> useAdminMetricsRevenue
+  useAdminNavigation --> useAdminVerticalConfig
+  useAdminNewsCreate --> useAdminNews
+  useAdminNewsCreate --> useCloudinaryUpload
+  useAdminNewsCreate --> useSeoScore
+  useAdminNewsForm --> useAdminNews
+  useAdminNewsForm --> useCloudinaryUpload
+  useAdminNewsForm --> useSeoScore
+  useAdminNoticiaForm --> useAdminNews
+  useAdminNoticiaForm --> useCloudinaryUpload
+  useAdminNoticiaForm --> useSeoScore
+  useAdminNoticiasIndex --> useAdminNews
+  useAdminProductForm --> useAdminFilters
+  useAdminProductForm --> useAdminProductRecords
+  useAdminProductForm --> useAdminSubcategories
+  useAdminProductForm --> useAdminTypes
+  useAdminProductForm --> useAdminVehicles
+  useAdminProductForm --> useCloudinaryUpload
+  useAdminProductForm --> useToast
+  useAdminProductoDetail --> useAdminFilters
+  useAdminProductoDetail --> useAdminProductoDetailImages
+  useAdminProductoDetail --> useAdminProductoDetailRecords
+  useAdminProductoDetail --> useAdminProductoDetailVerif
+  useAdminProductoDetail --> useAdminSubcategories
+  useAdminProductoDetail --> useAdminTypes
+  useAdminProductoDetail --> useAdminVehicles
+  useAdminProductoDetail --> useCloudinaryUpload
+  useAdminProductoDetail --> useToast
+  useAdminProductoDetailImages --> useToast
+  useAdminProductoDetailRecords --> useGoogleDrive
+  useAdminProductoDetailVerif --> useVehicleVerification
+  useAdminProductoNuevo --> useAdminProductForm
+  useAdminProductosPage --> useAdminFilters
+  useAdminProductosPage --> useAdminProductosColumns
+  useAdminProductosPage --> useAdminProductosSort
+  useAdminProductosPage --> useAdminSubcategories
+  useAdminProductosPage --> useAdminTypes
+  useAdminProductosPage --> useAdminVehicles
+  useAdminProductosPage --> useGoogleDrive
+  useAdminProductosPage --> useToast
+  useAdminPublicidad --> useAdminAdDashboard
+  useAdminSidebar --> useSiteName
+  useAdminSidebar --> useVerticalConfig
+  useAdminSolicitantes --> useAdminDemands
+  useAdminSubcategoriasPage --> useAdminFilters
+  useAdminSubcategoriasPage --> useAdminSubcategories
+  useAdminSubcategoriasPage --> useToast
+  useAdminTiposPage --> useAdminFilters
+  useAdminTiposPage --> useAdminSubcategories
+  useAdminTiposPage --> useAdminTypes
+  useAdminTiposPage --> useToast
+  useAdminUsuariosPage --> useAdminUsers
+  useAdminVehicleDetail --> useAdminVehicles
+  useGoogleDrive --> useGoogleDriveFolders
+  useInvoiceGenerator --> useSiteUrl
+  useSeoScore --> useSiteUrl
+  useSocialAdminUI --> useSocialPublisher
+  useFilterBar --> useAuth
+  useFilterBar --> useCatalogState
+  useFilterBar --> useFilters
+  useFilterBar --> useUserLocation
+  useGeoFallback --> useCatalogState
+  useGeoFallback --> useUserLocation
+  useGeoFallback --> useVehicles
+  useSimilarSearches --> useGeoFallback
+  useSimilarSearches --> useCatalogState
+  useSimilarSearches --> useVehicles
+  useVehicleTable --> useFavorites
+  useVehicleTable --> useUserLocation
+  useDashboardAlquileres --> useAuth
+  useDashboardAlquileres --> useDealerDashboard
+  useDashboardAlquileres --> useSubscriptionPlan
+  useDashboardCalculadora --> useFinanceCalculator
+  useDashboardContrato --> useDashboardContratoHistory
+  useDashboardContrato --> useAuth
+  useDashboardContrato --> useDealerDashboard
+  useDashboardContrato --> useFormAutosave
+  useDashboardContrato --> useSubscriptionPlan
+  useDashboardExportar --> useAuth
+  useDashboardExportar --> useDealerDashboard
+  useDashboardExportar --> useSiteName
+  useDashboardExportar --> useSiteUrl
+  useDashboardExportar --> useSubscriptionPlan
+  useDashboardExportarAnuncio --> useAuth
+  useDashboardExportarAnuncio --> useDealerDashboard
+  useDashboardExportarAnuncio --> useSiteUrl
+  useDashboardExportarAnuncio --> useSubscriptionPlan
+  useDashboardFactura --> useInvoice
+  useDashboardHistorico --> useDealerDashboard
+  useDashboardImportar --> useAuth
+  useDashboardImportar --> useDealerDashboard
+  useDashboardImportar --> useSubscriptionPlan
+  useDashboardIndex --> useAuth
+  useDashboardIndex --> useDealerDashboard
+  useDashboardIndex --> useDealerHealthScore
+  useDashboardIndex --> useSubscriptionPlan
+  useDashboardMantenimientos --> useAuth
+  useDashboardMantenimientos --> useDealerDashboard
+  useDashboardMantenimientos --> useSubscriptionPlan
+  useDashboardMercado --> useDealerDashboard
+  useDashboardMerchandising --> useDealerDashboard
+  useDashboardNuevoVehiculo --> useAuth
+  useDashboardNuevoVehiculo --> useDealerDashboard
+  useDashboardNuevoVehiculo --> useSubscriptionPlan
+  useDashboardObservatorio --> useAuth
+  useDashboardObservatorio --> useDealerDashboard
+  useDashboardObservatorio --> useSubscriptionPlan
+  useDashboardPipeline --> useAuth
+  useDashboardPipeline --> useSubscriptionPlan
+  useDashboardPresupuesto --> useDealerDashboard
+  useDashboardTransaccion --> useAuth
+  useDashboardTransaccion --> useDealerDashboard
+  useDashboardVehiculoDetail --> useCloudinaryUpload
+  useDashboardVehiculoDetail --> useAuth
+  useDashboardVehiculoDetail --> useDealerDashboard
+  useDashboardVehiculoDetail --> useSubscriptionPlan
+  useDashboardVehiculoDetail --> useVehicleVerification
+  useDashboardVisitas --> useDealerDashboard
+  useDashboardWidget --> useAuth
+  useDashboardWidget --> useDealerDashboard
+  useDashboardWidget --> useSiteUrl
+  useDashboardWidget --> useSubscriptionPlan
+  useInvoice --> useInvoiceData
+  useInvoice --> useAuth
+  useInvoice --> useDealerDashboard
+  useInvoice --> useFormAutosave
+  useInvoice --> useSubscriptionPlan
+  useAdvertiseModal --> useVehicleTypeSelector
+  useAuctionDetail --> useCloudinaryUpload
+  useAuctionDetail --> useAuction
+  useAuctionDetail --> useAuctionRegistration
+  useAuctionDetail --> useSiteUrl
+  useAuctionDetail --> useToast
+  useBuyerDashboard --> useAuth
+  useDatos --> useSiteUrl
+  useDealerDashboard --> useAuth
+  useDealerTheme --> useVerticalConfig
+  useFeatureGate --> useFeatureFlag
+  useFeatureGate --> useSubscriptionPlan
+  useGtag --> useConsent
+  useHreflang --> useSiteUrl
+  useListingRenewal --> useListingLifecycle
+  usePageSeo --> useSiteUrl
+  usePerfilAlertas --> useAuth
+  usePerfilComparador --> useVehicleComparator
+  usePerfilMensajes --> useConversation
+  usePerfilMensajes --> useImageUrl
+  usePerfilReservas --> useReservation
+  useUserPanel --> useAuth
+  useUserPanel --> useFavorites
+  useUserPanel --> useUserChat
+  useReservation --> useAnalyticsTracking
+  useReservation --> useSubscriptionPlan
+  useScrollDepth --> useAnalyticsTracking
+  useSocialPublisher --> useSiteUrl
+  useJsonLd --> useSiteName
+  useJsonLd --> useSiteUrl
+  useSubastasIndex --> useAuction
+  useSubastasIndex --> usePageSeo
+  useSubastasIndex --> useSiteUrl
+  useVehicleComparator --> useSubscriptionPlan
+  useVendedorDetail --> useSellerProfile
+  useVendedorDetail --> useSiteUrl
+    </pre>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', flowchart: { curve: 'basis' } });
+  </script>
+  <script>
+    const graphData = {"nodes":[{"id":"useAdminAgenda","group":"root"},{"id":"useAdminContacts","group":"root"},{"id":"useAdminAnunciantes","group":"root"},{"id":"useAdminAdvertisements","group":"root"},{"id":"useAdminAuctionList","group":"root"},{"id":"useToast","group":"root"},{"id":"useAdminBalanceUI","group":"root"},{"id":"useAdminBalance","group":"root"},{"id":"useAdminSubcategories","group":"root"},{"id":"useAdminTypes","group":"root"},{"id":"useAdminVehicles","group":"root"},{"id":"useSiteName","group":"root"},{"id":"useSiteUrl","group":"root"},{"id":"useAdminBanner","group":"root"},{"id":"useAdminConfig","group":"root"},{"id":"useAdminCaracteristicas","group":"root"},{"id":"useAdminFilters","group":"root"},{"id":"useAdminChats","group":"root"},{"id":"useAdminChat","group":"root"},{"id":"useAdminDashboard","group":"root"},{"id":"useAdminMetrics","group":"root"},{"id":"useAdminDashboardPage","group":"root"},{"id":"useAdminEmails","group":"root"},{"id":"useAdminVerticalConfig","group":"root"},{"id":"useSanitize","group":"root"},{"id":"useAdminFacturacion","group":"root"},{"id":"useRevenueMetrics","group":"root"},{"id":"useAdminHistoricoPage","group":"root"},{"id":"useAdminHistorico","group":"root"},{"id":"useAdminHomepage","group":"root"},{"id":"useAdminInfrastructura","group":"root"},{"id":"useInfraMetrics","group":"root"},{"id":"useInfraRecommendations","group":"root"},{"id":"useAdminLanguages","group":"root"},{"id":"useAdminMetricsActivity","group":"root"},{"id":"useAdminMetricsRevenue","group":"root"},{"id":"useAdminNavigation","group":"root"},{"id":"useAdminNewsCreate","group":"root"},{"id":"useAdminNews","group":"root"},{"id":"useCloudinaryUpload","group":"root"},{"id":"useSeoScore","group":"root"},{"id":"useAdminNewsForm","group":"root"},{"id":"useAdminNoticiaForm","group":"root"},{"id":"useAdminNoticiasIndex","group":"root"},{"id":"useAdminProductForm","group":"root"},{"id":"useAdminProductRecords","group":"root"},{"id":"useAdminProductoDetail","group":"root"},{"id":"useAdminProductoDetailImages","group":"root"},{"id":"useAdminProductoDetailRecords","group":"root"},{"id":"useAdminProductoDetailVerif","group":"root"},{"id":"useGoogleDrive","group":"root"},{"id":"useVehicleVerification","group":"root"},{"id":"useAdminProductoNuevo","group":"root"},{"id":"useAdminProductosPage","group":"root"},{"id":"useAdminProductosColumns","group":"root"},{"id":"useAdminProductosSort","group":"root"},{"id":"useAdminPublicidad","group":"root"},{"id":"useAdminAdDashboard","group":"root"},{"id":"useAdminSidebar","group":"root"},{"id":"useVerticalConfig","group":"root"},{"id":"useAdminSolicitantes","group":"root"},{"id":"useAdminDemands","group":"root"},{"id":"useAdminSubcategoriasPage","group":"root"},{"id":"useAdminTiposPage","group":"root"},{"id":"useAdminUsuariosPage","group":"root"},{"id":"useAdminUsers","group":"root"},{"id":"useAdminVehicleDetail","group":"root"},{"id":"useGoogleDriveFolders","group":"root"},{"id":"useInvoiceGenerator","group":"root"},{"id":"useSocialAdminUI","group":"root"},{"id":"useSocialPublisher","group":"root"},{"id":"useFilterBar","group":"root"},{"id":"useAuth","group":"root"},{"id":"useCatalogState","group":"root"},{"id":"useFilters","group":"root"},{"id":"useUserLocation","group":"root"},{"id":"useGeoFallback","group":"root"},{"id":"useVehicles","group":"root"},{"id":"useSimilarSearches","group":"root"},{"id":"useVehicleTable","group":"root"},{"id":"useFavorites","group":"root"},{"id":"useDashboardAlquileres","group":"root"},{"id":"useDealerDashboard","group":"root"},{"id":"useSubscriptionPlan","group":"root"},{"id":"useDashboardCalculadora","group":"root"},{"id":"useFinanceCalculator","group":"root"},{"id":"useDashboardContrato","group":"root"},{"id":"useDashboardContratoHistory","group":"root"},{"id":"useFormAutosave","group":"root"},{"id":"useDashboardExportar","group":"root"},{"id":"useDashboardExportarAnuncio","group":"root"},{"id":"useDashboardFactura","group":"root"},{"id":"useInvoice","group":"root"},{"id":"useDashboardHistorico","group":"root"},{"id":"useDashboardImportar","group":"root"},{"id":"useDashboardIndex","group":"root"},{"id":"useDealerHealthScore","group":"root"},{"id":"useDashboardMantenimientos","group":"root"},{"id":"useDashboardMercado","group":"root"},{"id":"useDashboardMerchandising","group":"root"},{"id":"useDashboardNuevoVehiculo","group":"root"},{"id":"useDashboardObservatorio","group":"root"},{"id":"useDashboardPipeline","group":"root"},{"id":"useDashboardPresupuesto","group":"root"},{"id":"useDashboardTransaccion","group":"root"},{"id":"useDashboardVehiculoDetail","group":"root"},{"id":"useDashboardVisitas","group":"root"},{"id":"useDashboardWidget","group":"root"},{"id":"useInvoiceData","group":"root"},{"id":"useAdvertiseModal","group":"root"},{"id":"useVehicleTypeSelector","group":"root"},{"id":"useAuctionDetail","group":"root"},{"id":"useAuction","group":"root"},{"id":"useAuctionRegistration","group":"root"},{"id":"useBuyerDashboard","group":"root"},{"id":"useDatos","group":"root"},{"id":"useDealerTheme","group":"root"},{"id":"useFeatureGate","group":"root"},{"id":"useFeatureFlag","group":"root"},{"id":"useGtag","group":"root"},{"id":"useConsent","group":"root"},{"id":"useHreflang","group":"root"},{"id":"useListingRenewal","group":"root"},{"id":"useListingLifecycle","group":"root"},{"id":"usePageSeo","group":"root"},{"id":"usePerfilAlertas","group":"root"},{"id":"usePerfilComparador","group":"root"},{"id":"useVehicleComparator","group":"root"},{"id":"usePerfilMensajes","group":"root"},{"id":"useConversation","group":"root"},{"id":"useImageUrl","group":"root"},{"id":"usePerfilReservas","group":"root"},{"id":"useReservation","group":"root"},{"id":"useUserPanel","group":"root"},{"id":"useUserChat","group":"root"},{"id":"useAnalyticsTracking","group":"root"},{"id":"useScrollDepth","group":"root"},{"id":"useJsonLd","group":"root"},{"id":"useSubastasIndex","group":"root"},{"id":"useVendedorDetail","group":"root"},{"id":"useSellerProfile","group":"root"}],"edges":[{"from":"useAdminAgenda","to":"useAdminContacts"},{"from":"useAdminAnunciantes","to":"useAdminAdvertisements"},{"from":"useAdminAuctionList","to":"useToast"},{"from":"useAdminBalanceUI","to":"useAdminBalance"},{"from":"useAdminBalanceUI","to":"useAdminSubcategories"},{"from":"useAdminBalanceUI","to":"useAdminTypes"},{"from":"useAdminBalanceUI","to":"useAdminVehicles"},{"from":"useAdminBalanceUI","to":"useSiteName"},{"from":"useAdminBalanceUI","to":"useSiteUrl"},{"from":"useAdminBalanceUI","to":"useToast"},{"from":"useAdminBanner","to":"useAdminConfig"},{"from":"useAdminBanner","to":"useToast"},{"from":"useAdminCaracteristicas","to":"useAdminFilters"},{"from":"useAdminCaracteristicas","to":"useToast"},{"from":"useAdminChats","to":"useAdminChat"},{"from":"useAdminDashboard","to":"useAdminMetrics"},{"from":"useAdminDashboardPage","to":"useAdminMetrics"},{"from":"useAdminEmails","to":"useAdminVerticalConfig"},{"from":"useAdminEmails","to":"useSanitize"},{"from":"useAdminFacturacion","to":"useRevenueMetrics"},{"from":"useAdminHistoricoPage","to":"useAdminHistorico"},{"from":"useAdminHistoricoPage","to":"useSiteUrl"},{"from":"useAdminHomepage","to":"useAdminVerticalConfig"},{"from":"useAdminInfrastructura","to":"useInfraMetrics"},{"from":"useAdminInfrastructura","to":"useInfraRecommendations"},{"from":"useAdminLanguages","to":"useAdminVerticalConfig"},{"from":"useAdminMetrics","to":"useAdminMetricsActivity"},{"from":"useAdminMetrics","to":"useAdminMetricsRevenue"},{"from":"useAdminNavigation","to":"useAdminVerticalConfig"},{"from":"useAdminNewsCreate","to":"useAdminNews"},{"from":"useAdminNewsCreate","to":"useCloudinaryUpload"},{"from":"useAdminNewsCreate","to":"useSeoScore"},{"from":"useAdminNewsForm","to":"useAdminNews"},{"from":"useAdminNewsForm","to":"useCloudinaryUpload"},{"from":"useAdminNewsForm","to":"useSeoScore"},{"from":"useAdminNoticiaForm","to":"useAdminNews"},{"from":"useAdminNoticiaForm","to":"useCloudinaryUpload"},{"from":"useAdminNoticiaForm","to":"useSeoScore"},{"from":"useAdminNoticiasIndex","to":"useAdminNews"},{"from":"useAdminProductForm","to":"useAdminFilters"},{"from":"useAdminProductForm","to":"useAdminProductRecords"},{"from":"useAdminProductForm","to":"useAdminSubcategories"},{"from":"useAdminProductForm","to":"useAdminTypes"},{"from":"useAdminProductForm","to":"useAdminVehicles"},{"from":"useAdminProductForm","to":"useCloudinaryUpload"},{"from":"useAdminProductForm","to":"useToast"},{"from":"useAdminProductoDetail","to":"useAdminFilters"},{"from":"useAdminProductoDetail","to":"useAdminProductoDetailImages"},{"from":"useAdminProductoDetail","to":"useAdminProductoDetailRecords"},{"from":"useAdminProductoDetail","to":"useAdminProductoDetailVerif"},{"from":"useAdminProductoDetail","to":"useAdminSubcategories"},{"from":"useAdminProductoDetail","to":"useAdminTypes"},{"from":"useAdminProductoDetail","to":"useAdminVehicles"},{"from":"useAdminProductoDetail","to":"useCloudinaryUpload"},{"from":"useAdminProductoDetail","to":"useToast"},{"from":"useAdminProductoDetailImages","to":"useToast"},{"from":"useAdminProductoDetailRecords","to":"useGoogleDrive"},{"from":"useAdminProductoDetailVerif","to":"useVehicleVerification"},{"from":"useAdminProductoNuevo","to":"useAdminProductForm"},{"from":"useAdminProductosPage","to":"useAdminFilters"},{"from":"useAdminProductosPage","to":"useAdminProductosColumns"},{"from":"useAdminProductosPage","to":"useAdminProductosSort"},{"from":"useAdminProductosPage","to":"useAdminSubcategories"},{"from":"useAdminProductosPage","to":"useAdminTypes"},{"from":"useAdminProductosPage","to":"useAdminVehicles"},{"from":"useAdminProductosPage","to":"useGoogleDrive"},{"from":"useAdminProductosPage","to":"useToast"},{"from":"useAdminPublicidad","to":"useAdminAdDashboard"},{"from":"useAdminSidebar","to":"useSiteName"},{"from":"useAdminSidebar","to":"useVerticalConfig"},{"from":"useAdminSolicitantes","to":"useAdminDemands"},{"from":"useAdminSubcategoriasPage","to":"useAdminFilters"},{"from":"useAdminSubcategoriasPage","to":"useAdminSubcategories"},{"from":"useAdminSubcategoriasPage","to":"useToast"},{"from":"useAdminTiposPage","to":"useAdminFilters"},{"from":"useAdminTiposPage","to":"useAdminSubcategories"},{"from":"useAdminTiposPage","to":"useAdminTypes"},{"from":"useAdminTiposPage","to":"useToast"},{"from":"useAdminUsuariosPage","to":"useAdminUsers"},{"from":"useAdminVehicleDetail","to":"useAdminVehicles"},{"from":"useGoogleDrive","to":"useGoogleDriveFolders"},{"from":"useInvoiceGenerator","to":"useSiteUrl"},{"from":"useSeoScore","to":"useSiteUrl"},{"from":"useSocialAdminUI","to":"useSocialPublisher"},{"from":"useFilterBar","to":"useAuth"},{"from":"useFilterBar","to":"useCatalogState"},{"from":"useFilterBar","to":"useFilters"},{"from":"useFilterBar","to":"useUserLocation"},{"from":"useGeoFallback","to":"useCatalogState"},{"from":"useGeoFallback","to":"useUserLocation"},{"from":"useGeoFallback","to":"useVehicles"},{"from":"useSimilarSearches","to":"useGeoFallback"},{"from":"useSimilarSearches","to":"useCatalogState"},{"from":"useSimilarSearches","to":"useVehicles"},{"from":"useVehicleTable","to":"useFavorites"},{"from":"useVehicleTable","to":"useUserLocation"},{"from":"useDashboardAlquileres","to":"useAuth"},{"from":"useDashboardAlquileres","to":"useDealerDashboard"},{"from":"useDashboardAlquileres","to":"useSubscriptionPlan"},{"from":"useDashboardCalculadora","to":"useFinanceCalculator"},{"from":"useDashboardContrato","to":"useDashboardContratoHistory"},{"from":"useDashboardContrato","to":"useAuth"},{"from":"useDashboardContrato","to":"useDealerDashboard"},{"from":"useDashboardContrato","to":"useFormAutosave"},{"from":"useDashboardContrato","to":"useSubscriptionPlan"},{"from":"useDashboardExportar","to":"useAuth"},{"from":"useDashboardExportar","to":"useDealerDashboard"},{"from":"useDashboardExportar","to":"useSiteName"},{"from":"useDashboardExportar","to":"useSiteUrl"},{"from":"useDashboardExportar","to":"useSubscriptionPlan"},{"from":"useDashboardExportarAnuncio","to":"useAuth"},{"from":"useDashboardExportarAnuncio","to":"useDealerDashboard"},{"from":"useDashboardExportarAnuncio","to":"useSiteUrl"},{"from":"useDashboardExportarAnuncio","to":"useSubscriptionPlan"},{"from":"useDashboardFactura","to":"useInvoice"},{"from":"useDashboardHistorico","to":"useDealerDashboard"},{"from":"useDashboardImportar","to":"useAuth"},{"from":"useDashboardImportar","to":"useDealerDashboard"},{"from":"useDashboardImportar","to":"useSubscriptionPlan"},{"from":"useDashboardIndex","to":"useAuth"},{"from":"useDashboardIndex","to":"useDealerDashboard"},{"from":"useDashboardIndex","to":"useDealerHealthScore"},{"from":"useDashboardIndex","to":"useSubscriptionPlan"},{"from":"useDashboardMantenimientos","to":"useAuth"},{"from":"useDashboardMantenimientos","to":"useDealerDashboard"},{"from":"useDashboardMantenimientos","to":"useSubscriptionPlan"},{"from":"useDashboardMercado","to":"useDealerDashboard"},{"from":"useDashboardMerchandising","to":"useDealerDashboard"},{"from":"useDashboardNuevoVehiculo","to":"useAuth"},{"from":"useDashboardNuevoVehiculo","to":"useDealerDashboard"},{"from":"useDashboardNuevoVehiculo","to":"useSubscriptionPlan"},{"from":"useDashboardObservatorio","to":"useAuth"},{"from":"useDashboardObservatorio","to":"useDealerDashboard"},{"from":"useDashboardObservatorio","to":"useSubscriptionPlan"},{"from":"useDashboardPipeline","to":"useAuth"},{"from":"useDashboardPipeline","to":"useSubscriptionPlan"},{"from":"useDashboardPresupuesto","to":"useDealerDashboard"},{"from":"useDashboardTransaccion","to":"useAuth"},{"from":"useDashboardTransaccion","to":"useDealerDashboard"},{"from":"useDashboardVehiculoDetail","to":"useCloudinaryUpload"},{"from":"useDashboardVehiculoDetail","to":"useAuth"},{"from":"useDashboardVehiculoDetail","to":"useDealerDashboard"},{"from":"useDashboardVehiculoDetail","to":"useSubscriptionPlan"},{"from":"useDashboardVehiculoDetail","to":"useVehicleVerification"},{"from":"useDashboardVisitas","to":"useDealerDashboard"},{"from":"useDashboardWidget","to":"useAuth"},{"from":"useDashboardWidget","to":"useDealerDashboard"},{"from":"useDashboardWidget","to":"useSiteUrl"},{"from":"useDashboardWidget","to":"useSubscriptionPlan"},{"from":"useInvoice","to":"useInvoiceData"},{"from":"useInvoice","to":"useAuth"},{"from":"useInvoice","to":"useDealerDashboard"},{"from":"useInvoice","to":"useFormAutosave"},{"from":"useInvoice","to":"useSubscriptionPlan"},{"from":"useAdvertiseModal","to":"useVehicleTypeSelector"},{"from":"useAuctionDetail","to":"useCloudinaryUpload"},{"from":"useAuctionDetail","to":"useAuction"},{"from":"useAuctionDetail","to":"useAuctionRegistration"},{"from":"useAuctionDetail","to":"useSiteUrl"},{"from":"useAuctionDetail","to":"useToast"},{"from":"useBuyerDashboard","to":"useAuth"},{"from":"useDatos","to":"useSiteUrl"},{"from":"useDealerDashboard","to":"useAuth"},{"from":"useDealerTheme","to":"useVerticalConfig"},{"from":"useFeatureGate","to":"useFeatureFlag"},{"from":"useFeatureGate","to":"useSubscriptionPlan"},{"from":"useGtag","to":"useConsent"},{"from":"useHreflang","to":"useSiteUrl"},{"from":"useListingRenewal","to":"useListingLifecycle"},{"from":"usePageSeo","to":"useSiteUrl"},{"from":"usePerfilAlertas","to":"useAuth"},{"from":"usePerfilComparador","to":"useVehicleComparator"},{"from":"usePerfilMensajes","to":"useConversation"},{"from":"usePerfilMensajes","to":"useImageUrl"},{"from":"usePerfilReservas","to":"useReservation"},{"from":"useUserPanel","to":"useAuth"},{"from":"useUserPanel","to":"useFavorites"},{"from":"useUserPanel","to":"useUserChat"},{"from":"useReservation","to":"useAnalyticsTracking"},{"from":"useReservation","to":"useSubscriptionPlan"},{"from":"useScrollDepth","to":"useAnalyticsTracking"},{"from":"useSocialPublisher","to":"useSiteUrl"},{"from":"useJsonLd","to":"useSiteName"},{"from":"useJsonLd","to":"useSiteUrl"},{"from":"useSubastasIndex","to":"useAuction"},{"from":"useSubastasIndex","to":"usePageSeo"},{"from":"useSubastasIndex","to":"useSiteUrl"},{"from":"useVehicleComparator","to":"useSubscriptionPlan"},{"from":"useVendedorDetail","to":"useSellerProfile"},{"from":"useVendedorDetail","to":"useSiteUrl"}],"cycles":0,"generated":"2026-03-19T11:03:12.653Z"};
+    function filterGraph(term) {
+      const nodes = document.querySelectorAll('.node');
+      nodes.forEach(n => {
+        const label = n.textContent || '';
+        n.style.opacity = !term || label.toLowerCase().includes(term.toLowerCase()) ? '1' : '0.15';
+      });
+    }
+    function filterModule(mod) {
+      const nodes = document.querySelectorAll('.node');
+      nodes.forEach(n => {
+        const label = (n.textContent || '').trim();
+        const node = graphData.nodes.find(gn => gn.id === label);
+        n.style.opacity = !mod || (node && node.group === mod) ? '1' : '0.15';
+      });
+    }
+  </script>
+</body>
+</html>

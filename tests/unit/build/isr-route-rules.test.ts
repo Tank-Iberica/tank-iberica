@@ -1,86 +1,82 @@
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-
-const ROOT = resolve(__dirname, '../../..')
-const CONFIG = readFileSync(resolve(ROOT, 'nuxt.config.ts'), 'utf-8')
+import { loadNuxtConfig } from '../../helpers/nuxtConfig'
 
 describe('ISR (SWR) route rules', () => {
+  let config: Record<string, any>
+
+  beforeAll(async () => {
+    config = await loadNuxtConfig()
+  })
+
   describe('Vehicle pages', () => {
     it('has SWR rule for /vehiculo/**', () => {
-      expect(CONFIG).toContain("'/vehiculo/**': { swr:")
+      expect(config.routeRules['/vehiculo/**'].swr).toBeDefined()
     })
 
-    it('vehicle SWR TTL is 5 minutes', () => {
-      const match = CONFIG.match(/vehiculo\/\*\*.*?swr:\s*([^}]+)/)
-      expect(match).toBeTruthy()
-      if (match) {
-        expect(match[1].trim()).toContain('60 * 5')
-      }
+    it('vehicle SWR TTL is 5 minutes (300s)', () => {
+      expect(config.routeRules['/vehiculo/**'].swr).toBe(300)
     })
   })
 
   describe('Homepage', () => {
     it('has SWR rule for homepage', () => {
-      expect(CONFIG).toContain("'/': { swr:")
+      expect(config.routeRules['/'].swr).toBeDefined()
     })
 
-    it('homepage SWR TTL is 10 minutes', () => {
-      const match = CONFIG.match(/'\/': \{ swr:\s*([^}]+)/)
-      expect(match).toBeTruthy()
-      if (match) {
-        expect(match[1].trim()).toContain('60 * 10')
-      }
+    it('homepage SWR TTL is 10 minutes (600s)', () => {
+      expect(config.routeRules['/'].swr).toBe(600)
     })
   })
 
   describe('News/Articles pages', () => {
     it('has SWR for /noticias', () => {
-      expect(CONFIG).toContain("'/noticias': { swr:")
+      expect(config.routeRules['/noticias'].swr).toBeDefined()
     })
 
     it('has SWR for /noticias/** (individual articles)', () => {
-      expect(CONFIG).toContain("'/noticias/**': { swr:")
+      expect(config.routeRules['/noticias/**'].swr).toBeDefined()
     })
   })
 
   describe('Guide pages', () => {
     it('has SWR for /guia/**', () => {
-      expect(CONFIG).toContain("'/guia/**': { swr:")
+      expect(config.routeRules['/guia/**'].swr).toBeDefined()
     })
   })
 
   describe('Static pages use prerender', () => {
     it('/sobre-nosotros is prerendered', () => {
-      expect(CONFIG).toContain("'/sobre-nosotros': { prerender: true }")
+      expect(config.routeRules['/sobre-nosotros'].prerender).toBe(true)
     })
 
     it('/legal/** is prerendered', () => {
-      expect(CONFIG).toContain("'/legal/**': { prerender: true }")
+      expect(config.routeRules['/legal/**'].prerender).toBe(true)
     })
 
     it('/preguntas-frecuentes is prerendered', () => {
-      expect(CONFIG).toContain("'/preguntas-frecuentes': { prerender: true }")
+      expect(config.routeRules['/preguntas-frecuentes'].prerender).toBe(true)
     })
   })
 
   describe('Admin pages', () => {
     it('admin routes are CSR only (ssr: false)', () => {
-      expect(CONFIG).toContain("'/admin/**': { ssr: false }")
+      expect(config.routeRules['/admin/**'].ssr).toBe(false)
     })
   })
 
   describe('Security headers', () => {
     it('all routes have X-Content-Type-Options', () => {
-      expect(CONFIG).toContain("'X-Content-Type-Options': 'nosniff'")
+      expect(config.routeRules['/**'].headers['X-Content-Type-Options']).toBe('nosniff')
     })
 
     it('all routes have X-Frame-Options', () => {
-      expect(CONFIG).toContain("'X-Frame-Options': 'SAMEORIGIN'")
+      expect(config.routeRules['/**'].headers['X-Frame-Options']).toBe('SAMEORIGIN')
     })
 
     it('all routes have Referrer-Policy', () => {
-      expect(CONFIG).toContain("'Referrer-Policy': 'strict-origin-when-cross-origin'")
+      expect(config.routeRules['/**'].headers['Referrer-Policy']).toBe(
+        'strict-origin-when-cross-origin',
+      )
     })
   })
 })

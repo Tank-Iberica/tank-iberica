@@ -1,108 +1,142 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
 
-const ROOT = resolve(__dirname, '../../..')
-const COMPONENT = readFileSync(resolve(ROOT, 'app/components/ui/FormField.vue'), 'utf-8')
+// useId is Nuxt auto-import, must exist before component mounts
+vi.hoisted(() => {
+  ;(globalThis as any).useId = () => 'auto-1'
+})
+
+import UiFormField from '../../../app/components/ui/FormField.vue'
 
 describe('UiFormField', () => {
-  describe('Props interface', () => {
-    it('has label prop (required string)', () => {
-      expect(COMPONENT).toContain('label: string')
+  describe('Label', () => {
+    it('renders label text', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Email' } })
+      expect(wrapper.find('label').text()).toContain('Email')
     })
 
-    it('has error prop (optional string | null)', () => {
-      expect(COMPONENT).toContain('error?: string | null')
-    })
-
-    it('has hint prop (optional string | null)', () => {
-      expect(COMPONENT).toContain('hint?: string | null')
-    })
-
-    it('has required prop (optional boolean)', () => {
-      expect(COMPONENT).toContain('required?: boolean')
-    })
-
-    it('has fieldId prop for custom ID', () => {
-      expect(COMPONENT).toContain('fieldId?: string')
-    })
-  })
-
-  describe('Label binding', () => {
-    it('uses label element with for attribute bound to id', () => {
-      expect(COMPONENT).toContain(':for="id"')
+    it('label has for attribute', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Name' } })
+      const forAttr = wrapper.find('label').attributes('for')
+      expect(forAttr).toBeDefined()
+      expect(forAttr!.length).toBeGreaterThan(0)
     })
 
     it('shows required asterisk when required', () => {
-      expect(COMPONENT).toContain('v-if="required"')
-      expect(COMPONENT).toContain('form-field__required')
-      expect(COMPONENT).toContain('*')
+      const wrapper = mount(UiFormField, { props: { label: 'Name', required: true } })
+      expect(wrapper.find('.form-field__required').exists()).toBe(true)
+      expect(wrapper.find('.form-field__required').text()).toBe('*')
+    })
+
+    it('hides required asterisk when not required', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Name' } })
+      expect(wrapper.find('.form-field__required').exists()).toBe(false)
     })
 
     it('required asterisk is aria-hidden', () => {
-      expect(COMPONENT).toContain('aria-hidden="true"')
+      const wrapper = mount(UiFormField, { props: { label: 'Name', required: true } })
+      expect(wrapper.find('.form-field__required').attributes('aria-hidden')).toBe('true')
     })
   })
 
   describe('Error display', () => {
     it('shows error message when error prop is set', () => {
-      expect(COMPONENT).toContain('v-if="error"')
-      expect(COMPONENT).toContain('form-field__error')
+      const wrapper = mount(UiFormField, { props: { label: 'Email', error: 'Invalid email' } })
+      expect(wrapper.find('.form-field__error').exists()).toBe(true)
+      expect(wrapper.find('.form-field__error').text()).toBe('Invalid email')
     })
 
-    it('error has role="alert" for screen readers', () => {
-      expect(COMPONENT).toContain('role="alert"')
+    it('error has role=alert for screen readers', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Email', error: 'Required' } })
+      expect(wrapper.find('.form-field__error').attributes('role')).toBe('alert')
     })
 
-    it('error has ID for aria-describedby', () => {
-      expect(COMPONENT).toContain(':id="`${id}-error`"')
+    it('error ID has -error suffix matching label for', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Email', error: 'Error' } })
+      const labelFor = wrapper.find('label').attributes('for')
+      const errorId = wrapper.find('.form-field__error').attributes('id')
+      expect(errorId).toBe(`${labelFor}-error`)
     })
 
     it('applies error class to wrapper', () => {
-      expect(COMPONENT).toContain("'form-field--error': !!error")
+      const wrapper = mount(UiFormField, { props: { label: 'Email', error: 'Error' } })
+      expect(wrapper.find('.form-field').classes()).toContain('form-field--error')
     })
 
-    it('error styles apply to nested inputs via :deep()', () => {
-      expect(COMPONENT).toContain('.form-field--error :deep(input)')
-      expect(COMPONENT).toContain('.form-field--error :deep(select)')
-      expect(COMPONENT).toContain('.form-field--error :deep(textarea)')
-      expect(COMPONENT).toContain('border-color: var(--error')
+    it('no error class when no error', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Email' } })
+      expect(wrapper.find('.form-field').classes()).not.toContain('form-field--error')
+    })
+
+    it('hides error when prop is null', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Email', error: null } })
+      expect(wrapper.find('.form-field__error').exists()).toBe(false)
     })
   })
 
   describe('Hint display', () => {
     it('shows hint when hint prop is set and no error', () => {
-      expect(COMPONENT).toContain('v-if="hint && !error"')
+      const wrapper = mount(UiFormField, { props: { label: 'Email', hint: "We won't share it" } })
+      expect(wrapper.find('.form-field__hint').exists()).toBe(true)
+      expect(wrapper.find('.form-field__hint').text()).toBe("We won't share it")
     })
 
-    it('hint has ID for aria-describedby', () => {
-      expect(COMPONENT).toContain(':id="`${id}-hint`"')
-    })
-  })
-
-  describe('Aria / Accessibility', () => {
-    it('passes aria-invalid to slot based on error', () => {
-      expect(COMPONENT).toContain(':aria-invalid="!!error"')
+    it('hint ID has -hint suffix matching label for', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Email', hint: 'Hint text' } })
+      const labelFor = wrapper.find('label').attributes('for')
+      const hintId = wrapper.find('.form-field__hint').attributes('id')
+      expect(hintId).toBe(`${labelFor}-hint`)
     })
 
-    it('builds aria-describedby from error and hint IDs', () => {
-      expect(COMPONENT).toContain('aria-describedby')
-      expect(COMPONENT).toContain("`${id}-error`")
-      expect(COMPONENT).toContain("`${id}-hint`")
-    })
-
-    it('provides id to slot for input binding', () => {
-      expect(COMPONENT).toContain(':id="id"')
+    it('hides hint when error is present', () => {
+      const wrapper = mount(UiFormField, {
+        props: { label: 'Email', hint: 'Hint', error: 'Error' },
+      })
+      expect(wrapper.find('.form-field__hint').exists()).toBe(false)
     })
   })
 
   describe('ID generation', () => {
-    it('uses useId() for auto-generated IDs', () => {
-      expect(COMPONENT).toContain('useId()')
+    it('generates a non-empty auto ID', () => {
+      const wrapper = mount(UiFormField, { props: { label: 'Name' } })
+      const forAttr = wrapper.find('label').attributes('for')
+      expect(forAttr).toBeTruthy()
     })
 
-    it('falls back to auto ID when fieldId not provided', () => {
-      expect(COMPONENT).toContain('props.fieldId || `field-${autoId}`')
+    it('each instance gets an ID', () => {
+      const w1 = mount(UiFormField, { props: { label: 'A' } })
+      const w2 = mount(UiFormField, { props: { label: 'B' } })
+      expect(w1.find('label').attributes('for')).toBeTruthy()
+      expect(w2.find('label').attributes('for')).toBeTruthy()
+    })
+  })
+
+  describe('Slot rendering', () => {
+    it('renders slot content', () => {
+      const wrapper = mount(UiFormField, {
+        props: { label: 'Name' },
+        slots: { default: '<input type="text" />' },
+      })
+      expect(wrapper.find('input').exists()).toBe(true)
+    })
+
+    it('slot is inside form-field__input wrapper', () => {
+      const wrapper = mount(UiFormField, {
+        props: { label: 'Name' },
+        slots: { default: '<input type="text" />' },
+      })
+      expect(wrapper.find('.form-field__input input').exists()).toBe(true)
+    })
+
+    it('error and hint IDs share the same base as label for', () => {
+      const wrapper = mount(UiFormField, {
+        props: { label: 'Email', error: 'Error' },
+        slots: { default: '<input />' },
+      })
+      const labelFor = wrapper.find('label').attributes('for')!
+      const errorId = wrapper.find('.form-field__error').attributes('id')!
+      expect(errorId).toContain(labelFor)
+      expect(errorId.endsWith('-error')).toBe(true)
     })
   })
 })

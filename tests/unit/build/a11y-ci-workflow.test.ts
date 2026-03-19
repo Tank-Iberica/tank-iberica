@@ -1,52 +1,70 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { parse as parseYaml } from 'yaml'
 
 const ROOT = resolve(__dirname, '../../..')
-const WORKFLOW = readFileSync(resolve(ROOT, '.github/workflows/a11y-audit.yml'), 'utf-8')
 
 describe('Accessibility CI workflow (axe-core)', () => {
+  let workflow: Record<string, any>
+
+  beforeAll(() => {
+    const workflowRaw = readFileSync(resolve(ROOT, '.github/workflows/a11y-audit.yml'), 'utf-8')
+    workflow = parseYaml(workflowRaw)
+  })
+
   it('runs on push to main', () => {
-    expect(WORKFLOW).toContain('push:')
-    expect(WORKFLOW).toContain('branches: [main]')
+    expect(workflow.on.push.branches).toEqual(expect.arrayContaining(['main']))
   })
 
   it('runs on pull requests', () => {
-    expect(WORKFLOW).toContain('pull_request:')
+    expect(workflow.on.pull_request).toBeDefined()
   })
 
   it('runs on weekly schedule', () => {
-    expect(WORKFLOW).toContain('schedule:')
-    expect(WORKFLOW).toContain('cron:')
+    expect(workflow.on.schedule).toBeDefined()
+    expect(workflow.on.schedule[0].cron).toBeDefined()
   })
 
   it('installs axe-core CLI', () => {
-    expect(WORKFLOW).toContain('@axe-core/cli')
+    const steps = workflow.jobs.a11y.steps
+    const installStep = steps.find((s: any) => s.run?.includes('@axe-core/cli'))
+    expect(installStep).toBeDefined()
   })
 
   it('tests WCAG 2.0 AA compliance', () => {
-    expect(WORKFLOW).toContain('wcag2a')
-    expect(WORKFLOW).toContain('wcag2aa')
+    const steps = workflow.jobs.a11y.steps
+    const axeStep = steps.find((s: any) => s.name?.includes('Run axe'))
+    expect(axeStep).toBeDefined()
+    expect(axeStep.run).toMatch(/wcag2a/)
+    expect(axeStep.run).toMatch(/wcag2aa/)
   })
 
   it('tests at least 10 routes', () => {
-    const pageMatches = WORKFLOW.match(/http:\/\/localhost:3000\//g)
-    expect(pageMatches).not.toBeNull()
+    const steps = workflow.jobs.a11y.steps
+    const axeStep = steps.find((s: any) => s.name?.includes('Run axe'))
+    const pageMatches = axeStep.run.match(/http:\/\/localhost:3000\//g)
     expect(pageMatches!.length).toBeGreaterThanOrEqual(10)
   })
 
   it('includes key public pages', () => {
-    expect(WORKFLOW).toContain('/catalogo')
-    expect(WORKFLOW).toContain('/auth/login')
-    expect(WORKFLOW).toContain('/auth/registro')
+    const steps = workflow.jobs.a11y.steps
+    const axeStep = steps.find((s: any) => s.name?.includes('Run axe'))
+    expect(axeStep.run).toMatch(/\/catalogo/)
+    expect(axeStep.run).toMatch(/\/auth\/login/)
+    expect(axeStep.run).toMatch(/\/auth\/registro/)
   })
 
   it('fails CI on violations (--exit flag)', () => {
-    expect(WORKFLOW).toContain('--exit')
-    expect(WORKFLOW).toContain('exit 1')
+    const steps = workflow.jobs.a11y.steps
+    const axeStep = steps.find((s: any) => s.name?.includes('Run axe'))
+    expect(axeStep.run).toMatch(/--exit/)
+    expect(axeStep.run).toMatch(/exit 1/)
   })
 
   it('builds the project before testing', () => {
-    expect(WORKFLOW).toContain('npm run build')
+    const steps = workflow.jobs.a11y.steps
+    const buildStep = steps.find((s: any) => s.run?.includes('npm run build'))
+    expect(buildStep).toBeDefined()
   })
 })

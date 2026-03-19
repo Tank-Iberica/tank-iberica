@@ -1,133 +1,123 @@
 import { describe, it, expect, vi } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'app/composables/useQueryCostEstimation.ts'), 'utf-8')
+import { useQueryCostEstimation } from '../../../app/composables/useQueryCostEstimation'
 
 describe('useQueryCostEstimation', () => {
-  describe('Source code structure', () => {
-    it('defines LARGE_TABLE_THRESHOLD', () => {
-      expect(SRC).toContain('LARGE_TABLE_THRESHOLD')
-      expect(SRC).toContain('10_000')
+  describe('Return shape', () => {
+    it('returns expected API', () => {
+      const result = useQueryCostEstimation()
+      expect(result).toHaveProperty('estimateCost')
+      expect(result).toHaveProperty('warnExpensiveQuery')
+      expect(result).toHaveProperty('LARGE_TABLES')
+      expect(result).toHaveProperty('LARGE_TABLE_THRESHOLD')
+      expect(result).toHaveProperty('EXPENSIVE_LIMIT_THRESHOLD')
     })
 
-    it('defines EXPENSIVE_LIMIT_THRESHOLD', () => {
-      expect(SRC).toContain('EXPENSIVE_LIMIT_THRESHOLD')
-      expect(SRC).toContain('500')
+    it('LARGE_TABLE_THRESHOLD is 10000', () => {
+      const { LARGE_TABLE_THRESHOLD } = useQueryCostEstimation()
+      expect(LARGE_TABLE_THRESHOLD).toBe(10_000)
     })
 
-    it('lists known large tables', () => {
-      expect(SRC).toContain('LARGE_TABLES')
-      expect(SRC).toContain("'vehicles'")
-      expect(SRC).toContain("'analytics_events'")
-      expect(SRC).toContain("'search_logs'")
-      expect(SRC).toContain("'leads'")
+    it('EXPENSIVE_LIMIT_THRESHOLD is 500', () => {
+      const { EXPENSIVE_LIMIT_THRESHOLD } = useQueryCostEstimation()
+      expect(EXPENSIVE_LIMIT_THRESHOLD).toBe(500)
     })
 
-    it('exports estimateCost function', () => {
-      expect(SRC).toContain('estimateCost')
-    })
-
-    it('exports warnExpensiveQuery function', () => {
-      expect(SRC).toContain('warnExpensiveQuery')
-    })
-
-    it('only warns in dev mode', () => {
-      expect(SRC).toContain('import.meta.dev')
-    })
-
-    it('warns about Seq Scan on large tables without filter', () => {
-      expect(SRC).toContain('Seq Scan')
-    })
-
-    it('warns about large LIMIT values', () => {
-      expect(SRC).toContain('Large LIMIT')
-      expect(SRC).toContain('pagination')
-    })
-
-    it('returns cost level (low/medium/high)', () => {
-      expect(SRC).toContain("'low'")
-      expect(SRC).toContain("'medium'")
-      expect(SRC).toContain("'high'")
+    it('LARGE_TABLES includes expected tables', () => {
+      const { LARGE_TABLES } = useQueryCostEstimation()
+      expect(LARGE_TABLES).toContain('vehicles')
+      expect(LARGE_TABLES).toContain('analytics_events')
+      expect(LARGE_TABLES).toContain('leads')
     })
   })
 
-  describe('Cost estimation logic (unit)', () => {
-    // Replicate the core logic for direct testing
-    const LARGE_TABLES = ['vehicles', 'analytics_events', 'search_logs', 'leads', 'messages', 'web_vitals']
-    const EXPENSIVE_LIMIT = 500
-
-    function estimateCost(
-      table: string,
-      opts: { hasFilter?: boolean; limit?: number; hasIndex?: boolean } = {},
-    ) {
-      const { hasFilter = true, limit = 100, hasIndex = true } = opts
-      const isLargeTable = LARGE_TABLES.includes(table)
-      const warnings: string[] = []
-      let cost: 'low' | 'medium' | 'high' = 'low'
-
-      if (isLargeTable && !hasFilter) {
-        cost = 'high'
-        warnings.push('Seq Scan likely')
-      }
-      if (limit > EXPENSIVE_LIMIT) {
-        if (cost !== 'high') cost = 'medium'
-        warnings.push('Large LIMIT')
-      }
-      if (isLargeTable && !hasIndex) {
-        cost = 'high'
-        warnings.push('No index hint')
-      }
-
-      return { table, isLargeTable, hasFilter, limit, estimatedCost: cost, warnings }
-    }
-
-    it('small table with filter = low cost', () => {
-      const result = estimateCost('categories', { hasFilter: true })
+  describe('estimateCost', () => {
+    it('returns low cost for small table with filter', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      const result = estimateCost('small_table', { hasFilter: true, limit: 10 })
       expect(result.estimatedCost).toBe('low')
-      expect(result.isLargeTable).toBe(false)
       expect(result.warnings).toHaveLength(0)
     })
 
-    it('large table with filter = low cost', () => {
-      const result = estimateCost('vehicles', { hasFilter: true })
-      expect(result.estimatedCost).toBe('low')
-    })
-
-    it('large table without filter = high cost', () => {
+    it('returns high cost for large table without filter', () => {
+      const { estimateCost } = useQueryCostEstimation()
       const result = estimateCost('vehicles', { hasFilter: false })
       expect(result.estimatedCost).toBe('high')
       expect(result.warnings.length).toBeGreaterThan(0)
+      expect(result.warnings[0]).toContain('Seq Scan')
     })
 
-    it('large LIMIT on small table = medium cost', () => {
-      const result = estimateCost('categories', { limit: 1000 })
+    it('returns medium cost for large limit', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      const result = estimateCost('small_table', { limit: 1000 })
       expect(result.estimatedCost).toBe('medium')
+      expect(result.warnings.some((w) => w.includes('Large LIMIT'))).toBe(true)
     })
 
-    it('large LIMIT on large table without filter = high cost', () => {
-      const result = estimateCost('analytics_events', { hasFilter: false, limit: 2000 })
+    it('returns high cost for large table without index', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      const result = estimateCost('analytics_events', { hasIndex: false })
       expect(result.estimatedCost).toBe('high')
+      expect(result.warnings.some((w) => w.includes('No index hint'))).toBe(true)
     })
 
-    it('no index on large table = high cost', () => {
-      const result = estimateCost('search_logs', { hasIndex: false })
-      expect(result.estimatedCost).toBe('high')
+    it('detects large tables correctly', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      expect(estimateCost('vehicles').isLargeTable).toBe(true)
+      expect(estimateCost('analytics_events').isLargeTable).toBe(true)
+      expect(estimateCost('vertical_config').isLargeTable).toBe(false)
     })
 
-    it('all tables in LARGE_TABLES are detected', () => {
-      for (const table of LARGE_TABLES) {
-        const result = estimateCost(table, { hasFilter: false })
-        expect(result.isLargeTable).toBe(true)
-        expect(result.estimatedCost).toBe('high')
-      }
+    it('returns correct shape', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      const result = estimateCost('vehicles', { hasFilter: true, limit: 50 })
+      expect(result).toHaveProperty('table', 'vehicles')
+      expect(result).toHaveProperty('isLargeTable', true)
+      expect(result).toHaveProperty('hasFilter', true)
+      expect(result).toHaveProperty('limit', 50)
+      expect(result).toHaveProperty('estimatedCost')
+      expect(result).toHaveProperty('warnings')
     })
 
-    it('unknown tables are not flagged as large', () => {
-      const result = estimateCost('nonexistent_table', { hasFilter: false })
-      expect(result.isLargeTable).toBe(false)
+    it('defaults hasFilter to true, limit to 100, hasIndex to true', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      const result = estimateCost('vehicles')
+      expect(result.hasFilter).toBe(true)
+      expect(result.limit).toBe(100)
       expect(result.estimatedCost).toBe('low')
+    })
+
+    it('large limit + no filter on large table = high', () => {
+      const { estimateCost } = useQueryCostEstimation()
+      const result = estimateCost('vehicles', { hasFilter: false, limit: 1000 })
+      expect(result.estimatedCost).toBe('high')
+      expect(result.warnings.length).toBeGreaterThanOrEqual(2)
+    })
+  })
+
+  describe('warnExpensiveQuery', () => {
+    it('returns same estimate as estimateCost', () => {
+      const { estimateCost, warnExpensiveQuery } = useQueryCostEstimation()
+      const estimate = estimateCost('vehicles', { hasFilter: false })
+      const warned = warnExpensiveQuery('vehicles', { hasFilter: false })
+      expect(warned.estimatedCost).toBe(estimate.estimatedCost)
+    })
+
+    it('logs warning for expensive queries in dev mode', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const { warnExpensiveQuery } = useQueryCostEstimation()
+      warnExpensiveQuery('vehicles', { hasFilter: false })
+      // import.meta.dev = true in tests
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('QueryCost'), expect.any(String))
+      warnSpy.mockRestore()
+    })
+
+    it('does not log for low-cost queries', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const { warnExpensiveQuery } = useQueryCostEstimation()
+      warnExpensiveQuery('small_table', { hasFilter: true, limit: 10 })
+      expect(warnSpy).not.toHaveBeenCalled()
+      warnSpy.mockRestore()
     })
   })
 })

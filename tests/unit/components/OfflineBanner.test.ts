@@ -1,80 +1,91 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { mount, flushPromises } from '@vue/test-utils'
+import { ref, computed } from 'vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const COMPONENT = readFileSync(resolve(ROOT, 'app/components/ui/OfflineBanner.vue'), 'utf-8')
-const LAYOUT = readFileSync(resolve(ROOT, 'app/layouts/default.vue'), 'utf-8')
+// Override setup.ts stubs with real Vue APIs for SFC component testing.
+// Real ref/computed needed for reactive template evaluation (v-if unwrap).
+vi.stubGlobal('ref', ref)
+vi.stubGlobal('computed', computed)
+
+const mockIsOnline = ref(true)
+const mockPendingCount = ref(0)
+
+vi.stubGlobal('useOfflineSync', () => ({
+  isOnline: mockIsOnline,
+  pendingCount: mockPendingCount,
+}))
+
+import OfflineBanner from '../../../app/components/ui/OfflineBanner.vue'
 
 describe('OfflineBanner', () => {
+  beforeEach(() => {
+    mockIsOnline.value = true
+    mockPendingCount.value = 0
+  })
+
   describe('Connectivity detection', () => {
-    it('uses useOfflineSync composable', () => {
-      expect(COMPONENT).toContain('useOfflineSync()')
+    it('does not show when online', () => {
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-banner').exists()).toBe(false)
     })
 
     it('shows banner when offline', () => {
-      expect(COMPONENT).toContain('!isOnline.value')
+      mockIsOnline.value = false
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-banner').exists()).toBe(true)
     })
 
-    it('only runs on client side', () => {
-      expect(COMPONENT).toContain('import.meta.client')
+    it('hides when connectivity is restored', async () => {
+      mockIsOnline.value = false
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-banner').exists()).toBe(true)
+
+      mockIsOnline.value = true
+      await flushPromises()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find('.offline-banner').exists()).toBe(false)
     })
   })
 
   describe('Accessibility', () => {
-    it('has role="alert"', () => {
-      expect(COMPONENT).toContain('role="alert"')
+    it('has role=alert', () => {
+      mockIsOnline.value = false
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-banner').attributes('role')).toBe('alert')
     })
 
-    it('has aria-live="assertive"', () => {
-      expect(COMPONENT).toContain('aria-live="assertive"')
+    it('has aria-live=assertive', () => {
+      mockIsOnline.value = false
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-banner').attributes('aria-live')).toBe('assertive')
     })
 
     it('SVG icon is aria-hidden', () => {
-      expect(COMPONENT).toContain('aria-hidden="true"')
+      mockIsOnline.value = false
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('svg').attributes('aria-hidden')).toBe('true')
     })
   })
 
   describe('Content', () => {
-    it('uses i18n for offline message', () => {
-      expect(COMPONENT).toContain("$t('common.offlineBanner')")
+    it('displays offline message text', () => {
+      mockIsOnline.value = false
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-text').exists()).toBe(true)
     })
 
-    it('shows pending count for offline queue', () => {
-      expect(COMPONENT).toContain('pendingCount > 0')
-      expect(COMPONENT).toContain("$t('common.offlinePending'")
-    })
-  })
-
-  describe('Transition', () => {
-    it('uses Vue Transition', () => {
-      expect(COMPONENT).toContain('<Transition name="offline-banner">')
+    it('shows pending count when > 0', () => {
+      mockIsOnline.value = false
+      mockPendingCount.value = 3
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-pending').exists()).toBe(true)
     })
 
-    it('slides up from bottom', () => {
-      expect(COMPONENT).toContain('translateY(100%)')
-    })
-
-    it('respects prefers-reduced-motion', () => {
-      expect(COMPONENT).toContain('@media (prefers-reduced-motion: reduce)')
-      expect(COMPONENT).toContain('transition: none')
-    })
-  })
-
-  describe('Positioning', () => {
-    it('is fixed at bottom of viewport', () => {
-      expect(COMPONENT).toContain('position: fixed')
-      expect(COMPONENT).toContain('bottom: 0')
-    })
-
-    it('has high z-index', () => {
-      expect(COMPONENT).toContain('z-index: 9999')
-    })
-  })
-
-  describe('Integration', () => {
-    it('is included in default layout', () => {
-      expect(LAYOUT).toContain('OfflineBanner')
+    it('hides pending count when 0', () => {
+      mockIsOnline.value = false
+      mockPendingCount.value = 0
+      const wrapper = mount(OfflineBanner)
+      expect(wrapper.find('.offline-pending').exists()).toBe(false)
     })
   })
 })

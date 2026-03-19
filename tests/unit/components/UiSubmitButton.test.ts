@@ -1,118 +1,123 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { describe, it, expect, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import UiSubmitButton from '../../../app/components/ui/SubmitButton.vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const COMPONENT = readFileSync(resolve(ROOT, 'app/components/ui/SubmitButton.vue'), 'utf-8')
+vi.stubGlobal('useI18n', () => ({
+  t: (key: string) => {
+    const map: Record<string, string> = {
+      'common.loading': 'Cargando...',
+      'common.save': 'Guardar',
+    }
+    return map[key] ?? key
+  },
+}))
 
 describe('UiSubmitButton', () => {
-  describe('Props interface', () => {
-    it('has loading prop (boolean, default false)', () => {
-      expect(COMPONENT).toContain('loading?: boolean')
-      expect(COMPONENT).toContain('loading: false')
+  describe('Props', () => {
+    it('renders label text', () => {
+      const wrapper = mount(UiSubmitButton, { props: { label: 'Send' } })
+      expect(wrapper.text()).toContain('Send')
     })
 
-    it('has disabled prop (boolean, default false)', () => {
-      expect(COMPONENT).toContain('disabled?: boolean')
-      expect(COMPONENT).toContain('disabled: false')
+    it('defaults to i18n save text when no label', () => {
+      const wrapper = mount(UiSubmitButton)
+      expect(wrapper.text()).toContain('Guardar')
     })
 
-    it('has label prop for idle text', () => {
-      expect(COMPONENT).toContain('label?: string')
+    it('defaults type to button', () => {
+      const wrapper = mount(UiSubmitButton)
+      expect(wrapper.find('button').attributes('type')).toBe('button')
     })
 
-    it('has loadingLabel prop for loading text', () => {
-      expect(COMPONENT).toContain('loadingLabel?: string')
+    it('accepts type=submit', () => {
+      const wrapper = mount(UiSubmitButton, { props: { type: 'submit' } })
+      expect(wrapper.find('button').attributes('type')).toBe('submit')
     })
 
-    it('has variant prop with 4 options', () => {
-      expect(COMPONENT).toContain("'primary'")
-      expect(COMPONENT).toContain("'secondary'")
-      expect(COMPONENT).toContain("'outline'")
-      expect(COMPONENT).toContain("'danger'")
+    it('applies primary variant class by default', () => {
+      const wrapper = mount(UiSubmitButton)
+      expect(wrapper.find('button').classes()).toContain('submit-btn--primary')
     })
 
-    it('has type prop (button | submit)', () => {
-      expect(COMPONENT).toContain("type?: 'button' | 'submit'")
+    it('applies danger variant class', () => {
+      const wrapper = mount(UiSubmitButton, { props: { variant: 'danger' } })
+      expect(wrapper.find('button').classes()).toContain('submit-btn--danger')
+    })
+
+    it('applies outline variant class', () => {
+      const wrapper = mount(UiSubmitButton, { props: { variant: 'outline' } })
+      expect(wrapper.find('button').classes()).toContain('submit-btn--outline')
+    })
+
+    it('applies secondary variant class', () => {
+      const wrapper = mount(UiSubmitButton, { props: { variant: 'secondary' } })
+      expect(wrapper.find('button').classes()).toContain('submit-btn--secondary')
     })
   })
 
   describe('Loading state', () => {
-    it('is disabled when loading', () => {
-      expect(COMPONENT).toContain(':disabled="loading || disabled"')
+    it('disables button when loading', () => {
+      const wrapper = mount(UiSubmitButton, { props: { loading: true } })
+      expect(wrapper.find('button').attributes('disabled')).toBeDefined()
     })
 
-    it('has aria-busy when loading', () => {
-      expect(COMPONENT).toContain(':aria-busy="loading"')
+    it('sets aria-busy when loading', () => {
+      const wrapper = mount(UiSubmitButton, { props: { loading: true } })
+      expect(wrapper.find('button').attributes('aria-busy')).toBe('true')
     })
 
     it('shows spinner when loading', () => {
-      expect(COMPONENT).toContain('v-if="loading"')
-      expect(COMPONENT).toContain('submit-btn__spinner')
+      const wrapper = mount(UiSubmitButton, { props: { loading: true } })
+      expect(wrapper.find('.submit-btn__spinner').exists()).toBe(true)
     })
 
-    it('spinner is aria-hidden', () => {
-      expect(COMPONENT).toContain('aria-hidden="true"')
+    it('hides spinner when not loading', () => {
+      const wrapper = mount(UiSubmitButton, { props: { loading: false } })
+      expect(wrapper.find('.submit-btn__spinner').exists()).toBe(false)
     })
 
-    it('shows loadingLabel when loading and loadingLabel provided', () => {
-      expect(COMPONENT).toContain('loading ? loadingLabel || label')
-    })
-  })
-
-  describe('CSS & Variants', () => {
-    it('applies variant class dynamically', () => {
-      expect(COMPONENT).toContain('`submit-btn--${variant}`')
+    it('spinner has aria-hidden', () => {
+      const wrapper = mount(UiSubmitButton, { props: { loading: true } })
+      expect(wrapper.find('.submit-btn__spinner').attributes('aria-hidden')).toBe('true')
     })
 
-    it('has primary variant styles', () => {
-      expect(COMPONENT).toContain('.submit-btn--primary')
-      expect(COMPONENT).toContain('var(--color-primary)')
+    it('shows loadingLabel when loading', () => {
+      const wrapper = mount(UiSubmitButton, {
+        props: { loading: true, label: 'Save', loadingLabel: 'Saving...' },
+      })
+      expect(wrapper.text()).toContain('Saving...')
     })
 
-    it('has secondary variant styles', () => {
-      expect(COMPONENT).toContain('.submit-btn--secondary')
+    it('falls back to label when loadingLabel not set', () => {
+      const wrapper = mount(UiSubmitButton, {
+        props: { loading: true, label: 'Save' },
+      })
+      expect(wrapper.text()).toContain('Save')
     })
 
-    it('has outline variant styles', () => {
-      expect(COMPONENT).toContain('.submit-btn--outline')
-    })
-
-    it('has danger variant styles', () => {
-      expect(COMPONENT).toContain('.submit-btn--danger')
-      expect(COMPONENT).toContain('var(--color-error)')
-    })
-
-    it('has disabled styling (reduced opacity, not-allowed cursor)', () => {
-      expect(COMPONENT).toContain('.submit-btn:disabled')
-      expect(COMPONENT).toContain('cursor: not-allowed')
-    })
-
-    it('has spinner animation', () => {
-      expect(COMPONENT).toContain('@keyframes submit-spin')
-      expect(COMPONENT).toContain('animation: submit-spin')
+    it('falls back to i18n loading text when no labels', () => {
+      const wrapper = mount(UiSubmitButton, { props: { loading: true } })
+      expect(wrapper.text()).toContain('Cargando...')
     })
   })
 
-  describe('Accessibility', () => {
-    it('uses semantic button element', () => {
-      expect(COMPONENT).toContain('<button')
-      expect(COMPONENT).toContain(':type="type"')
+  describe('Disabled state', () => {
+    it('disables button when disabled prop is true', () => {
+      const wrapper = mount(UiSubmitButton, { props: { disabled: true } })
+      expect(wrapper.find('button').attributes('disabled')).toBeDefined()
     })
 
-    it('emits click event', () => {
-      expect(COMPONENT).toContain("click: [event: MouseEvent]")
-      expect(COMPONENT).toContain('@click="$emit(\'click\', $event)"')
+    it('disables when both loading and disabled', () => {
+      const wrapper = mount(UiSubmitButton, { props: { loading: true, disabled: true } })
+      expect(wrapper.find('button').attributes('disabled')).toBeDefined()
     })
+  })
 
-    it('min-height meets touch target guidelines (44px = 2.75rem)', () => {
-      expect(COMPONENT).toContain('min-height: 2.75rem')
-    })
-
-    it('hover styles only apply on hover-capable devices', () => {
-      const hoverMediaQueries = COMPONENT.match(/@media \(hover: hover\)/g)
-      expect(hoverMediaQueries).not.toBeNull()
-      expect(hoverMediaQueries!.length).toBeGreaterThanOrEqual(3)
+  describe('Events', () => {
+    it('emits click on button click', async () => {
+      const wrapper = mount(UiSubmitButton)
+      await wrapper.find('button').trigger('click')
+      expect(wrapper.emitted('click')).toHaveLength(1)
     })
   })
 })

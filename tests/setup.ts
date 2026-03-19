@@ -127,6 +127,8 @@ vi.stubGlobal('onUnmounted', () => {})
 vi.stubGlobal('nextTick', () => Promise.resolve())
 vi.stubGlobal('navigateTo', () => {})
 vi.stubGlobal('useRoute', () => ({ params: {}, query: {} }))
+vi.stubGlobal('$fetch', () => Promise.resolve(null))
+vi.stubGlobal('getVerticalSlug', () => 'tracciona')
 vi.stubGlobal('useRouter', () => ({ push: () => {} }))
 vi.stubGlobal('definePageMeta', () => {})
 

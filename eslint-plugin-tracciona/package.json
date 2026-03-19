@@ -1,0 +1,8 @@
+{
+  "name": "eslint-plugin-tracciona",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Custom ESLint rules for Tracciona codebase quality enforcement",
+  "main": "index.js",
+  "type": "commonjs"
+}

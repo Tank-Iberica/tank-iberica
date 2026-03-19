@@ -1,9 +1,88 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-18 (Roadmap v3 127/127 + BACKLOG sync ~300 done) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→18-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v3 + setup servicios + test fixes (ver git log)
+**Última actualización:** 2026-03-19 (Roadmap Autónomo v5 creado — 14 items) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v4 + setup servicios + test fixes + test professionalization (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 19-mar — Profesionalización de Tests: COMPLETADA + AUDITORÍA
+
+**Roadmap:** `.claude/ROADMAP-TEST-PROFESIONALIZACION.md`
+**Resultado:** 0 structural / 0 mixed / 973 behavioral en tests/unit/ (17,982 tests) · Quality gate 0% enforced
+
+### Changelog sesión 19-mar (continuación)
+
+- Conversión 8 config tests conformance → behavioral (nuxt.config, YAML, JS config)
+- Auditoría exhaustiva: 111 items verificados, 0 saltados, 51/51 conformance mapeados
+- Corrección conteo: 48→51 conformance, 56→59 movidos, Fase 3: 21→19 items / 13→11 moved
+- ROADMAP-AUTONOMO.md: 36 items ⏳→✅ + 7 headers fase 0/N→N/N
+- BACKLOG-EJECUTABLE.md: 33 items del roadmap v4 sincronizados como ✅ (30 nuevos + 3 actualizados)
+- 1 gap menor: ESLint rule `require-autocomplete` (5.22) pendiente de crear
+- Pre-existente: `scripts-analysis.test.ts` 2 tests timeout (no relacionado)
+
+### Resumen de todas las fases
+
+- **Fase 0:** Infraestructura (ESLint plugin 7 rules, CI workflow, vitest config)
+- **Fase 1:** 52 items (13 behavioral + 21 conformance + 3 eliminados + 15 ya behavioral)
+- **Fase 2:** 5 archivos mixed limpios (structural sections removed)
+- **Fases 3-5:** 59 archivos structural movidos a `tests/conformance/`, 8 convertidos a behavioral
+- **Fase 6:** Quality gate 0% enforcement, clasificador mejorado
+
+### Arquitectura de tests resultante
+
+- `tests/unit/` — 973 archivos behavioral (quality gate: 0% structural enforced)
+- `tests/conformance/` — 51 archivos structural (multi-file audits, pattern scans)
+- `tests/integration/` — placeholder para Supabase local
+- `tests/e2e/` — Playwright
+- `tests/security/` — IDOR, rate limiting
+
+### Pendiente menor
+
+- Item 5.22: crear ESLint rule `require-autocomplete` (menor)
+- `scripts-analysis.test.ts`: aumentar timeout o optimizar scripts (pre-existente)
+
+### Roadmap Autónomo v5 (14 items, 5 fases)
+
+**Archivo:** `.claude/ROADMAP-AUTONOMO.md` · **Estado:** 0/14
+
+| Fase | Items | Foco                                                 |
+| ---- | ----- | ---------------------------------------------------- |
+| 0    | 3     | Git push, bottlenecks docs, glosario SEO             |
+| 1    | 3     | select('\*') final, cross-vertical, sesiones activas |
+| 2    | 3     | Registro documental, CRM pipeline, FAQ               |
+| 3    | 3     | Custom fields JSONB, search engine, Redis cache      |
+| 4    | 2     | API InfoCar/DGT, network graph supply chain          |
+
+**Backlog analysis (19-mar):** ~205 items pendientes de ~510 totales. 7 código ejecutable + 68 código bloqueado + 130 no-código. 7 items FUTURO adelantados a v5 (prerequisitos blandos/cumplidos).
+
+### Para continuar
+
+```
+Ejecutar Roadmap Autónomo v5 fase 0 (item 0.1). Leer .claude/ROADMAP-AUTONOMO.md para contexto.
+```
+
+---
+
+## Sesión 18-mar — Roadmap Autónomo v4 COMPLETADO (36/36)
+
+**Scope:** 36 items across 7 phases — advanced features, security, monitoring, testing infra
+
+### Phase 6 (final) — Advanced Features (3/3)
+
+- **6.1 A/B Testing (#268):** Migration 00177 (experiments/assignments/events tables + assign_experiment RPC), `server/utils/experiments.ts`, admin CRUD endpoints, results endpoint — 27 tests
+- **6.2 Email at Scale (N81):** `server/utils/emailScale.ts` — Resend primary + SES fallback w/ circuit breaker, bounce/complaint monitoring, 14-day IP warming schedule — 15 tests
+- **6.3 Multi-user Dealer (D17):** Migration 00178 (dealer_team_members + RLS + check_dealer_permission/accept_invite RPCs), `server/utils/dealerTeamAuth.ts` (requireDealerRole, invite, revoke, role update) — 27 tests
+
+### Phases 0-5 (completed in prior sessions)
+
+- **Phase 0 (8/8):** select('\*') cleanup, structured logs, font subsetting, scripts
+- **Phase 1 (7/7):** Connection monitoring, slow queries, latency metrics, cohort metrics
+- **Phase 2 (3/3):** Per-user rate limiting, DB-backed rate limit, COEP audit
+- **Phase 3 (6/6):** Admin subscriptions, UX health dashboard, keyboard nav audit
+- **Phase 4 (5/5):** Dependency graph, DI composable, coverage gate
+- **Phase 5 (4/4):** E2E journeys, k6 load/spike/write-stress tests
+
+---
 
 ## Sesión 18-mar (overnight) — Roadmap Autónomo v3 COMPLETADO
 

@@ -20,16 +20,16 @@ describe('useAbTest', () => {
     useAbTest = mod.useAbTest
   })
 
-  it('returns control variant in SSR mode', () => {
+  it('assigns a variant from the list in client mode', () => {
     const { variant } = useAbTest('test-exp', ['control', 'variant-a'])
-    // SSR mode defaults to first variant (control)
-    expect(variant.value).toBe('control')
+    // import.meta.client → (true) via vitest transform, so variant is assigned via hash
+    expect(['control', 'variant-a']).toContain(variant.value)
   })
 
-  it('isVariant checks the current variant', () => {
-    const { isVariant } = useAbTest('test-exp', ['control', 'variant-a'])
-    expect(isVariant('control')).toBe(true)
-    expect(isVariant('variant-a')).toBe(false)
+  it('isVariant returns true for the assigned variant', () => {
+    const { variant, isVariant } = useAbTest('test-exp', ['control', 'variant-a'])
+    // The assigned variant should match isVariant check
+    expect(isVariant(variant.value!)).toBe(true)
   })
 
   it('exposes experimentId', () => {

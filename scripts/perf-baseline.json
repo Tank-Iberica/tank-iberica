@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-19T11:03:05.305Z",
+  "gitSha": "2bca879",
+  "totalBundleSize": 5891009,
+  "jsSize": 4755465,
+  "cssSize": 917032,
+  "chunkCount": 318,
+  "dynamicImports": 280,
+  "largestChunk": {
+    "name": "BHf2IQVO.js",
+    "size": 937113
+  }
+}

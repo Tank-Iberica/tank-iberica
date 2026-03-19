@@ -1,132 +1,117 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { ref } from 'vue'
 
-const ROOT = resolve(__dirname, '../../..')
-const SRC = readFileSync(resolve(ROOT, 'app/composables/useQueryBudget.ts'), 'utf-8')
+// Mock Nuxt auto-imports
+vi.stubGlobal('ref', ref)
+vi.stubGlobal(
+  'useState',
+  vi.fn((_key: string, init?: () => unknown) => ref(init ? init() : [])),
+)
+
+import { useQueryBudget } from '../../../app/composables/useQueryBudget'
 
 describe('useQueryBudget', () => {
-  describe('Source code verification', () => {
-    it('defines MAX_QUERIES_PER_PAGE constant', () => {
-      expect(SRC).toContain('MAX_QUERIES_PER_PAGE')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(useState).mockImplementation(
+      (_key: string, init?: () => unknown) => ref(init ? init() : []) as any,
+    )
+  })
+
+  describe('Return shape', () => {
+    it('returns expected API', () => {
+      const result = useQueryBudget()
+      expect(result).toHaveProperty('trackQuery')
+      expect(result).toHaveProperty('getQueryCount')
+      expect(result).toHaveProperty('getQueries')
+      expect(result).toHaveProperty('checkBudget')
+      expect(result).toHaveProperty('resetBudget')
+      expect(result).toHaveProperty('MAX_QUERIES_PER_PAGE')
     })
 
-    it('sets budget to 5 queries per page', () => {
-      expect(SRC).toContain('MAX_QUERIES_PER_PAGE = 5')
-    })
-
-    it('exports trackQuery function', () => {
-      expect(SRC).toContain('trackQuery')
-    })
-
-    it('exports getQueryCount function', () => {
-      expect(SRC).toContain('getQueryCount')
-    })
-
-    it('exports checkBudget function', () => {
-      expect(SRC).toContain('checkBudget')
-    })
-
-    it('exports resetBudget function', () => {
-      expect(SRC).toContain('resetBudget')
-    })
-
-    it('only active in dev mode', () => {
-      expect(SRC).toContain('import.meta.dev')
-    })
-
-    it('logs warning with query labels when budget exceeded', () => {
-      expect(SRC).toContain('console.warn')
-      expect(SRC).toContain('QueryBudget')
-      expect(SRC).toContain('exceeded budget')
-    })
-
-    it('uses useState for SSR-safe state', () => {
-      expect(SRC).toContain('useState')
-    })
-
-    it('tracks query labels and timestamps', () => {
-      expect(SRC).toContain('label')
-      expect(SRC).toContain('timestamp')
-      expect(SRC).toContain('Date.now()')
-    })
-
-    it('checkBudget returns boolean (true=within, false=exceeded)', () => {
-      expect(SRC).toContain('return true')
-      expect(SRC).toContain('return false')
-    })
-
-    it('resetBudget clears the query log', () => {
-      expect(SRC).toContain('queries.value = []')
-    })
-
-    it('exports MAX_QUERIES_PER_PAGE in return object', () => {
-      expect(SRC).toContain('MAX_QUERIES_PER_PAGE,')
+    it('MAX_QUERIES_PER_PAGE is 5', () => {
+      const { MAX_QUERIES_PER_PAGE } = useQueryBudget()
+      expect(MAX_QUERIES_PER_PAGE).toBe(5)
     })
   })
 
-  describe('Budget logic (unit test)', () => {
-    // Simulate the composable logic without Nuxt dependencies
-    const MAX = 5
-
-    function createBudget() {
-      const queries: { label: string; timestamp: number }[] = []
-      return {
-        trackQuery(label: string = 'unknown') {
-          queries.push({ label, timestamp: Date.now() })
-        },
-        getQueryCount() {
-          return queries.length
-        },
-        checkBudget() {
-          return queries.length <= MAX
-        },
-        resetBudget() {
-          queries.length = 0
-        },
-        queries,
-      }
-    }
-
+  describe('trackQuery', () => {
     it('starts with 0 queries', () => {
-      const budget = createBudget()
-      expect(budget.getQueryCount()).toBe(0)
+      const { getQueryCount } = useQueryBudget()
+      expect(getQueryCount()).toBe(0)
     })
 
-    it('tracks queries correctly', () => {
-      const budget = createBudget()
-      budget.trackQuery('vehicles.select')
-      budget.trackQuery('categories.select')
-      expect(budget.getQueryCount()).toBe(2)
+    it('increments query count', () => {
+      const { trackQuery, getQueryCount } = useQueryBudget()
+      trackQuery('vehicles.select')
+      trackQuery('categories.select')
+      // import.meta.dev = true in tests (vitest config transforms it)
+      expect(getQueryCount()).toBe(2)
     })
 
-    it('is within budget when <= 5 queries', () => {
-      const budget = createBudget()
-      for (let i = 0; i < 5; i++) budget.trackQuery(`q${i}`)
-      expect(budget.checkBudget()).toBe(true)
+    it('stores labels', () => {
+      const { trackQuery, getQueries } = useQueryBudget()
+      trackQuery('vehicles.select')
+      trackQuery('dealers.select')
+      const queries = getQueries()
+      expect(queries[0].label).toBe('vehicles.select')
+      expect(queries[1].label).toBe('dealers.select')
     })
 
-    it('exceeds budget when > 5 queries', () => {
-      const budget = createBudget()
-      for (let i = 0; i < 6; i++) budget.trackQuery(`q${i}`)
-      expect(budget.checkBudget()).toBe(false)
+    it('stores timestamps', () => {
+      const { trackQuery, getQueries } = useQueryBudget()
+      trackQuery('test')
+      expect(getQueries()[0].timestamp).toBeTypeOf('number')
     })
 
-    it('resets correctly', () => {
-      const budget = createBudget()
-      for (let i = 0; i < 10; i++) budget.trackQuery(`q${i}`)
-      expect(budget.getQueryCount()).toBe(10)
-      budget.resetBudget()
-      expect(budget.getQueryCount()).toBe(0)
-      expect(budget.checkBudget()).toBe(true)
+    it('uses "unknown" as default label', () => {
+      const { trackQuery, getQueries } = useQueryBudget()
+      trackQuery()
+      expect(getQueries()[0].label).toBe('unknown')
+    })
+  })
+
+  describe('checkBudget', () => {
+    it('returns true when within budget', () => {
+      const { trackQuery, checkBudget } = useQueryBudget()
+      for (let i = 0; i < 5; i++) trackQuery(`q${i}`)
+      expect(checkBudget()).toBe(true)
     })
 
-    it('stores query labels for debugging', () => {
-      const budget = createBudget()
-      budget.trackQuery('vehicles.select')
-      budget.trackQuery('dealers.select')
-      expect(budget.queries[0].label).toBe('vehicles.select')
-      expect(budget.queries[1].label).toBe('dealers.select')
+    it('returns false when exceeding budget', () => {
+      const { trackQuery, checkBudget } = useQueryBudget()
+      for (let i = 0; i < 6; i++) trackQuery(`q${i}`)
+      expect(checkBudget()).toBe(false)
+    })
+
+    it('warns on console when budget exceeded', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const { trackQuery, checkBudget } = useQueryBudget()
+      for (let i = 0; i < 6; i++) trackQuery(`q${i}`)
+      checkBudget()
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('QueryBudget'),
+        expect.any(Array),
+      )
+      warnSpy.mockRestore()
+    })
+  })
+
+  describe('resetBudget', () => {
+    it('clears all tracked queries', () => {
+      const { trackQuery, getQueryCount, resetBudget } = useQueryBudget()
+      for (let i = 0; i < 10; i++) trackQuery(`q${i}`)
+      expect(getQueryCount()).toBe(10)
+      resetBudget()
+      expect(getQueryCount()).toBe(0)
+    })
+
+    it('budget passes after reset', () => {
+      const { trackQuery, checkBudget, resetBudget } = useQueryBudget()
+      for (let i = 0; i < 10; i++) trackQuery(`q${i}`)
+      expect(checkBudget()).toBe(false)
+      resetBudget()
+      expect(checkBudget()).toBe(true)
     })
   })
 })

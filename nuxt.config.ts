@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     families: {
       Inter: [400, 500, 600, 700],
     },
-    subsets: ['latin'],
+    subsets: ['latin', 'latin-ext'],
     display: 'swap',
     preload: true,
     download: true,
