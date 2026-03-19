@@ -12,8 +12,8 @@
  * Output: docs/composable-inventory.md + docs/composable-inventory.json
  */
 
-import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs'
-import { resolve, relative, basename, dirname } from 'node:path'
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
+import { resolve, relative, basename } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const COMPOSABLES_DIR = resolve(ROOT, 'app/composables')
@@ -79,7 +79,6 @@ function findTestFile(composableName) {
     `${composableName}.test.ts`,
     `${composableName.replace(/^use/, '')}.test.ts`,
   ]
-  const searchDirs = [TESTS_DIR]
   function search(dir) {
     try {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {

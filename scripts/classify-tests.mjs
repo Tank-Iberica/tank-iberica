@@ -9,7 +9,7 @@
  *
  * Usage: node scripts/classify-tests.mjs [--json] [--structural-only]
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { resolve, relative } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
@@ -44,8 +44,8 @@ function classifyTest(filePath) {
 
   // Detect source imports (behavioral indicator)
   const sourceImportPatterns = [
-    /import\s+.*from\s+['"]\.\.\/.*(?:server|app|scripts)\//,
-    /import\s+.*from\s+['"].*(?:server|app)\/(?:utils|composables|components|services|api)\//,
+    /import\s[^\n]+from\s+['"][^'"]*(?:server|app|scripts)\//,
+    /import\s[^\n]+from\s+['"][^'"]*(?:server|app)\/(?:utils|composables|components|services|api)\//,
   ]
   const hasSourceImports = sourceImportPatterns.some(p => p.test(content))
 
@@ -57,7 +57,7 @@ function classifyTest(filePath) {
   // Only check these patterns when readFileSync is present — otherwise
   // variables like `content` may be function output, not file content.
   const structuralPatterns = [
-    /readFileSync\(.*\)[\s\S]*?expect\(.*\)\.toContain\(/,
+    /readFileSync\([^)]*\)[\s\S]*?expect\([^)]*\)\.toContain\(/,
     /content\)\.toContain\(/,
     /sql\)\.toContain\(/,
     /source\)\.toContain\(/,
@@ -65,9 +65,9 @@ function classifyTest(filePath) {
   // Also detect audit patterns: readFileSync + .includes() used as assertion proxy
   // Note: globSync/readdirSync alone is too broad (catches the quality gate itself)
   const auditPatterns = [
-    /readFileSync\(.*\)[\s\S]*?\.includes\([\s\S]*?expect\(.*\)\.toBe\(true\)/,
-    /readFileSync\(.*\)[\s\S]*?\.match\([\s\S]*?expect\(.*\)\.toEqual\(\[\]\)/,
-    /globSync.*readFileSync/, // scanning dirs + reading source files = audit
+    /readFileSync\([^)]*\)[\s\S]*?\.includes\([\s\S]*?expect\([^)]*\)\.toBe\(true\)/,
+    /readFileSync\([^)]*\)[\s\S]*?\.match\([\s\S]*?expect\([^)]*\)\.toEqual\(\[\]\)/,
+    /globSync[\s\S]*?readFileSync/, // scanning dirs + reading source files = audit
   ]
   const hasAuditPatterns = hasReadFileSync && auditPatterns.some(p => p.test(content))
   const hasStructuralAssertions = hasReadFileSync && (structuralPatterns.some(p => p.test(content)) || hasAuditPatterns)
