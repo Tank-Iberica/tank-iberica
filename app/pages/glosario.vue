@@ -16,13 +16,43 @@ const {
   fetchTerms,
 } = useGlossary()
 
-useHead({ title: t('glossary.title') })
-
 await fetchTerms()
+
+// --- SEO with JSON-LD DefinedTermSet ---
+const SITE_URL = useSiteUrl()
+
+const jsonLdTerms = computed(() =>
+  filteredTerms.value.map((term) => ({
+    '@type': 'DefinedTerm',
+    name: localizedField(term.term, locale.value),
+    description: localizedField(term.definition, locale.value),
+    url: `${SITE_URL}/glosario#term-${term.slug}`,
+    inDefinedTermSet: `${SITE_URL}/glosario`,
+  })),
+)
+
+usePageSeo({
+  title: t('glossary.title'),
+  description: t('glossary.seoDescription'),
+  path: '/glosario',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTermSet',
+    name: t('glossary.title'),
+    description: t('glossary.seoDescription'),
+    url: `${SITE_URL}/glosario`,
+    inLanguage: locale.value,
+    hasDefinedTerm: jsonLdTerms.value,
+  },
+})
 </script>
 
 <template>
   <div class="glossary-page">
+    <UiBreadcrumbNav
+      :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('glossary.title') }]"
+    />
+
     <header class="glossary-header">
       <h1>{{ t('glossary.title') }}</h1>
       <p class="glossary-subtitle">{{ t('glossary.subtitle') }}</p>
@@ -30,14 +60,17 @@ await fetchTerms()
 
     <!-- Search & Filter -->
     <div class="glossary-controls">
+      <label for="glossary-search" class="sr-only">{{ t('glossary.searchPlaceholder') }}</label>
       <input
+        id="glossary-search"
         v-model="searchQuery"
         type="search"
         :placeholder="t('glossary.searchPlaceholder')"
         class="glossary-search"
         autocomplete="off"
       >
-      <select v-model="selectedCategory" class="glossary-category-select">
+      <label for="glossary-category" class="sr-only">{{ t('glossary.allCategories') }}</label>
+      <select id="glossary-category" v-model="selectedCategory" class="glossary-category-select">
         <option :value="null">{{ t('glossary.allCategories') }}</option>
         <option v-for="cat in categories" :key="cat" :value="cat">
           {{ cat }}
@@ -83,7 +116,12 @@ await fetchTerms()
       >
         <h2 class="glossary-group-letter">{{ letter }}</h2>
         <dl class="glossary-terms">
-          <div v-for="term in group" :key="term.id" class="glossary-term-item">
+          <div
+            v-for="term in group"
+            :id="`term-${term.slug}`"
+            :key="term.id"
+            class="glossary-term-item"
+          >
             <dt class="glossary-term-name">
               {{ localizedField(term.term, locale) }}
               <span v-if="term.category" class="glossary-term-category">
@@ -108,6 +146,17 @@ await fetchTerms()
 </template>
 
 <style scoped>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .glossary-page {
   max-width: 52rem;
   margin: 0 auto;
@@ -171,8 +220,8 @@ await fetchTerms()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 0.25rem;
   font-weight: 600;
   font-size: 0.875rem;
@@ -181,13 +230,15 @@ await fetchTerms()
   transition: background 0.15s;
 }
 
-.glossary-letter-link:hover {
+.glossary-letter-link:hover,
+.glossary-letter-link:focus {
   background: var(--color-primary, #23424a);
   color: white;
 }
 
 .glossary-group {
   margin-bottom: 2rem;
+  scroll-margin-top: var(--header-offset, 5rem);
 }
 
 .glossary-group-letter {
@@ -207,6 +258,7 @@ await fetchTerms()
 .glossary-term-item {
   padding: 0.75rem 0;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
+  scroll-margin-top: var(--header-offset, 5rem);
 }
 
 .glossary-term-item:last-child {
@@ -268,6 +320,11 @@ await fetchTerms()
 
   .glossary-header h1 {
     font-size: 2rem;
+  }
+
+  .glossary-letter-link {
+    width: 2rem;
+    height: 2rem;
   }
 }
 </style>

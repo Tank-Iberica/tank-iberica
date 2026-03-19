@@ -213,6 +213,7 @@ export default defineNuxtConfig({
     '/sobre-nosotros': { prerender: true },
     '/transparencia': { prerender: true },
     '/preguntas-frecuentes': { prerender: true },
+    '/glosario': { swr: 60 * 60 },
     '/top-dealers': { swr: 60 * 60 },
     '/servicios-postventa': { prerender: true },
     '/legal': { prerender: true },
