@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-19 (Migraciones sync completada — 33 migraciones aplicadas a remoto) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync (ver git log)
+**Última actualización:** 2026-03-19 (Migration sync completa + cast cleanup + verificación exhaustiva) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
 
@@ -31,6 +31,12 @@
 - Actualizarlo causa ~35 errores de tipos preexistentes en el codebase
 - Requiere sesión dedicada: regenerar tipos + arreglar todos los archivos dependientes
 - Tras esto, se podrán eliminar los `(supabase as any)` casts restantes en composables v5
+
+### Prompt para continuar:
+
+> "Sincroniza `app/types/database.types.ts` con el schema real de Supabase. Regenera los tipos y arregla los ~35 errores de tipos que aparecerán en el codebase. Después elimina los `(supabase as any)` casts en los composables de Roadmap v5."
+
+CLOSING_SESSION
 
 ---
 
