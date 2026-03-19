@@ -33,8 +33,8 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   try {
-    let dbQuery = supabase
-      .from('dealers')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let dbQuery = (supabase.from('dealers') as any)
       .select(
         'id, business_name, email, subscription_tier, subscription_status, stripe_customer_id, created_at, updated_at',
         { count: 'exact' },
@@ -52,8 +52,8 @@ export default defineEventHandler(async (event) => {
     if (error) throw safeError(500, `Query failed: ${error.message}`)
 
     // Summary counts
-    const { data: summaryData } = await supabase
-      .from('dealers')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: summaryData } = await (supabase.from('dealers') as any)
       .select('subscription_status')
       .not('subscription_tier', 'is', null)
 

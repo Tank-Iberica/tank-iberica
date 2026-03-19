@@ -15,6 +15,7 @@
  */
 import { defineEventHandler, createError } from 'h3'
 import { z } from 'zod'
+import { serverSupabaseServiceRole } from '#supabase/server'
 import { requireRole } from '../../utils/rbac'
 import { validateBody } from '../../utils/validateBody'
 
@@ -38,7 +39,8 @@ export default defineEventHandler(async (event) => {
 
   const body = await validateBody(event, experimentSchema)
 
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   // Update existing experiment
   if (body.id) {

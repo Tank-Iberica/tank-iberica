@@ -38,7 +38,8 @@ export async function checkDbRateLimit(
 
   const supabase = serverSupabaseServiceRole(event)
 
-  const { data, error } = await supabase.rpc('check_rate_limit' as never, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)('check_rate_limit', {
     p_key: key,
     p_window_seconds: config.windowSeconds,
     p_max_requests: config.maxRequests,
@@ -78,7 +79,8 @@ export async function cleanupRateLimitEntries(
 ): Promise<number> {
   const supabase = serverSupabaseServiceRole(event)
 
-  const { data, error } = await supabase.rpc('cleanup_rate_limit_entries' as never, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)('cleanup_rate_limit_entries', {
     p_max_age_seconds: maxAgeSeconds,
   })
 

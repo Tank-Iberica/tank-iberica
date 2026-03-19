@@ -93,7 +93,7 @@ export function recordLatency(path: string, durationMs: number, isError = false)
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return 0
   const idx = Math.ceil((p / 100) * sorted.length) - 1
-  return sorted[Math.max(0, idx)]
+  return sorted[Math.max(0, idx)] ?? 0
 }
 
 /**
@@ -116,8 +116,8 @@ export function getEndpointMetrics(path: string): PercentileResult | null {
     p95: percentile(sorted, 95),
     p99: percentile(sorted, 99),
     avg: Math.round(sum / sorted.length),
-    min: sorted[0],
-    max: sorted[sorted.length - 1],
+    min: sorted[0] ?? 0,
+    max: sorted[sorted.length - 1] ?? 0,
     count: entry.count,
     errors: entry.errors,
     errorRate: entry.count > 0 ? entry.errors / entry.count : 0,
@@ -144,8 +144,8 @@ export function getAllEndpointMetrics(): Array<{ path: string } & PercentileResu
       p95: percentile(sorted, 95),
       p99: percentile(sorted, 99),
       avg: Math.round(sum / sorted.length),
-      min: sorted[0],
-      max: sorted[sorted.length - 1],
+      min: sorted[0] ?? 0,
+      max: sorted[sorted.length - 1] ?? 0,
       count: entry.count,
       errors: entry.errors,
       errorRate: entry.count > 0 ? entry.errors / entry.count : 0,
@@ -208,8 +208,8 @@ export function getGlobalMetrics(): PercentileResult & { endpointsTracked: numbe
     p95: percentile(sorted, 95),
     p99: percentile(sorted, 99),
     avg: Math.round(sum / sorted.length),
-    min: sorted[0],
-    max: sorted[sorted.length - 1],
+    min: sorted[0] ?? 0,
+    max: sorted[sorted.length - 1] ?? 0,
     count: totalCount,
     errors: totalErrors,
     errorRate: totalCount > 0 ? totalErrors / totalCount : 0,

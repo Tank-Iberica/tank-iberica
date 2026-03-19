@@ -10,6 +10,7 @@
  * - limit: number (default 20, max 100)
  */
 import { defineEventHandler, getQuery, createError } from 'h3'
+import { serverSupabaseServiceRole } from '#supabase/server'
 import { requireRole } from '../../utils/rbac'
 
 export default defineEventHandler(async (event) => {
@@ -29,7 +30,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   let queryBuilder = client
     .from('experiments')

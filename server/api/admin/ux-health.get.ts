@@ -114,7 +114,8 @@ export default defineEventHandler(async (event) => {
       const lcpValues = ((vitalsRes.data ?? []) as Array<{ metric_value: number }>)
         .map((r) => r.metric_value)
         .sort((a, b) => a - b)
-      const lcpP75 = lcpValues.length > 0 ? lcpValues[Math.ceil(0.75 * lcpValues.length) - 1] : 0
+      const lcpP75 =
+        lcpValues.length > 0 ? (lcpValues[Math.ceil(0.75 * lcpValues.length) - 1] ?? 0) : 0
 
       const weekScore = Math.round(
         scoreErrorRate(errorRate) * 0.3 +

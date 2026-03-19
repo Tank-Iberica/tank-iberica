@@ -7,6 +7,7 @@
  * Uses deterministic hashing for consistent variant assignment.
  */
 import type { H3Event } from 'h3'
+import { serverSupabaseServiceRole } from '#supabase/server'
 import { logger } from './logger'
 
 export interface Experiment {
@@ -79,7 +80,8 @@ export async function assignExperiment(
 ): Promise<string | null> {
   if (!userId && !anonymousId) return null
 
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   try {
     const { data, error } = await client.rpc('assign_experiment', {
@@ -130,7 +132,8 @@ export async function trackExperimentEvent(
   anonymousId?: string | null,
   metadata?: Record<string, unknown>,
 ): Promise<boolean> {
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   try {
     // Look up experiment ID by key
@@ -169,7 +172,8 @@ export async function getExperimentResults(
   event: H3Event,
   experimentKey: string,
 ): Promise<ExperimentResults | null> {
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   // Get experiment
   const { data: experiment, error: expError } = await client

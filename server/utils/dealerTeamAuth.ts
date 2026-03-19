@@ -8,6 +8,7 @@
  */
 import type { H3Event } from 'h3'
 import { createError } from 'h3'
+import { serverSupabaseServiceRole } from '#supabase/server'
 import { logger } from './logger'
 
 export type DealerTeamRole = 'owner' | 'manager' | 'viewer'
@@ -41,7 +42,8 @@ export async function requireDealerRole(
   dealerId: string,
   requiredRole: DealerTeamRole = 'viewer',
 ): Promise<DealerTeamMember> {
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
   const userId = getUserIdFromEvent(event)
 
   if (!userId) {
@@ -93,7 +95,8 @@ export async function getDealerTeamMembers(
 ): Promise<DealerTeamMember[]> {
   await requireDealerRole(event, dealerId, 'viewer')
 
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
   const { data, error } = await client
     .from('dealer_team_members')
     .select(
@@ -129,7 +132,8 @@ export async function inviteDealerTeamMember(
     })
   }
 
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   // Generate invite token
   const inviteToken = crypto.randomUUID()
@@ -176,7 +180,8 @@ export async function updateDealerTeamMemberRole(
     })
   }
 
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   const { data, error } = await client
     .from('dealer_team_members')
@@ -207,7 +212,8 @@ export async function revokeDealerTeamMember(
   memberId: number,
 ): Promise<void> {
   const member = await requireDealerRole(event, dealerId, 'owner')
-  const client = useSupabaseServiceClient(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = serverSupabaseServiceRole(event) as any
 
   // Check we're not revoking the owner
   const { data: target } = await client
