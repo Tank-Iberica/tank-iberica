@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$path = 'C:\TradeBase\SUBVENCIONES.md'
+$path = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
 $text = Get-Content $path -Raw
 
 $text = $text -replace [regex]::Escape('> **Versión:** 1.16 · Marzo 2026 (v1.7: matriz semáforo + 30K FP / 6K capital. v1.8: bloque IRPF corregido y alineado con 50/50, cert. startup y no acumulación estatal/CyL. v1.9: matriz operativa por sede con escenarios S1-S5 y probabilidades. v1.10: A9 FELE INCIBE Emprende incorporado como incentivo complementario. v1.11: split de contenido operativo hacia DECISIONES-FINANCIERAS.md. v1.12: nota de gobierno documental y derivados explícitos. v1.13: enlace al mapa general README-documental.md. v1.14: normalización editorial, terminología y maquetación del maestro.)'), '> **Versión:** 1.17 · Marzo 2026 (v1.7: matriz semáforo + 30K FP / 6K capital. v1.8: bloque IRPF corregido y alineado con 50/50, cert. startup y no acumulación estatal/CyL. v1.9: matriz operativa por sede con escenarios S1-S5 y probabilidades. v1.10: A9 FELE INCIBE Emprende incorporado como incentivo complementario. v1.11: split de contenido operativo hacia DECISIONES-FINANCIERAS.md. v1.12: nota de gobierno documental y derivados explícitos. v1.13: enlace al mapa general README-documental.md. v1.14: normalización editorial, terminología y maquetación del maestro. v1.17: probabilidades reescritas por línea y tipo, con actualización de Cámara León 2026.)'

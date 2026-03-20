@@ -1,10 +1,10 @@
 $ErrorActionPreference = 'Stop'
 
-$subvPath = 'C:\TradeBase\SUBVENCIONES.md'
-$decPath = 'C:\TradeBase\DECISIONES-FINANCIERAS.md'
-$subvSummaryPath = 'C:\TradeBase\SUBVENCIONES-resumen.md'
-$dossierPath = 'C:\TradeBase\TradeBase-dossier-ejecutivo.md'
-$onePagerPath = 'C:\TradeBase\TradeBase-one-pager.md'
+$subvPath = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
+$decPath = 'C:\TradeBase\Proyecto\05-financiero\DECISIONES-FINANCIERAS.md'
+$subvSummaryPath = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-resumen.md'
+$dossierPath = 'C:\TradeBase\Proyecto\05-financiero\derivados\TradeBase-dossier-ejecutivo.md'
+$onePagerPath = 'C:\TradeBase\Proyecto\05-financiero\derivados\TradeBase-one-pager.md'
 
 function Set-Utf8NoBom {
   param(

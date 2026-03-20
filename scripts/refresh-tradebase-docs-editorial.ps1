@@ -2,6 +2,12 @@ $ErrorActionPreference = 'Stop'
 
 $root = 'C:\TradeBase'
 
+# Rutas centralizadas post-migración documental (Bloque 4)
+$DocsFinanciero = Join-Path $root 'Proyecto\05-financiero'
+$DocsSubvenciones = Join-Path $root 'Proyecto\06-subvenciones'
+$DocsDerivados = Join-Path $DocsFinanciero 'derivados'
+$DocsArchivo = Join-Path $root 'archivo'
+
 function Write-Utf8File {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
@@ -697,22 +703,15 @@ Debate final + decisión ejecutiva + registro
 '@
 
 Write-Utf8File -Path (Join-Path $root 'README-documental.md') -Content $readmeDoc
-Write-Utf8File -Path (Join-Path $root 'TradeBase-dossier-ejecutivo.md') -Content $dossier
-Write-Utf8File -Path (Join-Path $root 'TradeBase-one-pager.md') -Content $onePager
-Write-Utf8File -Path (Join-Path $root 'SUBVENCIONES-resumen.md') -Content $subvencionesResumen
-Write-Utf8File -Path (Join-Path $root 'PRESUPUESTOS-resumen.md') -Content $presupuestosResumen
+Write-Utf8File -Path (Join-Path $DocsDerivados 'TradeBase-dossier-ejecutivo.md') -Content $dossier
+Write-Utf8File -Path (Join-Path $DocsDerivados 'TradeBase-one-pager.md') -Content $onePager
+Write-Utf8File -Path (Join-Path $DocsSubvenciones 'SUBVENCIONES-resumen.md') -Content $subvencionesResumen
+Write-Utf8File -Path (Join-Path $DocsDerivados 'PRESUPUESTOS-resumen.md') -Content $presupuestosResumen
 
-$oldCouncil = Join-Path $root 'Proyecto CONSEJO.md'
-$newCouncil = Join-Path $root 'CONSEJO-MULTI-AI.md'
-if (Test-Path $newCouncil) {
-  Remove-Item $newCouncil -Force
-}
-if (Test-Path $oldCouncil) {
-  Move-Item $oldCouncil $newCouncil -Force
-}
+$newCouncil = Join-Path $DocsArchivo 'CONSEJO-MULTI-AI.md'
 Write-Utf8File -Path $newCouncil -Content $consejo
 
-$subvencionesPath = Join-Path $root 'SUBVENCIONES.md'
+$subvencionesPath = Join-Path $DocsSubvenciones 'SUBVENCIONES.md'
 $subvencionesText = Get-Content $subvencionesPath -Raw
 $subvencionesText = $subvencionesText.Replace('> **Documento de trabajo · Marzo 2026 · Version 1.13**', '> **Documento de trabajo · Marzo 2026 · Versión 1.13**')
 $subvencionesText = $subvencionesText.Replace('catalogo, fichas, tabla maestra, metodologia, compatibilidades, alertas y fuentes.', 'catálogo, fichas, tabla maestra, metodología, compatibilidades, alertas y fuentes.')
@@ -720,7 +719,7 @@ $subvencionesText = $subvencionesText.Replace('Para decisiones de ejecucion: [DE
 $subvencionesText = $subvencionesText.Replace("`r`n> - Mapa general: [README-documental.md](README-documental.md).`r`n---", "`r`n> - Mapa general: [README-documental.md](README-documental.md).`r`n`r`n---")
 Write-Utf8File -Path $subvencionesPath -Content $subvencionesText
 
-$presupuestosPath = Join-Path $root 'PRESUPUESTOS.md'
+$presupuestosPath = Join-Path $DocsFinanciero 'PRESUPUESTOS.md'
 $presupuestosText = Get-Content $presupuestosPath -Raw
 $presupuestosText = $presupuestosText.Replace('maestro de costes y tesoreria.', 'maestro de costes y tesorería.')
 $presupuestosText = $presupuestosText.Replace('lectura de caja minima, OPEX/COGS y capitalizacion recomendada.', 'lectura de caja mínima, OPEX/COGS y capitalización recomendada.')
@@ -728,7 +727,7 @@ $presupuestosText = $presupuestosText.Replace('catalogo completo de ayudas.', 'c
 $presupuestosText = $presupuestosText.Replace('en su parte numerica.', 'en su parte numérica.')
 Write-Utf8File -Path $presupuestosPath -Content $presupuestosText
 
-$decisionesPath = Join-Path $root 'DECISIONES-FINANCIERAS.md'
+$decisionesPath = Join-Path $DocsFinanciero 'DECISIONES-FINANCIERAS.md'
 $decisionesText = Get-Content $decisionesPath -Raw
 $decisionesText = $decisionesText.Replace('> **Documento de trabajo · Marzo 2026 · Version 1.4**', '> **Documento de trabajo · Marzo 2026 · Versión 1.4**')
 $decisionesText = $decisionesText.Replace('> **Ultima actualizacion:** 10/03/2026', '> **Última actualización:** 10/03/2026')
@@ -744,13 +743,13 @@ Write-Utf8File -Path $decisionesPath -Content $decisionesText
 
 $formatFiles = @(
   (Join-Path $root 'README-documental.md'),
-  (Join-Path $root 'TradeBase-dossier-ejecutivo.md'),
-  (Join-Path $root 'TradeBase-one-pager.md'),
-  (Join-Path $root 'SUBVENCIONES-resumen.md'),
-  (Join-Path $root 'PRESUPUESTOS-resumen.md'),
-  (Join-Path $root 'CONSEJO-MULTI-AI.md'),
-  (Join-Path $root 'SUBVENCIONES.md'),
-  (Join-Path $root 'DECISIONES-FINANCIERAS.md')
+  (Join-Path $DocsDerivados 'TradeBase-dossier-ejecutivo.md'),
+  (Join-Path $DocsDerivados 'TradeBase-one-pager.md'),
+  (Join-Path $DocsSubvenciones 'SUBVENCIONES-resumen.md'),
+  (Join-Path $DocsDerivados 'PRESUPUESTOS-resumen.md'),
+  (Join-Path $DocsArchivo 'CONSEJO-MULTI-AI.md'),
+  (Join-Path $DocsSubvenciones 'SUBVENCIONES.md'),
+  (Join-Path $DocsFinanciero 'DECISIONES-FINANCIERAS.md')
 )
 
 foreach ($path in $formatFiles) {

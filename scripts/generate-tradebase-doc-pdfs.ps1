@@ -5,6 +5,13 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Rutas centralizadas post-migración documental (Bloque 4)
+$DocsFinanciero = Join-Path $SourceRoot 'Proyecto\05-financiero'
+$DocsSubvenciones = Join-Path $SourceRoot 'Proyecto\06-subvenciones'
+$DocsDerivados = Join-Path $DocsFinanciero 'derivados'
+$DocsArchivo = Join-Path $SourceRoot 'archivo'
+$DocsBiblia = Join-Path $DocsSubvenciones 'subvenciones-biblia'
+
 $chromeCandidates = @(
   'C:\Program Files\Google\Chrome\Application\chrome.exe',
   'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
@@ -328,72 +335,72 @@ $bodyHtml
 
 $documents = @(
   @{
-    Input = Join-Path $SourceRoot 'SUBVENCIONES-PLAYBOOK.md'
+    Input = Join-Path $DocsSubvenciones 'SUBVENCIONES-PLAYBOOK.md'
     Html = Join-Path $BuildDir 'SUBVENCIONES-PLAYBOOK.print.html'
-    Pdf = Join-Path $SourceRoot 'SUBVENCIONES-PLAYBOOK.pdf'
+    Pdf = Join-Path $DocsSubvenciones 'SUBVENCIONES-PLAYBOOK.pdf'
     Title = 'TradeBase - Playbook Profundo de Subvenciones'
     Subtitle = 'Documento operativo profundo para revisar, optimizar y preparar expedientes de ayudas uno a uno.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'SUBVENCIONES-BIBLIA.md'
+    Input = Join-Path $DocsSubvenciones 'SUBVENCIONES-BIBLIA.md'
     Html = Join-Path $BuildDir 'SUBVENCIONES-BIBLIA.print.html'
-    Pdf = Join-Path $SourceRoot 'SUBVENCIONES-BIBLIA.pdf'
+    Pdf = Join-Path $DocsSubvenciones 'SUBVENCIONES-BIBLIA.pdf'
     Title = 'TradeBase - Biblia de Subvenciones'
     Subtitle = 'Indice maestro de la capa monografica: un tomo por ayuda, con desarrollo exhaustivo de expediente.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'subvenciones-biblia\12-certificacion-startup.md'
+    Input = Join-Path $DocsBiblia '12-certificacion-startup.md'
     Html = Join-Path $BuildDir '12-certificacion-startup.print.html'
-    Pdf = Join-Path $SourceRoot 'subvenciones-biblia\12-certificacion-startup.pdf'
+    Pdf = Join-Path $DocsBiblia '12-certificacion-startup.pdf'
     Title = 'TradeBase - Tomo #12 Certificacion Startup'
     Subtitle = 'Monografia operativa para preparar la certificacion de empresa emergente ante ENISA.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'subvenciones-biblia\27-irpf-socios.md'
+    Input = Join-Path $DocsBiblia '27-irpf-socios.md'
     Html = Join-Path $BuildDir '27-irpf-socios.print.html'
-    Pdf = Join-Path $SourceRoot 'subvenciones-biblia\27-irpf-socios.pdf'
+    Pdf = Join-Path $DocsBiblia '27-irpf-socios.pdf'
     Title = 'TradeBase - Tomo #27 IRPF Socios'
     Subtitle = 'Monografia fiscal y probatoria para la deduccion por inversion en empresa nueva o de reciente creacion.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md'
+    Input = Join-Path $DocsSubvenciones 'PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md'
     Html = Join-Path $BuildDir 'PLANTILLAS-EXPEDIENTES-PRIORITARIOS.print.html'
-    Pdf = Join-Path $SourceRoot 'PLANTILLAS-EXPEDIENTES-PRIORITARIOS.pdf'
+    Pdf = Join-Path $DocsSubvenciones 'PLANTILLAS-EXPEDIENTES-PRIORITARIOS.pdf'
     Title = 'TradeBase - Plantillas de Expedientes Prioritarios'
     Subtitle = 'Plantillas operativas para preparar los expedientes prioritarios de ayudas y fiscalidad.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'SUBVENCIONES.md'
+    Input = Join-Path $DocsSubvenciones 'SUBVENCIONES.md'
     Html = Join-Path $BuildDir 'SUBVENCIONES.print.html'
-    Pdf = Join-Path $SourceRoot 'SUBVENCIONES.pdf'
+    Pdf = Join-Path $DocsSubvenciones 'SUBVENCIONES.pdf'
     Title = 'TradeBase - Subvenciones y Ayudas'
     Subtitle = 'Maestro de referencia de ayudas, metodologia, fichas, compatibilidades y alertas.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'PRESUPUESTOS.md'
+    Input = Join-Path $DocsFinanciero 'PRESUPUESTOS.md'
     Html = Join-Path $BuildDir 'PRESUPUESTOS.print.html'
-    Pdf = Join-Path $SourceRoot 'PRESUPUESTOS.pdf'
+    Pdf = Join-Path $DocsFinanciero 'PRESUPUESTOS.pdf'
     Title = 'TradeBase - Presupuestos'
     Subtitle = 'Maestro de costes, tesoreria y lectura de capitalizacion.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'DECISIONES-FINANCIERAS.md'
+    Input = Join-Path $DocsFinanciero 'DECISIONES-FINANCIERAS.md'
     Html = Join-Path $BuildDir 'DECISIONES-FINANCIERAS.print.html'
-    Pdf = Join-Path $SourceRoot 'DECISIONES-FINANCIERAS.pdf'
+    Pdf = Join-Path $DocsFinanciero 'DECISIONES-FINANCIERAS.pdf'
     Title = 'TradeBase - Decisiones Financieras'
     Subtitle = 'Maestro de decisiones: sede, estructura societaria, roadmap, pools y orden de ejecucion.'
     Compact = $false
@@ -409,9 +416,9 @@ $documents = @(
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'CONSEJO-MULTI-AI.md'
+    Input = Join-Path $DocsArchivo 'CONSEJO-MULTI-AI.md'
     Html = Join-Path $BuildDir 'CONSEJO-MULTI-AI.print.html'
-    Pdf = Join-Path $SourceRoot 'CONSEJO-MULTI-AI.pdf'
+    Pdf = Join-Path $DocsArchivo 'CONSEJO-MULTI-AI.pdf'
     Title = 'TradeBase - Consejo Multi-AI'
     Subtitle = 'Documento paralelo de producto: sistema de toma de decisiones multiagente, fuera del nucleo financiero principal.'
     Compact = $false
@@ -428,36 +435,36 @@ $documents = @(
     Required = $false
   },
   @{
-    Input = Join-Path $SourceRoot 'SUBVENCIONES-resumen.md'
+    Input = Join-Path $DocsSubvenciones 'SUBVENCIONES-resumen.md'
     Html = Join-Path $BuildDir 'SUBVENCIONES-resumen.print.html'
-    Pdf = Join-Path $SourceRoot 'SUBVENCIONES-resumen.pdf'
+    Pdf = Join-Path $DocsSubvenciones 'SUBVENCIONES-resumen.pdf'
     Title = 'TradeBase - Subvenciones (Resumen)'
     Subtitle = 'Resumen ejecutivo derivado de SUBVENCIONES.md y DECISIONES-FINANCIERAS.md.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'PRESUPUESTOS-resumen.md'
+    Input = Join-Path $DocsDerivados 'PRESUPUESTOS-resumen.md'
     Html = Join-Path $BuildDir 'PRESUPUESTOS-resumen.print.html'
-    Pdf = Join-Path $SourceRoot 'PRESUPUESTOS-resumen.pdf'
+    Pdf = Join-Path $DocsDerivados 'PRESUPUESTOS-resumen.pdf'
     Title = 'TradeBase - Presupuestos (Resumen)'
     Subtitle = 'Resumen ejecutivo derivado de PRESUPUESTOS.md.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'TradeBase-dossier-ejecutivo.md'
+    Input = Join-Path $DocsDerivados 'TradeBase-dossier-ejecutivo.md'
     Html = Join-Path $BuildDir 'TradeBase-dossier-ejecutivo.print.html'
-    Pdf = Join-Path $SourceRoot 'TradeBase-dossier-ejecutivo.pdf'
+    Pdf = Join-Path $DocsDerivados 'TradeBase-dossier-ejecutivo.pdf'
     Title = 'TradeBase - Dossier Ejecutivo'
     Subtitle = 'Sintesis ejecutiva derivada de los 3 maestros para conversacion con socios o terceros.'
     Compact = $false
     IncludeToc = $true
   },
   @{
-    Input = Join-Path $SourceRoot 'TradeBase-one-pager.md'
+    Input = Join-Path $DocsDerivados 'TradeBase-one-pager.md'
     Html = Join-Path $BuildDir 'TradeBase-one-pager.print.html'
-    Pdf = Join-Path $SourceRoot 'TradeBase-one-pager.pdf'
+    Pdf = Join-Path $DocsDerivados 'TradeBase-one-pager.pdf'
     Title = 'TradeBase - One Pager'
     Subtitle = 'Hoja corta de decision derivada de los 3 maestros.'
     Compact = $true
@@ -467,9 +474,8 @@ $documents = @(
 
 $rendered = New-Object System.Collections.Generic.List[object]
 
-$bibleDir = Join-Path $SourceRoot 'subvenciones-biblia'
-if (Test-Path $bibleDir) {
-  $bibleDocs = Get-ChildItem -Path $bibleDir -Filter *.md | Sort-Object Name
+if (Test-Path $DocsBiblia) {
+  $bibleDocs = Get-ChildItem -Path $DocsBiblia -Filter *.md | Sort-Object Name
   foreach ($bibleDoc in $bibleDocs) {
     if ($documents.Input -contains $bibleDoc.FullName) {
       continue
@@ -480,7 +486,7 @@ if (Test-Path $bibleDir) {
     $documents += @{
       Input = $bibleDoc.FullName
       Html = Join-Path $BuildDir "$baseName.print.html"
-      Pdf = Join-Path $bibleDir "$baseName.pdf"
+      Pdf = Join-Path $DocsBiblia "$baseName.pdf"
       Title = "TradeBase - Biblia de Subvenciones - $titleName"
       Subtitle = 'Tomo monografico de la biblia de subvenciones para desarrollo exhaustivo por linea.'
       Compact = $false

@@ -1,17 +1,13 @@
 $ErrorActionPreference = 'Stop'
 
-$srcRoot = 'C:\TradeBase\Tracciona\docs'
-$dstRoot = 'C:\TradeBase'
-$srcBibleRoot = Join-Path $srcRoot 'subvenciones-biblia'
-$dstBibleRoot = Join-Path $dstRoot 'subvenciones-biblia'
-$readme = Join-Path $dstRoot 'README-documental.md'
+# Post-migración: los archivos ya viven en Proyecto/06-subvenciones/
+# Este script ya no necesita copiar ficheros — se conserva por referencia histórica.
+$DocsSubvenciones = 'C:\TradeBase\Proyecto\06-subvenciones'
+$DocsBiblia = Join-Path $DocsSubvenciones 'subvenciones-biblia'
+$readme = 'C:\TradeBase\README-documental.md'
 
-New-Item -ItemType Directory -Force -Path $dstBibleRoot | Out-Null
-
-Copy-Item (Join-Path $srcRoot 'SUBVENCIONES-BIBLIA.md') (Join-Path $dstRoot 'SUBVENCIONES-BIBLIA.md') -Force
-Get-ChildItem -Path $srcBibleRoot -Filter *.md | ForEach-Object {
-  Copy-Item $_.FullName (Join-Path $dstBibleRoot $_.Name) -Force
-}
+# Las copias ya no son necesarias: los archivos viven directamente en Proyecto/06-subvenciones/
+# Copy-Item ya no aplica
 
 $text = Get-Content $readme -Raw
 

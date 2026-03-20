@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$path = 'C:\TradeBase\SUBVENCIONES.md'
+$path = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
 $text = Get-Content $path -Raw
 
 function Replace-Literal {

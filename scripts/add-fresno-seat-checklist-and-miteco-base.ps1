@@ -1,8 +1,8 @@
 $ErrorActionPreference = 'Stop'
 
-$decisionsPath = 'C:\TradeBase\DECISIONES-FINANCIERAS.md'
-$subsidiesPath = 'C:\TradeBase\SUBVENCIONES.md'
-$dossierPath = 'C:\TradeBase\TradeBase-dossier-ejecutivo.md'
+$decisionsPath = 'C:\TradeBase\Proyecto\05-financiero\DECISIONES-FINANCIERAS.md'
+$subsidiesPath = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
+$dossierPath = 'C:\TradeBase\Proyecto\05-financiero\derivados\TradeBase-dossier-ejecutivo.md'
 
 function Replace-Literal {
     param(

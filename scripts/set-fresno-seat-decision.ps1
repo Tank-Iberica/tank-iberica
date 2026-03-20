@@ -15,11 +15,11 @@ function Replace-Exact {
   return $Text.Replace($Old, $New)
 }
 
-$decPath = 'C:\TradeBase\DECISIONES-FINANCIERAS.md'
-$subvPath = 'C:\TradeBase\SUBVENCIONES.md'
-$sumPath = 'C:\TradeBase\SUBVENCIONES-resumen.md'
-$dossierPath = 'C:\TradeBase\TradeBase-dossier-ejecutivo.md'
-$onePath = 'C:\TradeBase\TradeBase-one-pager.md'
+$decPath = 'C:\TradeBase\Proyecto\05-financiero\DECISIONES-FINANCIERAS.md'
+$subvPath = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
+$sumPath = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-resumen.md'
+$dossierPath = 'C:\TradeBase\Proyecto\05-financiero\derivados\TradeBase-dossier-ejecutivo.md'
+$onePath = 'C:\TradeBase\Proyecto\05-financiero\derivados\TradeBase-one-pager.md'
 
 $dec = Get-Content $decPath -Raw
 $subv = Get-Content $subvPath -Raw

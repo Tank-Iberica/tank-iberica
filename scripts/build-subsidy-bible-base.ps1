@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$playbook = 'C:\TradeBase\Tracciona\docs\SUBVENCIONES-PLAYBOOK.md'
-$outDir = 'C:\TradeBase\Tracciona\docs\subvenciones-biblia'
+$playbook = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-PLAYBOOK.md'
+$outDir = 'C:\TradeBase\Proyecto\06-subvenciones\subvenciones-biblia'
 
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
@@ -57,7 +57,7 @@ for ($i = 0; $i -lt $headings.Count; $i++) {
 
 > **Rol:** tomo monográfico inicial derivado del playbook profundo.  
 > **Estado:** base migrada; pendiente de expansión artículo por artículo al estándar largo definitivo si no aparece ya desarrollado en esta carpeta.  
-> **Documento maestro relacionado:** [SUBVENCIONES-PLAYBOOK.md](C:/TradeBase/SUBVENCIONES-PLAYBOOK.md)
+> **Documento maestro relacionado:** [SUBVENCIONES-PLAYBOOK.md](C:/TradeBase/Proyecto/06-subvenciones/SUBVENCIONES-PLAYBOOK.md)
 
 ---
 

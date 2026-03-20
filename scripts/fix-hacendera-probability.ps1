@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$path = 'C:\TradeBase\SUBVENCIONES.md'
+$path = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
 $text = Get-Content $path -Raw
 $old = '| **Probabilidad** | **Media-baja (25%)** — no depende solo de la memoria; depende también de ejecutar bien el esquema de crowdfunding |'
 $new = '| **Probabilidad** | **Media-baja (20%)** — no depende solo de la memoria; depende también de ejecutar bien el esquema de crowdfunding |'

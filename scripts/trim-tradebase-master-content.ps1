@@ -1,8 +1,12 @@
 $ErrorActionPreference = 'Stop'
 
-$subvPath = 'C:\TradeBase\SUBVENCIONES.md'
-$presPath = 'C:\TradeBase\PRESUPUESTOS.md'
-$decPath = 'C:\TradeBase\DECISIONES-FINANCIERAS.md'
+# Rutas centralizadas post-migración documental (Bloque 4)
+$DocsFinanciero = 'C:\TradeBase\Proyecto\05-financiero'
+$DocsSubvenciones = 'C:\TradeBase\Proyecto\06-subvenciones'
+
+$subvPath = Join-Path $DocsSubvenciones 'SUBVENCIONES.md'
+$presPath = Join-Path $DocsFinanciero 'PRESUPUESTOS.md'
+$decPath = Join-Path $DocsFinanciero 'DECISIONES-FINANCIERAS.md'
 
 function Set-Utf8NoBom {
   param(

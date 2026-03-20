@@ -1,9 +1,9 @@
 $ErrorActionPreference = 'Stop'
 
-$playbookSource = 'C:\TradeBase\Tracciona\docs\SUBVENCIONES-PLAYBOOK.md'
-$playbookRoot = 'C:\TradeBase\SUBVENCIONES-PLAYBOOK.md'
-$templatesSource = 'C:\TradeBase\Tracciona\docs\PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md'
-$templatesRoot = 'C:\TradeBase\PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md'
+$playbookSource = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-PLAYBOOK.md'
+$playbookRoot = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-PLAYBOOK.md'
+$templatesSource = 'C:\TradeBase\Proyecto\06-subvenciones\PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md'
+$templatesRoot = 'C:\TradeBase\Proyecto\06-subvenciones\PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md'
 $readmeRoot = 'C:\TradeBase\README-documental.md'
 
 $playbook = Get-Content $playbookSource -Raw
@@ -27,7 +27,7 @@ Estos cambios **no se asumen por defecto**. La tabla fija el estado actual de tr
 
 - `APROBADO`: ya puede incorporarse a memorias y narrativas como decisión válida.
 - `PENDIENTE`: no se mete como hecho cerrado hasta confirmación explícita.
-- Si alguno cambia de estado, hay que actualizar este bloque y el roadmap de [DECISIONES-FINANCIERAS.md](C:/TradeBase/DECISIONES-FINANCIERAS.md).
+- Si alguno cambia de estado, hay que actualizar este bloque y el roadmap de [DECISIONES-FINANCIERAS.md](C:/TradeBase/Proyecto/05-financiero/DECISIONES-FINANCIERAS.md).
 "@
 
 if ($playbook -notmatch '(?s)## Cambios pequeños de visión o producto que mejorarían algunas líneas y requieren confirmación expresa.*?## Orden real de ataque') {
@@ -48,7 +48,7 @@ $templates = @'
 > **Fecha de corte:** 10/03/2026  
 > **Rol:** plantillas operativas para convertir el foco 2026 en expedientes presentables.  
 > **Ámbito:** TradeBase SL con sede en **Fresno de la Vega**, 2 socios `50/50`, `30.000 EUR` de fondos propios y primera vertical **Tracciona**.  
-> **Se usan junto con:** [SUBVENCIONES-PLAYBOOK.md](C:/TradeBase/SUBVENCIONES-PLAYBOOK.md), [SUBVENCIONES.md](C:/TradeBase/SUBVENCIONES.md), [DECISIONES-FINANCIERAS.md](C:/TradeBase/DECISIONES-FINANCIERAS.md) y [PRESUPUESTOS.md](C:/TradeBase/PRESUPUESTOS.md).
+> **Se usan junto con:** [SUBVENCIONES-PLAYBOOK.md](C:/TradeBase/Proyecto/06-subvenciones/SUBVENCIONES-PLAYBOOK.md), [SUBVENCIONES.md](C:/TradeBase/Proyecto/06-subvenciones/SUBVENCIONES.md), [DECISIONES-FINANCIERAS.md](C:/TradeBase/Proyecto/05-financiero/DECISIONES-FINANCIERAS.md) y [PRESUPUESTOS.md](C:/TradeBase/Proyecto/05-financiero/PRESUPUESTOS.md).
 
 ---
 

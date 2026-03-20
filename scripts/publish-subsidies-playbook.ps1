@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$src = 'C:\TradeBase\Tracciona\docs\SUBVENCIONES-PLAYBOOK.md'
-$dst = 'C:\TradeBase\SUBVENCIONES-PLAYBOOK.md'
+$src = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-PLAYBOOK.md'
+$dst = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES-PLAYBOOK.md'
 $readme = 'C:\TradeBase\README-documental.md'
 
 Copy-Item $src $dst -Force

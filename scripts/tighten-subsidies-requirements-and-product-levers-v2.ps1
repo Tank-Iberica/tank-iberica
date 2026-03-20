@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$path = 'C:\TradeBase\SUBVENCIONES.md'
+$path = 'C:\TradeBase\Proyecto\06-subvenciones\SUBVENCIONES.md'
 $text = Get-Content $path -Raw
 
 $text = $text.Replace('> **Documento de trabajo · Marzo 2026 · Versión 1.18**', '> **Documento de trabajo · Marzo 2026 · Versión 1.21**')

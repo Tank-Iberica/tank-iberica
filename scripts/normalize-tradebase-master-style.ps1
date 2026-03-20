@@ -2,6 +2,10 @@ $ErrorActionPreference = 'Stop'
 
 $root = 'C:\TradeBase'
 
+# Rutas centralizadas post-migración documental (Bloque 4)
+$DocsFinanciero = Join-Path $root 'Proyecto\05-financiero'
+$DocsSubvenciones = Join-Path $root 'Proyecto\06-subvenciones'
+
 function Write-Utf8File {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
@@ -25,7 +29,7 @@ function Apply-Replacements {
   Write-Utf8File -Path $Path -Content $text
 }
 
-$subvencionesPath = Join-Path $root 'SUBVENCIONES.md'
+$subvencionesPath = Join-Path $DocsSubvenciones 'SUBVENCIONES.md'
 $subvencionesPairs = @(
   @('> **Documento de trabajo · Marzo 2026 · Versión 1.13**', '> **Documento de trabajo · Marzo 2026 · Versión 1.14**'),
   @('**27 lineas de ayuda principales + 9 ayudas/incentivos complementarios', '**27 líneas de ayuda principales + 9 ayudas/incentivos complementarios'),
@@ -44,7 +48,7 @@ $subvencionesPairs = @(
   @("`r`n> - Mapa general: [README-documental.md](README-documental.md).`r`n---", "`r`n> - Mapa general: [README-documental.md](README-documental.md).`r`n`r`n---")
 )
 
-$presupuestosPath = Join-Path $root 'PRESUPUESTOS.md'
+$presupuestosPath = Join-Path $DocsFinanciero 'PRESUPUESTOS.md'
 $presupuestosPairs = @(
   @('mantener abierta la via ENISA/IRPF', 'mantener abierta la vía ENISA/IRPF'),
   @('24.000€ aportacion adicional de socios', '24.000€ de aportación adicional de socios'),
@@ -69,7 +73,7 @@ $presupuestosPairs = @(
   @("`r`n---`r`n## 2. RETA", "`r`n`r`n---`r`n`r`n## 2. RETA")
 )
 
-$decisionesPath = Join-Path $root 'DECISIONES-FINANCIERAS.md'
+$decisionesPath = Join-Path $DocsFinanciero 'DECISIONES-FINANCIERAS.md'
 $decisionesPairs = @(
   @('> **Documento de trabajo · Marzo 2026 · Versión 1.4**', '> **Documento de trabajo · Marzo 2026 · Versión 1.5**'),
   @('Certificacion startup', 'Certificación startup'),

@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$path = 'C:\TradeBase\DECISIONES-FINANCIERAS.md'
+$path = 'C:\TradeBase\Proyecto\05-financiero\DECISIONES-FINANCIERAS.md'
 $text = Get-Content $path -Raw
 
 $text = $text.Replace(
