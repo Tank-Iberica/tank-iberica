@@ -515,6 +515,16 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Pendiente push:** Migraciones 00179-00184 necesitan `supabase db push`
 - **Supabase mock pattern confirmado:** Proxy-based chain con thenable objects para await destructuring. `range()` returns thenable, NOT is thenable.
 
+## Migración Documental Proyecto/ (completada 20-mar-2026)
+
+- **Estructura:** `C:\TradeBase\Proyecto\` con 6 subcarpetas temáticas (01-legal a 06-subvenciones)
+- **Resultado:** 71 .md (66 docs + 5 migration logs), 20 scripts PS1 parcheados, repo limpio
+- **Commits:** `3be6f9b` (scripts), `7f7cc99` (docs), `d531218` (tooling)
+- **Logs:** `Proyecto/MIGRATION-LOG-BLOQUE{1..5}.md`
+- **Exclusión:** `rewrite-tank-iberica-subsidies.ps1` = legacy Tank Ibérica, fuera del scope
+- **Artefactos en raíz:** 16 PDFs (regenerables) + `Instalación.txt` (operativo) — fuera del scope documental .md
+- **Lección sed:** NUNCA usar sed con rutas que contienen `\0N` — interpreta como octales. Usar Python binary-safe.
+
 ## Sub-archivos (leer bajo demanda)
 
 - `.claude/memory/patterns.md` — patrones de código confirmados (Vue, composables, ESLint)

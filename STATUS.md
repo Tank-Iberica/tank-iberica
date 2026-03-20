@@ -1,9 +1,30 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-19 (Migration sync completa + cast cleanup + verificación exhaustiva) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup (ver git log)
+**Última actualización:** 2026-03-20 (Migración documental Proyecto/ completa — Bloques 1-5) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup + doc migration (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 20-mar — Migración documental Proyecto/ (Bloques 1-5)
+
+Migración completa de documentos .md de C:\TradeBase\ a estructura Proyecto/ con 6 subcarpetas temáticas.
+
+### Realizado:
+
+- **Bloque 1**: Revisión Grupo A + movimientos iniciales
+- **Bloque 2**: Mover 16 .md restantes a Proyecto/
+- **Bloque 3+3.1**: Actualizar refs e índices en todos los documentos
+- **Bloque 4+4.1**: Parchear 20 scripts PS1 + reparar corrupción sed (15 scripts con bytes 0x05/0x06)
+- **Bloque 5**: Verificación final (8/8 checks PASS) + remates de cierre
+- **Commits**: `3be6f9b`, `7f7cc99`, `d531218`
+- **Resultado**: 71 .md en Proyecto/ (66 docs + 5 migration logs), 21 scripts activos limpios, repo limpio
+
+### Pendiente (otro trabajo, no migración):
+
+- Regenerar PDFs con rutas actualizadas
+- Prompt para continuar: "Regenerar PDFs ejecutando generate-tradebase-doc-pdfs.ps1 con las rutas actualizadas a Proyecto/"
+
+CLOSING_SESSION
 
 ## Sesión 19-mar — Migration Sync a Remoto
 
