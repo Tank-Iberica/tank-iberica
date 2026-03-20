@@ -156,7 +156,8 @@
       "WebFetch(domain:www.dihbu40.es)",
       "WebFetch(domain:www.sanchezgarridoabogados.com)",
       "WebFetch(domain:sede.miteco.gob.es)",
-      "WebFetch(domain:www.boe.es)"
+      "WebFetch(domain:www.boe.es)",
+      "Bash(PYTHONUTF8=1 python3:*)"
     ]
   },
   "mcpServers": {
