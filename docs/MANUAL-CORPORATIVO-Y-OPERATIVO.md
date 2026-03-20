@@ -1,3 +1,12 @@
+---
+Ámbito: Snapshot
+Canonicidad: Snapshot congelado — NO es maestro de ningún tema
+Maestro: N/A (cada sección refiere a su maestro canónico)
+Última revisión: marzo 2026 (generación)
+Próxima revisión: No aplica (congelado)
+Nota: Contiene análisis competitivo (S2B) y procesos RACI (S12B) no presentes en otros maestros. Extraer si se necesita actualizar.
+---
+
 # Manual Corporativo y Operativo — TradeBase
 
 > **SNAPSHOT:** Documento de referencia corporativa generado en marzo 2026. No se mantiene sesión a sesión. Para estado actual ver `STATUS.md`. Para arquitectura y visión ver `docs/PROYECTO-CONTEXTO.md`. Para estrategia ver `docs/ESTRATEGIA-NEGOCIO.md`. Regenerar este documento cuando se necesite (ej: reunión con inversores).
