@@ -10,6 +10,7 @@ export interface SavedFilterPreset {
   name: string
   filters: VehicleFilters
   locationLevel: LocationLevel | null
+  searchQuery?: string
   savedAt: number
 }
 
@@ -51,6 +52,7 @@ export function useSavedFilters() {
     name: string,
     filters: VehicleFilters,
     locationLevel: LocationLevel | null,
+    searchQuery?: string,
   ): void {
     const trimmedName = name.trim()
     if (!trimmedName) return
@@ -60,6 +62,7 @@ export function useSavedFilters() {
       name: trimmedName,
       filters: { ...filters },
       locationLevel,
+      searchQuery: searchQuery || undefined,
       savedAt: Date.now(),
     }
 

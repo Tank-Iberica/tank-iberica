@@ -245,14 +245,6 @@ export function useUserLocation() {
     return { country: res.country, province: null, region: null, city: null, source: 'ip' }
   }
 
-  const NO_LOCATION: UserLocation = {
-    country: null,
-    province: null,
-    region: null,
-    city: null,
-    source: null,
-  }
-
   async function detect() {
     if (detected.value) return
     detected.value = true
@@ -286,8 +278,14 @@ export function useUserLocation() {
       /* server route failed */
     }
 
-    // 4. No location detected
-    location.value = NO_LOCATION
+    // 4. No location detected — default to Spain
+    location.value = {
+      country: 'ES',
+      province: null,
+      region: null,
+      city: null,
+      source: null,
+    }
   }
 
   function setManualLocation(

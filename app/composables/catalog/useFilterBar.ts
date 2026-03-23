@@ -32,11 +32,10 @@ export function useFilterBar(
   const provinces = computed(() => getSortedProvinces())
 
   const locationTriggerText = computed(() => {
-    if (editProvince.value) return editProvince.value
-    if (editCountry.value) {
-      const all = [...europeanCountriesData.value.priority, ...europeanCountriesData.value.rest]
-      const country = all.find((c) => c.code === editCountry.value)
-      return country ? `${country.flag} ${country.name}` : editCountry.value
+    // Show the range/level label, not the location
+    if (locationLevel.value) {
+      const key = `catalog.locationLevel.${locationLevel.value}`
+      return t(key)
     }
     return t('catalog.locationAll')
   })

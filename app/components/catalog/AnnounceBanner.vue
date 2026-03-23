@@ -120,9 +120,9 @@ onUnmounted(() => {
 .announcement-banner {
   background: linear-gradient(135deg, #bf6b52 0%, #a3523b 100%);
   color: var(--color-white);
-  padding: 0.38rem 2rem;
+  padding: 0.12rem 2rem;
   text-align: center;
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   position: fixed;
   top: 0;

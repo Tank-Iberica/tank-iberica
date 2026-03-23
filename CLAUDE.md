@@ -235,7 +235,7 @@ Ver `CONTRIBUTING.md` para stack, estructura, convenciones, comandos, tests, git
 
 1. **Mobile-first:** CSS base 360px. `min-width` breakpoints (480/768/1024/1280). Touch ≥ 44px. `rem` no `px`. Desktop = mejora, no base.
 2. **Páginas reales:** Vehículos y artículos = URL propia, NO modales.
-3. **Extensible:** Categorías, subcategorías, filtros, idiomas de BD. Añadir = INSERT, no código. JSONB para campos multi-idioma.
+3. **Extensible + ZERO hardcoding:** Categorías, subcategorías, filtros, acciones, idiomas → TODO en BD. Añadir/cambiar = INSERT/UPDATE, NUNCA código. JSONB para campos multi-idioma. **Está PROHIBIDO hardcodear listas de valores de negocio** (acciones, categorías, planes, precios, etc.) en el código fuente. Si no hay config de BD cargada, usar un fallback genérico mínimo, pero la fuente de verdad es SIEMPRE la BD (`vertical_config`, `categories`, etc.).
 4. **Multilenguaje:** `$t()` + `localizedField()` siempre. ES+EN hoy, preparado para N idiomas.
 5. **Secuencial:** No subagentes paralelos (Task). Una a la vez, esperar, siguiente. **Excepción — Haiku únicamente:** Si el modelo objetivo es Haiku y las subtareas son independientes (sin dependencias de aprendizaje entre sí), ofrecer paralelo como opción al usuario (por defecto secuencial para ahorro de tokens). Si las tareas tienen dependencias de aprendizaje entre sí, NUNCA paralelo independientemente del modelo.
 

@@ -39,23 +39,23 @@ const {
   setActions,
 } = useCatalogState()
 
-// ── Data ──
+// -- Data --
 const categories = ref<CategoryRow[]>([])
 const subcategories = ref<SubcategoryRow[]>([])
 const subcategoryCategoryLinks = ref<Map<string, string[]>>(new Map())
 
-// ── Dropdown open state (mobile) ──
+// -- Dropdown open state --
 const transactionOpen = ref(false)
 const categoryOpen = ref(false)
 const subcategoryOpen = ref(false)
 
-// ── Desktop scroll refs ──
+// -- Scroll refs --
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 
-// ── Actions config ──
-const FALLBACK_ACTIONS = ['alquiler', 'venta', 'terceros']
+// -- Actions config --
+const FALLBACK_ACTIONS = ['venta', 'lotes', 'alquiler', 'subasta']
 const actionOptions = computed(() => {
   const actions = config.value?.active_actions?.length
     ? config.value.active_actions
@@ -63,13 +63,12 @@ const actionOptions = computed(() => {
   return actions.map((key) => ({ key }))
 })
 
-// Default: Venta selected
-onMounted(async () => {
-  // Set default action to 'venta' if none selected
-  if (!activeActions.value.length) {
-    setActions(['venta'] as VehicleAction[])
-  }
+// Default: Venta selected (immediately, not just onMounted, to avoid SSR mismatch)
+if (!activeActions.value.length) {
+  setActions(['venta'] as VehicleAction[])
+}
 
+onMounted(async () => {
   await Promise.all([fetchCategories(), fetchSubcategories(), fetchSubcategoryCategoryLinks()])
 
   const el = scrollContainer.value
@@ -83,7 +82,7 @@ onUnmounted(() => {
   scrollContainer.value?.removeEventListener('scroll', updateScrollState)
 })
 
-// ── Helpers ──
+// -- Helpers --
 function localizedName(row: { name_es: string; name_en: string | null }): string {
   return localizedJsonField({ es: row.name_es, en: row.name_en || '' }, locale.value)
 }
@@ -121,14 +120,14 @@ const selectedSubcategoryName = computed(() => {
   return sub ? localizedName(sub) : ''
 })
 
-// ── Transaction label (mobile) ──
+// -- Transaction label --
 const transactionLabel = computed(() => {
   if (!activeActions.value.length) return t('catalog.transaction')
   if (activeActions.value.length === 1) return t(`catalog.${activeActions.value[0]}`)
   return `${activeActions.value.length} ${t('catalog.transaction').toLowerCase()}`
 })
 
-// ── Fetch data ──
+// -- Fetch data --
 async function fetchCategories() {
   const { data } = await supabase
     .from('categories')
@@ -163,7 +162,7 @@ async function fetchSubcategoryCategoryLinks() {
   subcategoryCategoryLinks.value = links
 }
 
-// ── Actions (transaction type) ──
+// -- Actions (transaction type) --
 function toggleAction(key: string) {
   const action = key as VehicleAction
   const current = new Set(activeActions.value)
@@ -175,7 +174,7 @@ function toggleAction(key: string) {
   setActions([...current] as VehicleAction[])
 }
 
-// ── Category / Subcategory selection ──
+// -- Category / Subcategory selection --
 function selectCategory(cat: CategoryRow) {
   if (!isApplicable(cat)) return
   setCategory(cat.id, cat.slug)
@@ -191,6 +190,7 @@ function clearCategory() {
   setSubcategory(null, null)
   emit('categoryChange', null)
   emit('subcategoryChange', null)
+  categoryOpen.value = false
   nextTick(updateScrollState)
 }
 
@@ -205,6 +205,7 @@ function selectSubcategory(sub: SubcategoryRow) {
 function clearSubcategory() {
   setSubcategory(null, null)
   emit('subcategoryChange', null)
+  subcategoryOpen.value = false
   nextTick(updateScrollState)
 }
 
@@ -220,7 +221,21 @@ watch(
   { deep: true },
 )
 
-// ── Dropdown toggles (avoids multiline inline handlers) ──
+// Clear from a separator: clears category + subcategory
+function clearFromCategory() {
+  clearCategory()
+}
+
+// Clear from subcategory separator: clears subcategory only
+function clearFromSubcategory() {
+  clearSubcategory()
+}
+
+const anyDropdownOpen = computed(
+  () => transactionOpen.value || categoryOpen.value || subcategoryOpen.value,
+)
+
+// -- Dropdown toggles --
 function openTransaction() {
   transactionOpen.value = !transactionOpen.value
   categoryOpen.value = false
@@ -239,17 +254,7 @@ function openSubcategory() {
   categoryOpen.value = false
 }
 
-function clearCategoryAndClose() {
-  clearCategory()
-  categoryOpen.value = false
-}
-
-function clearSubcategoryAndClose() {
-  clearSubcategory()
-  subcategoryOpen.value = false
-}
-
-// ── Desktop scroll ──
+// -- Scroll --
 function updateScrollState() {
   const el = scrollContainer.value
   if (!el) return
@@ -265,12 +270,12 @@ function scrollRightFn() {
   scrollContainer.value?.scrollBy({ left: 200, behavior: 'smooth' })
 }
 
-// ── Close dropdowns on outside click ──
+// -- Close dropdowns on outside click --
 function onDocClick(e: MouseEvent) {
   const target = e.target as HTMLElement
-  if (!target.closest('.dropdown-transaction')) transactionOpen.value = false
-  if (!target.closest('.dropdown-category')) categoryOpen.value = false
-  if (!target.closest('.dropdown-subcategory')) subcategoryOpen.value = false
+  if (!target.closest('.segment-transaction')) transactionOpen.value = false
+  if (!target.closest('.segment-category')) categoryOpen.value = false
+  if (!target.closest('.segment-subcategory')) subcategoryOpen.value = false
 }
 
 onMounted(() => document.addEventListener('click', onDocClick))
@@ -279,255 +284,281 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
 
 <template>
   <nav class="category-bar" :aria-label="$t('catalog.title')">
-    <!-- ═══════════════════════════════════════════
-         MOBILE: 3 dropdown selectors in a row
-         ═══════════════════════════════════════════ -->
-    <div class="mobile-selectors">
-      <!-- 1. Transaccion (multi-select) -->
-      <div class="dropdown-wrapper dropdown-transaction">
-        <button
-          :class="['selector-btn', { active: transactionOpen || activeActions.length > 0 }]"
-          @click.stop="openTransaction"
-        >
-          <span class="selector-label">{{ transactionLabel }}</span>
-          <svg
-            class="chevron"
-            :class="{ open: transactionOpen }"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        <div v-show="transactionOpen" class="dropdown-menu">
-          <button
-            v-for="opt in actionOptions"
-            :key="opt.key"
-            :class="[
-              'dropdown-item',
-              { selected: activeActions.includes(opt.key as VehicleAction) },
-            ]"
-            @click.stop="toggleAction(opt.key)"
-          >
-            <span class="check-icon">{{
-              activeActions.includes(opt.key as VehicleAction) ? '✓' : ''
-            }}</span>
-            {{ $t(`catalog.${opt.key}`) }}
-          </button>
-        </div>
-      </div>
+    <div :class="['breadcrumb-bar', { 'dropdown-open': anyDropdownOpen }]">
+      <button
+        v-show="canScrollLeft"
+        class="scroll-btn scroll-btn-left"
+        aria-hidden="true"
+        @click="scrollLeftFn"
+      >
+        &#9664;
+      </button>
 
-      <!-- 2. Tipo (single-select category) -->
-      <div class="dropdown-wrapper dropdown-category">
-        <button
-          :class="['selector-btn', { active: categoryOpen || !!activeCategoryId }]"
-          @click.stop="openCategory"
-        >
-          <span class="selector-label">{{
-            activeCategoryId ? selectedCategoryName : $t('catalog.allTypes')
-          }}</span>
-          <svg
-            class="chevron"
-            :class="{ open: categoryOpen }"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        <div v-show="categoryOpen" class="dropdown-menu">
+      <div
+        ref="scrollContainer"
+        :class="['breadcrumb-scroll', { 'dropdown-open': anyDropdownOpen }]"
+        @scroll="updateScrollState"
+      >
+        <!-- Segment 1: Transaction (dropdown, multi-select) -->
+        <div class="breadcrumb-segment segment-transaction">
           <button
-            :class="['dropdown-item', { selected: !activeCategoryId }]"
-            @click="clearCategoryAndClose"
+            :class="['bc-btn bc-btn--selected', { open: transactionOpen }]"
+            :aria-expanded="transactionOpen"
+            aria-haspopup="listbox"
+            @click.stop="openTransaction"
           >
-            {{ $t('catalog.allTypes') }}
+            <span class="bc-label">{{ transactionLabel }}</span>
+            <svg
+              class="bc-chevron"
+              :class="{ open: transactionOpen }"
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
           </button>
+          <div
+            v-show="transactionOpen"
+            class="bc-dropdown"
+            role="listbox"
+            :aria-label="$t('catalog.transaction')"
+          >
+            <label
+              v-for="opt in actionOptions"
+              :key="opt.key"
+              :class="[
+                'bc-dropdown-item bc-checkbox-item',
+                { selected: activeActions.includes(opt.key as VehicleAction) },
+              ]"
+              @click.stop
+            >
+              <span class="bc-checkbox-label">{{ $t(`catalog.${opt.key}`) }}</span>
+              <input
+                type="checkbox"
+                class="bc-checkbox"
+                :checked="activeActions.includes(opt.key as VehicleAction)"
+                @change="toggleAction(opt.key)"
+              >
+            </label>
+          </div>
+        </div>
+
+        <!-- Separator after transaction (click clears category + subcategory) -->
+        <button class="bc-sep" :title="$t('catalog.allTypes')" @click="clearFromCategory">
+          &gt;
+        </button>
+
+        <!-- Segment 2: Category -->
+        <!-- No category selected: show all as pills -->
+        <template v-if="!activeCategoryId">
           <button
             v-for="cat in visibleCategories"
             :key="cat.id"
-            :class="['dropdown-item', { selected: activeCategoryId === cat.id }]"
+            :class="['bc-btn', { disabled: !isApplicable(cat) }]"
             @click="selectCategory(cat)"
           >
             {{ localizedName(cat) }}
           </button>
-        </div>
+        </template>
+
+        <!-- Category selected: show as dropdown segment -->
+        <template v-else>
+          <div class="breadcrumb-segment segment-category">
+            <button
+              :class="['bc-btn bc-btn--selected', { open: categoryOpen }]"
+              :aria-expanded="categoryOpen"
+              aria-haspopup="listbox"
+              @click.stop="openCategory"
+            >
+              <span class="bc-label">{{ selectedCategoryName }}</span>
+              <svg
+                class="bc-chevron"
+                :class="{ open: categoryOpen }"
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div
+              v-show="categoryOpen"
+              class="bc-dropdown"
+              role="listbox"
+              :aria-label="$t('catalog.allTypes')"
+            >
+              <button
+                role="option"
+                :aria-selected="false"
+                class="bc-dropdown-item"
+                @click="clearCategory"
+              >
+                {{ $t('catalog.allTypes') }}
+              </button>
+              <button
+                v-for="cat in visibleCategories"
+                :key="cat.id"
+                role="option"
+                :aria-selected="activeCategoryId === cat.id"
+                :class="['bc-dropdown-item', { selected: activeCategoryId === cat.id }]"
+                @click="selectCategory(cat)"
+              >
+                {{ localizedName(cat) }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Separator before subcategory (click clears subcategory) -->
+          <template v-if="linkedSubcategories.length">
+            <button class="bc-sep" :title="$t('catalog.allSubtypes')" @click="clearFromSubcategory">
+              &gt;
+            </button>
+
+            <!-- Segment 3: Subcategory -->
+            <!-- No subcategory selected: show all as pills -->
+            <template v-if="!activeSubcategoryId">
+              <button
+                v-for="sub in linkedSubcategories"
+                :key="sub.id"
+                :class="['bc-btn bc-btn--sub', { disabled: !isSubcategoryApplicable(sub) }]"
+                @click="selectSubcategory(sub)"
+              >
+                {{ localizedName(sub) }}
+              </button>
+            </template>
+
+            <!-- Subcategory selected: show as dropdown segment -->
+            <template v-else>
+              <div class="breadcrumb-segment segment-subcategory">
+                <button
+                  :class="['bc-btn bc-btn--selected bc-btn--sub', { open: subcategoryOpen }]"
+                  :aria-expanded="subcategoryOpen"
+                  aria-haspopup="listbox"
+                  @click.stop="openSubcategory"
+                >
+                  <span class="bc-label">{{ selectedSubcategoryName }}</span>
+                  <svg
+                    class="bc-chevron"
+                    :class="{ open: subcategoryOpen }"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                <div
+                  v-show="subcategoryOpen"
+                  class="bc-dropdown"
+                  role="listbox"
+                  :aria-label="$t('catalog.allSubtypes')"
+                >
+                  <button
+                    role="option"
+                    :aria-selected="false"
+                    class="bc-dropdown-item"
+                    @click="clearSubcategory"
+                  >
+                    {{ $t('catalog.allSubtypes') }}
+                  </button>
+                  <button
+                    v-for="sub in linkedSubcategories"
+                    :key="sub.id"
+                    role="option"
+                    :aria-selected="activeSubcategoryId === sub.id"
+                    :class="['bc-dropdown-item', { selected: activeSubcategoryId === sub.id }]"
+                    @click="selectSubcategory(sub)"
+                  >
+                    {{ localizedName(sub) }}
+                  </button>
+                </div>
+              </div>
+            </template>
+          </template>
+        </template>
       </div>
 
-      <!-- 3. Subtipo (single-select subcategory, only if category selected) -->
-      <div
-        v-if="activeCategoryId && linkedSubcategories.length"
-        class="dropdown-wrapper dropdown-subcategory"
+      <button
+        v-show="canScrollRight"
+        class="scroll-btn scroll-btn-right"
+        aria-hidden="true"
+        @click="scrollRightFn"
       >
-        <button
-          :class="['selector-btn', { active: subcategoryOpen || !!activeSubcategoryId }]"
-          @click.stop="openSubcategory"
-        >
-          <span class="selector-label">{{
-            activeSubcategoryId ? selectedSubcategoryName : $t('catalog.allSubtypes')
-          }}</span>
-          <svg
-            class="chevron"
-            :class="{ open: subcategoryOpen }"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        <div v-show="subcategoryOpen" class="dropdown-menu">
-          <button
-            :class="['dropdown-item', { selected: !activeSubcategoryId }]"
-            @click="clearSubcategoryAndClose"
-          >
-            {{ $t('catalog.allSubtypes') }}
-          </button>
-          <button
-            v-for="sub in linkedSubcategories"
-            :key="sub.id"
-            :class="['dropdown-item', { selected: activeSubcategoryId === sub.id }]"
-            @click="selectSubcategory(sub)"
-          >
-            {{ localizedName(sub) }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════
-         DESKTOP: action pills + breadcrumb
-         ═══════════════════════════════════════════ -->
-    <div class="desktop-bar">
-      <!-- Action pills -->
-      <div class="action-pills">
-        <button
-          v-for="opt in actionOptions"
-          :key="opt.key"
-          :class="['action-pill', { active: activeActions.includes(opt.key as VehicleAction) }]"
-          @click="toggleAction(opt.key)"
-        >
-          {{ $t(`catalog.${opt.key}`) }}
-        </button>
-      </div>
-
-      <!-- Breadcrumb separator -->
-      <span v-if="categories.length" class="breadcrumb-sep">|</span>
-
-      <!-- Category/Subcategory breadcrumb -->
-      <div class="breadcrumb-area">
-        <button
-          v-show="canScrollLeft"
-          class="scroll-btn scroll-btn-left"
-          aria-hidden="true"
-          @click="scrollLeftFn"
-        >
-          &#9664;
-        </button>
-
-        <div ref="scrollContainer" class="breadcrumb-scroll" @scroll="updateScrollState">
-          <!-- Level 1: show all categories -->
-          <template v-if="!activeCategoryId">
-            <button
-              v-for="cat in visibleCategories"
-              :key="cat.id"
-              :class="['breadcrumb-btn', { disabled: !isApplicable(cat) }]"
-              @click="selectCategory(cat)"
-            >
-              {{ localizedName(cat) }}
-            </button>
-          </template>
-
-          <!-- Level 2: selected category > subcategories -->
-          <template v-else-if="!activeSubcategoryId">
-            <button class="breadcrumb-btn active" @click="clearCategory">
-              {{ selectedCategoryName }}
-            </button>
-            <span class="sep">&gt;</span>
-            <button
-              v-for="sub in linkedSubcategories"
-              :key="sub.id"
-              :class="['breadcrumb-btn type-btn', { disabled: !isSubcategoryApplicable(sub) }]"
-              @click="selectSubcategory(sub)"
-            >
-              {{ localizedName(sub) }}
-            </button>
-          </template>
-
-          <!-- Level 3: category > subcategory selected -->
-          <template v-else>
-            <button class="breadcrumb-btn active" @click="clearCategory">
-              {{ selectedCategoryName }}
-            </button>
-            <span class="sep">&gt;</span>
-            <button class="breadcrumb-btn type-btn active" @click="clearSubcategory">
-              {{ selectedSubcategoryName }}
-            </button>
-          </template>
-        </div>
-
-        <button
-          v-show="canScrollRight"
-          class="scroll-btn scroll-btn-right"
-          aria-hidden="true"
-          @click="scrollRightFn"
-        >
-          &#9654;
-        </button>
-      </div>
+        &#9654;
+      </button>
     </div>
   </nav>
 </template>
 
 <style scoped>
+/* ============================================
+   CATEGORY BAR — Unified breadcrumb (mobile-first)
+   ============================================ */
 .category-bar {
   background: var(--bg-primary);
-  padding: 0.28rem 0;
+  padding: 0.25rem 0;
   margin-top: 0.5rem;
   position: relative;
+  z-index: 50;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
-/* ═══════════════════════════════════════════
-   MOBILE SELECTORS (default, <768px)
-   ═══════════════════════════════════════════ */
-.mobile-selectors {
+.breadcrumb-bar {
   display: flex;
-  gap: 0.25rem;
+  align-items: center;
   padding: 0 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.breadcrumb-bar.dropdown-open {
+  overflow: visible;
+}
+
+.breadcrumb-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   overflow-x: auto;
   scrollbar-width: none;
+  flex: 1;
+  min-width: 0;
 }
 
-.mobile-selectors::-webkit-scrollbar {
+.breadcrumb-scroll::-webkit-scrollbar {
   display: none;
 }
 
-.desktop-bar {
-  display: none;
+.breadcrumb-scroll.dropdown-open {
+  overflow: visible;
 }
 
-/* Dropdown wrapper */
-.dropdown-wrapper {
+/* ============================================
+   BREADCRUMB SEGMENT (wrapper for dropdown)
+   ============================================ */
+.breadcrumb-segment {
   position: relative;
   flex-shrink: 0;
 }
 
-.selector-btn {
-  display: flex;
+/* ============================================
+   BREADCRUMB BUTTONS
+   ============================================ */
+.bc-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.3rem 0.5rem;
+  gap: 0.2rem;
+  padding: 0.35rem 0.6rem;
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius-full);
   background: var(--bg-primary);
@@ -535,39 +566,100 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
   font-size: var(--font-size-xs);
   font-weight: 500;
   white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: auto;
-  min-width: auto;
-  line-height: 1.4;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  text-transform: uppercase;
 }
 
-.selector-btn.active {
-  border-color: var(--color-primary);
+.bc-btn:not(.disabled):not(.bc-btn--selected):hover {
   color: var(--color-primary);
+  background: var(--bg-secondary);
+  border-color: var(--color-primary-light);
 }
 
-.selector-label {
-  max-width: 7rem;
+/* Selected segment (has dropdown) */
+.bc-btn--selected {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.bc-btn--selected:hover,
+.bc-btn--selected.open {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
+}
+
+/* Subcategory pills: dashed border, no uppercase */
+.bc-btn--sub {
+  border-style: dashed;
+  text-transform: none;
+}
+
+.bc-btn--sub.bc-btn--selected {
+  border-style: solid;
+}
+
+.bc-btn.disabled {
+  color: var(--text-auxiliary);
+  cursor: not-allowed;
+  background: var(--color-gray-50);
+  border-color: var(--text-auxiliary);
+}
+
+.bc-label {
+  max-width: 8rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.chevron {
+.bc-chevron {
   flex-shrink: 0;
   transition: transform 0.2s;
+  opacity: 0.8;
 }
 
-.chevron.open {
+.bc-chevron.open {
   transform: rotate(180deg);
 }
 
-/* Dropdown menu */
-.dropdown-menu {
+/* ============================================
+   SEPARATOR
+   ============================================ */
+.bc-sep {
+  color: var(--text-auxiliary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  flex-shrink: 0;
+  padding: 0.2rem 0.15rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: all 0.15s ease;
+  min-height: 1.5rem;
+  min-width: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bc-sep:hover {
+  color: var(--color-primary);
+  background: var(--bg-secondary);
+}
+
+/* ============================================
+   DROPDOWN MENU
+   ============================================ */
+.bc-dropdown {
   position: absolute;
   top: calc(100% + 0.35rem);
   left: 0;
   min-width: 10rem;
+  max-width: calc(100vw - 1rem);
   max-height: 16rem;
   overflow-y: auto;
   background: var(--bg-primary);
@@ -578,7 +670,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
   z-index: 100;
 }
 
-.dropdown-item {
+.bc-dropdown-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -591,206 +683,112 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
   font-size: var(--font-size-sm);
   color: var(--text-primary);
   transition: background 0.15s;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   min-width: auto;
 }
 
-.dropdown-item:hover {
+.bc-dropdown-item:hover {
   background: var(--bg-secondary);
 }
 
-.dropdown-item.selected {
+.bc-dropdown-item.selected {
   color: var(--color-primary);
   font-weight: 600;
 }
 
-.check-icon {
-  width: 1rem;
-  text-align: center;
-  font-size: var(--font-size-sm);
-  color: var(--color-primary);
+/* Checkbox items in transaction dropdown */
+.bc-checkbox-item {
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
 }
 
-/* ═══════════════════════════════════════════
-   DESKTOP BAR (>=768px)
-   ═══════════════════════════════════════════ */
+.bc-checkbox-label {
+  flex: 1;
+}
+
+.bc-checkbox {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   SCROLL ARROWS
+   ============================================ */
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-btn-left {
+  left: 0;
+}
+
+.scroll-btn-right {
+  right: 0;
+}
+
+/* ============================================
+   RESPONSIVE: >=768px
+   ============================================ */
 @media (min-width: 48em) {
-  .mobile-selectors {
-    display: none;
-  }
-
-  .desktop-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0 1.5rem;
-  }
-
   .category-bar {
     padding: 0.34rem 0;
     margin-top: 0;
   }
 
-  /* Action pills */
-  .action-pills {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-  }
-
-  .action-pill {
-    padding: 0.35rem 0.6rem;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius-full);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: var(--font-size-xs);
-    font-weight: 500;
-    text-transform: uppercase;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 2.25rem;
-    display: inline-flex;
-    align-items: center;
-    min-width: auto;
-  }
-
-  .action-pill:hover {
-    border-color: var(--color-primary);
-    background: var(--bg-secondary);
-    color: var(--color-primary);
-  }
-
-  .action-pill.active {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-    color: var(--color-white);
-    border-color: var(--color-primary);
-  }
-
-  .breadcrumb-sep {
-    color: var(--border-color);
-    font-size: var(--font-size-base);
-    flex-shrink: 0;
-  }
-
-  /* Breadcrumb area */
-  .breadcrumb-area {
-    flex: 1;
-    min-width: 0;
-    position: relative;
-    overflow: hidden;
+  .breadcrumb-bar {
+    padding: 0 1.5rem;
   }
 
   .breadcrumb-scroll {
-    display: flex;
-    align-items: center;
     gap: 0.4rem;
-    overflow-x: auto;
-    scrollbar-width: none;
   }
 
-  .breadcrumb-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .breadcrumb-btn {
-    padding: 0.35rem 0.6rem;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius-full);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: var(--font-size-xs);
-    font-weight: 500;
-    white-space: nowrap;
-    flex-shrink: 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  .bc-btn {
     min-height: 2.25rem;
-    display: inline-flex;
-    align-items: center;
-    text-transform: uppercase;
     min-width: auto;
   }
 
-  .breadcrumb-btn:not(.disabled):not(.active):hover {
-    color: var(--color-primary);
-    background: var(--bg-secondary);
-    border-color: var(--color-primary-light);
-  }
-
-  .breadcrumb-btn.active {
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
-    color: var(--color-white);
-    border-color: var(--color-primary-light);
-  }
-
-  .breadcrumb-btn.disabled {
-    color: var(--text-auxiliary);
-    cursor: not-allowed;
-    background: var(--color-gray-50);
-    border-color: var(--text-auxiliary);
-  }
-
-  .breadcrumb-btn.type-btn {
-    border-style: dashed;
-    text-transform: none;
-  }
-
-  .breadcrumb-btn.type-btn.active {
-    border-style: solid;
-  }
-
-  .sep {
-    color: var(--text-secondary);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-
-  /* Scroll arrows */
-  .scroll-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 3;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    width: 1.5rem;
-    height: 1.5rem;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-xs);
-    color: var(--text-primary);
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .scroll-btn-left {
-    left: 0;
-  }
-
-  .scroll-btn-right {
-    right: 0;
+  .bc-dropdown-item {
+    min-height: 2.5rem;
   }
 }
 
+/* ============================================
+   RESPONSIVE: >=1024px
+   ============================================ */
 @media (min-width: 64em) {
-  .desktop-bar {
+  .breadcrumb-bar {
     padding: 0 3rem;
-    gap: 0.75rem;
-  }
-
-  .action-pills {
-    gap: 0.5rem;
   }
 
   .breadcrumb-scroll {
     gap: 0.5rem;
+  }
+
+  .bc-label {
+    max-width: 12rem;
   }
 }
 </style>

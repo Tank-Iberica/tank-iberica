@@ -22,6 +22,10 @@ export const CREDIT_COSTS = {
   PRIORITY_RESERVE: 2,
   /** Protect vehicle from priority reserves */
   PROTECT_VEHICLE: 2,
+  /** Unlock unlimited saved searches */
+  UNLOCK_SAVED_SEARCHES: 1,
+  /** Unlock unlimited search alerts */
+  UNLOCK_ALERTS: 1,
 } as const
 
 export type CreditAction = keyof typeof CREDIT_COSTS

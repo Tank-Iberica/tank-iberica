@@ -16,12 +16,19 @@ export function usePerfilAlertas() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
   const { userId } = useAuth()
+  const { isUnlocked } = useFeatureUnlocks()
 
   const alerts = ref<SearchAlert[]>([])
   const loading = ref(true)
   const error = ref<string | null>(null)
   const editingAlert = ref<SearchAlert | null>(null)
   const editForm = ref<AlertEditForm>({ frequency: 'daily', filters: {} })
+
+  /** Whether the user can create a new alert (1 free, then needs unlock) */
+  const canCreate = computed(() => {
+    if (isUnlocked('alerts')) return true
+    return alerts.value.length < 1
+  })
 
   async function loadAlerts() {
     if (!userId.value) return
@@ -132,12 +139,23 @@ export function usePerfilAlertas() {
     }
   }
 
+  /** Fetch vehicles matching an alert's filters */
+  async function viewMatches(alertId: string) {
+    try {
+      const data = await $fetch(`/api/alerts/${alertId}/matches`)
+      return data
+    } catch {
+      return { matches: [], total: 0 }
+    }
+  }
+
   return {
     alerts,
     loading,
     error,
     editingAlert,
     editForm,
+    canCreate,
     loadAlerts,
     toggleActive,
     deleteAlert,
@@ -147,5 +165,6 @@ export function usePerfilAlertas() {
     closeEdit,
     updateEditField,
     saveEdit,
+    viewMatches,
   }
 }

@@ -131,12 +131,15 @@
 
         <!-- Center: save filters + create alert -->
         <div class="catalog-actions-inline">
-          <!-- Save filters (preset) -->
+          <!-- Save search -->
           <div class="save-preset-wrapper">
             <button
-              :class="['action-btn action-btn--save', { active: showSaveInput }]"
+              :class="[
+                'action-btn action-btn--save',
+                { active: showSaveInput, success: saveSuccess },
+              ]"
               :title="$t('catalog.savedFilters.saveSearch')"
-              @click="showSaveInput = !showSaveInput"
+              @click="onClickSave"
             >
               <svg
                 width="16"
@@ -152,8 +155,13 @@
                 <polyline points="17 21 17 13 7 13 7 21" />
                 <polyline points="7 3 7 8 15 8" />
               </svg>
-              <span class="action-label">{{ $t('catalog.savedFilters.saveSearch') }}</span>
+              <span class="action-label">{{
+                saveSuccess
+                  ? $t('catalog.savedFilters.searchSavedOk')
+                  : $t('catalog.savedFilters.saveSearch')
+              }}</span>
             </button>
+            <!-- Name input -->
             <div v-show="showSaveInput" class="save-preset-dropdown">
               <input
                 ref="presetNameInput"
@@ -163,10 +171,7 @@
                 :aria-label="$t('catalog.savedFilters.name')"
                 autocomplete="off"
                 @keydown.enter="onSavePreset"
-                @keydown.escape="
-                  showSaveInput = false
-                  newPresetName = ''
-                "
+                @keydown.escape="onCancelPreset"
               >
               <button
                 class="save-preset-confirm"
@@ -176,31 +181,67 @@
                 {{ $t('catalog.savedFilters.save') }}
               </button>
             </div>
+            <!-- Limit reached prompt -->
+            <div v-show="showSaveLimitPrompt" class="save-preset-dropdown limit-prompt">
+              <p class="limit-text">{{ $t('catalog.savedFilters.limitReached') }}</p>
+              <button class="unlock-btn" @click="onUnlockSearches">
+                {{ $t('catalog.savedFilters.unlockPrompt') }}
+              </button>
+            </div>
           </div>
 
           <!-- Create alert -->
-          <button
-            :class="['action-btn action-btn--alert', { success: alertSuccess }]"
-            :title="$t('catalog.createAlert')"
-            @click="onCreateAlert"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <div class="alert-wrapper">
+            <button
+              :class="['action-btn action-btn--alert', { success: alertSuccess }]"
+              :title="$t('catalog.savedFilters.createAlert')"
+              @click="onClickCreateAlert"
             >
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            <span class="action-label">{{
-              alertSuccess ? $t('catalog.alertCreated') : $t('catalog.createAlert')
-            }}</span>
-          </button>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="action-label">{{
+                alertSuccess
+                  ? $t('catalog.savedFilters.alertCreated')
+                  : $t('catalog.savedFilters.createAlert')
+              }}</span>
+            </button>
+            <!-- Frequency choice dropdown -->
+            <div v-show="showAlertDropdown" class="alert-dropdown">
+              <button class="alert-freq-btn" @click="onCreateAlertWithFrequency('daily')">
+                {{ $t('catalog.savedFilters.daily') }}
+              </button>
+              <button
+                class="alert-freq-btn alert-freq-btn--instant"
+                @click="onCreateAlertWithFrequency('instant')"
+              >
+                {{ $t('catalog.savedFilters.instant') }}
+                <span class="subscriber-badge">{{
+                  $t('catalog.savedFilters.instantSubscriberOnly')
+                }}</span>
+              </button>
+              <NuxtLink to="/perfil/suscripcion" class="subscribe-link">
+                {{ $t('catalog.savedFilters.subscribeLink') }}
+              </NuxtLink>
+            </div>
+            <!-- Alert limit prompt -->
+            <div v-show="showAlertLimitPrompt" class="alert-dropdown limit-prompt">
+              <p class="limit-text">{{ $t('catalog.savedFilters.alertLimitReached') }}</p>
+              <button class="unlock-btn" @click="onUnlockAlerts">
+                {{ $t('catalog.savedFilters.unlockAlerts') }}
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Right: favorites + view + sort -->
@@ -301,8 +342,6 @@
 </template>
 
 <script setup lang="ts">
-import { useSavedFilters } from '~/composables/catalog/useSavedFilters'
-
 const props = defineProps<{
   vehicleCount?: number
   favCount?: number
@@ -329,42 +368,104 @@ const {
 } = useCatalogState()
 const { favoritesOnly, toggleFilter: toggleFavoritesFilter } = useFavorites()
 
-// Save filter preset (localStorage)
-const { savePreset } = useSavedFilters()
+// Auth
+const user = useSupabaseUser()
+const openSubscribeModal = inject<() => void>('openSubscribeModal')
+
+// Save search (DB-backed for auth users)
+const { save: saveSearch, canSave } = useSavedSearches()
+const { unlock } = useFeatureUnlocks()
 const showSaveInput = ref(false)
+const showSaveLimitPrompt = ref(false)
 const newPresetName = ref('')
 const presetNameInput = ref<HTMLInputElement | null>(null)
+const saveSuccess = ref(false)
 
-function onSavePreset() {
-  if (!newPresetName.value.trim()) return
-  savePreset(newPresetName.value, catalogFilters.value, locationLevel.value)
-  newPresetName.value = ''
+function onCancelPreset() {
   showSaveInput.value = false
+  showSaveLimitPrompt.value = false
+  newPresetName.value = ''
+}
+
+function onClickSave() {
+  if (!user.value) {
+    openSubscribeModal?.()
+    return
+  }
+  if (canSave.value) {
+    showSaveInput.value = !showSaveInput.value
+    showSaveLimitPrompt.value = false
+  } else {
+    showSaveLimitPrompt.value = !showSaveLimitPrompt.value
+    showSaveInput.value = false
+  }
+}
+
+async function onSavePreset() {
+  if (!newPresetName.value.trim()) return
+  const result = await saveSearch(
+    newPresetName.value,
+    catalogFilters.value,
+    searchQuery.value,
+    locationLevel.value,
+  )
+  if (result.success) {
+    newPresetName.value = ''
+    showSaveInput.value = false
+    saveSuccess.value = true
+    setTimeout(() => {
+      saveSuccess.value = false
+    }, 3000)
+  } else if (result.limitReached) {
+    showSaveInput.value = false
+    showSaveLimitPrompt.value = true
+  }
+}
+
+async function onUnlockSearches() {
+  const result = await unlock('saved_searches')
+  if (result.success) {
+    showSaveLimitPrompt.value = false
+    showSaveInput.value = true
+  }
 }
 
 watch(showSaveInput, (val) => {
   if (val) nextTick(() => presetNameInput.value?.focus())
 })
 
-// Create alert (search_alerts in Supabase)
+// Create alert
 const supabase = useSupabaseClient()
-const user = useSupabaseUser()
-const openSubscribeModal = inject<() => void>('openSubscribeModal')
 const { activeFilters } = useFilters()
+const { canCreate: canCreateAlert } = usePerfilAlertas()
 const alertSuccess = ref(false)
+const showAlertDropdown = ref(false)
+const showAlertLimitPrompt = ref(false)
 
-async function onCreateAlert() {
+function onClickCreateAlert() {
   if (!user.value) {
     openSubscribeModal?.()
     return
   }
+  if (canCreateAlert.value) {
+    showAlertDropdown.value = !showAlertDropdown.value
+    showAlertLimitPrompt.value = false
+  } else {
+    showAlertLimitPrompt.value = !showAlertLimitPrompt.value
+    showAlertDropdown.value = false
+  }
+}
+
+async function onCreateAlertWithFrequency(frequency: 'daily' | 'instant') {
+  if (!user.value) return
+  showAlertDropdown.value = false
 
   try {
     const allFilters = { ...toRaw(catalogFilters.value), ...toRaw(activeFilters.value) }
     const { error: err } = await supabase.from('search_alerts').insert({
       user_id: user.value.id,
       filters: allFilters,
-      frequency: 'daily',
+      frequency,
       active: true,
     } as never)
     if (err) throw err
@@ -374,6 +475,14 @@ async function onCreateAlert() {
     }, 3000)
   } catch {
     // Silent fail
+  }
+}
+
+async function onUnlockAlerts() {
+  const result = await unlock('alerts')
+  if (result.success) {
+    showAlertLimitPrompt.value = false
+    showAlertDropdown.value = true
   }
 }
 
@@ -452,6 +561,11 @@ function onDocClick(e: MouseEvent) {
   }
   if (!target.closest('.save-preset-wrapper')) {
     showSaveInput.value = false
+    showSaveLimitPrompt.value = false
+  }
+  if (!target.closest('.alert-wrapper')) {
+    showAlertDropdown.value = false
+    showAlertLimitPrompt.value = false
   }
 }
 
@@ -475,7 +589,7 @@ onUnmounted(() => {
   border-top: 1px solid var(--border-color);
   margin-bottom: 0.34rem;
   position: relative;
-  z-index: 50;
+  z-index: 30;
 }
 
 .controls-wrapper {
@@ -712,15 +826,16 @@ onUnmounted(() => {
   min-width: 0;
   display: flex;
   justify-content: center;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0 0.5rem;
   border: 2px solid var(--color-primary);
   border-radius: var(--border-radius-full);
   background: var(--bg-primary);
@@ -731,9 +846,9 @@ onUnmounted(() => {
   flex-shrink: 0;
   transition: all 0.3s ease;
   cursor: pointer;
-  min-height: auto;
-  min-width: auto;
-  line-height: 1.4;
+  min-height: 1.8125rem;
+  min-width: 1.8125rem;
+  line-height: 1;
 }
 
 .action-btn svg {
@@ -807,6 +922,101 @@ onUnmounted(() => {
 .save-preset-confirm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.action-btn--save.success {
+  background: var(--color-success, #22c55e);
+  border-color: var(--color-success, #22c55e);
+  color: var(--color-white);
+}
+
+/* Limit / unlock prompt */
+.limit-prompt {
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+.limit-text {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+.unlock-btn {
+  padding: 0.4rem 0.75rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  min-height: 2.5rem;
+}
+
+.unlock-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Alert dropdown */
+.alert-wrapper {
+  position: relative;
+}
+
+.alert-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  padding: 0.4rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.alert-freq-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-sm);
+  min-height: 2.5rem;
+  width: 100%;
+  text-align: left;
+}
+
+.alert-freq-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.subscriber-badge {
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
+  font-style: italic;
+}
+
+.subscribe-link {
+  display: block;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  text-decoration: underline;
+  padding: 0.25rem;
 }
 
 /* ============================================
