@@ -129,15 +129,77 @@
           </div>
         </div>
 
-        <!-- Category buttons: inline in the center -->
-        <div class="categories-inline">
+        <!-- Center: save filters + create alert -->
+        <div class="catalog-actions-inline">
+          <!-- Save filters (preset) -->
+          <div class="save-preset-wrapper">
+            <button
+              :class="['action-btn action-btn--save', { active: showSaveInput }]"
+              :title="$t('catalog.savedFilters.saveSearch')"
+              @click="showSaveInput = !showSaveInput"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
+              </svg>
+              <span class="action-label">{{ $t('catalog.savedFilters.saveSearch') }}</span>
+            </button>
+            <div v-show="showSaveInput" class="save-preset-dropdown">
+              <input
+                ref="presetNameInput"
+                v-model="newPresetName"
+                type="text"
+                :placeholder="$t('catalog.savedFilters.namePlaceholder')"
+                :aria-label="$t('catalog.savedFilters.name')"
+                autocomplete="off"
+                @keydown.enter="onSavePreset"
+                @keydown.escape="
+                  showSaveInput = false
+                  newPresetName = ''
+                "
+              >
+              <button
+                class="save-preset-confirm"
+                :disabled="!newPresetName.trim()"
+                @click="onSavePreset"
+              >
+                {{ $t('catalog.savedFilters.save') }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Create alert -->
           <button
-            v-for="cat in mainCategories"
-            :key="cat"
-            :class="['category-btn', { active: activeActions.has(cat) }]"
-            @click="handleCategoryClick(cat)"
+            :class="['action-btn action-btn--alert', { success: alertSuccess }]"
+            :title="$t('catalog.createAlert')"
+            @click="onCreateAlert"
           >
-            {{ $t(`catalog.${cat}`) }}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span class="action-label">{{
+              alertSuccess ? $t('catalog.alertCreated') : $t('catalog.createAlert')
+            }}</span>
           </button>
         </div>
 
@@ -153,24 +215,6 @@
               <polygon
                 points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
               />
-            </svg>
-          </button>
-
-          <button
-            :class="['save-search-btn', { success: saveSearchSuccess }]"
-            :title="$t('catalog.saveSearch')"
-            @click="onSaveSearch"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </button>
 
@@ -257,6 +301,8 @@
 </template>
 
 <script setup lang="ts">
+import { useSavedFilters } from '~/composables/catalog/useSavedFilters'
+
 const props = defineProps<{
   vehicleCount?: number
   favCount?: number
@@ -269,8 +315,6 @@ const emit = defineEmits<{
   toggleMenu: []
   openFavorites: []
   viewChange: [mode: 'grid' | 'list' | 'compact']
-  categoryChange: [categories: string[]]
-  saveSearchAuth: []
 }>()
 
 const {
@@ -280,54 +324,57 @@ const {
   viewMode,
   setSort,
   setViewMode,
-  setActions,
   filters: catalogFilters,
+  locationLevel,
 } = useCatalogState()
 const { favoritesOnly, toggleFilter: toggleFavoritesFilter } = useFavorites()
 
+// Save filter preset (localStorage)
+const { savePreset } = useSavedFilters()
+const showSaveInput = ref(false)
+const newPresetName = ref('')
+const presetNameInput = ref<HTMLInputElement | null>(null)
+
+function onSavePreset() {
+  if (!newPresetName.value.trim()) return
+  savePreset(newPresetName.value, catalogFilters.value, locationLevel.value)
+  newPresetName.value = ''
+  showSaveInput.value = false
+}
+
+watch(showSaveInput, (val) => {
+  if (val) nextTick(() => presetNameInput.value?.focus())
+})
+
+// Create alert (search_alerts in Supabase)
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
-const saveSearchSuccess = ref(false)
+const openSubscribeModal = inject<() => void>('openSubscribeModal')
+const { activeFilters } = useFilters()
+const alertSuccess = ref(false)
 
-async function onSaveSearch() {
+async function onCreateAlert() {
   if (!user.value) {
-    emit('saveSearchAuth')
+    openSubscribeModal?.()
     return
   }
 
   try {
+    const allFilters = { ...toRaw(catalogFilters.value), ...toRaw(activeFilters.value) }
     const { error: err } = await supabase.from('search_alerts').insert({
       user_id: user.value.id,
-      filters: { ...toRaw(catalogFilters.value) },
+      filters: allFilters,
       frequency: 'daily',
       active: true,
     } as never)
-
     if (err) throw err
-    saveSearchSuccess.value = true
+    alertSuccess.value = true
     setTimeout(() => {
-      saveSearchSuccess.value = false
-    }, 2000)
+      alertSuccess.value = false
+    }, 3000)
   } catch {
     // Silent fail
   }
-}
-
-// Action buttons state
-const mainCategories = ['alquiler', 'venta', 'terceros'] as const
-const activeActions = ref<Set<string>>(new Set())
-
-function handleCategoryClick(cat: string) {
-  const next = new Set(activeActions.value)
-  if (next.has(cat)) {
-    next.delete(cat)
-  } else {
-    next.add(cat)
-  }
-  activeActions.value = next
-  const arr = [...next]
-  setActions(arr as import('~~/shared/types/vehicle').VehicleAction[])
-  emit('categoryChange', arr)
 }
 
 const searchExpanded = ref(false)
@@ -402,6 +449,9 @@ function onDocClick(e: MouseEvent) {
   }
   if (!target.closest('.mobile-search-wrapper')) {
     if (!searchQuery.value) searchExpanded.value = false
+  }
+  if (!target.closest('.save-preset-wrapper')) {
+    showSaveInput.value = false
   }
 }
 
@@ -655,9 +705,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   CATEGORY BUTTONS — inline in center
+   CATALOG ACTIONS — save filters + create alert
    ============================================ */
-.categories-inline {
+.catalog-actions-inline {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -665,35 +715,98 @@ onUnmounted(() => {
   gap: 0.25rem;
 }
 
-.category-btn {
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
   padding: 0.25rem 0.5rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--color-primary);
   border-radius: var(--border-radius-full);
   background: var(--bg-primary);
-  color: var(--text-primary);
+  color: var(--color-primary);
   font-size: var(--font-size-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  line-height: 1.4;
+  font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
-  letter-spacing: 0;
   transition: all 0.3s ease;
   cursor: pointer;
   min-height: auto;
   min-width: auto;
+  line-height: 1.4;
 }
 
-.category-btn:hover {
-  border-color: var(--color-primary);
-  background: var(--bg-secondary);
-  color: var(--color-primary);
+.action-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
 }
 
-.category-btn.active {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+.action-label {
+  display: none;
+}
+
+.action-btn:hover,
+.action-btn.active {
+  background: var(--color-primary);
   color: var(--color-white);
-  border-color: var(--color-primary);
+}
+
+.action-btn--alert.success {
+  background: var(--color-success, #22c55e);
+  border-color: var(--color-success, #22c55e);
+  color: var(--color-white);
+}
+
+/* Save preset dropdown */
+.save-preset-wrapper {
+  position: relative;
+}
+
+.save-preset-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  padding: 0.4rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 14rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.save-preset-dropdown input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-sm);
+  padding: 0.3rem 0.5rem;
+  background: transparent;
+  min-height: auto;
+  min-width: 0;
+}
+
+.save-preset-confirm {
+  padding: 0.3rem 0.6rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: auto;
+  min-width: auto;
+}
+
+.save-preset-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ============================================
@@ -755,48 +868,6 @@ onUnmounted(() => {
 .favorites-btn.active svg {
   fill: var(--color-gold, var(--color-warning));
   stroke: var(--color-gold, var(--color-warning));
-}
-
-/* Save search: circular bell button */
-.save-search-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.8125rem;
-  height: 1.8125rem;
-  min-height: 2.75rem;
-  min-width: 2.75rem;
-  padding: 0;
-  background: var(--bg-primary);
-  border: 2px solid var(--color-primary);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: var(--color-primary);
-  flex-shrink: 0;
-  position: relative;
-}
-
-.save-search-btn svg {
-  width: 1rem;
-  height: 1rem;
-  transition: all 0.3s ease;
-}
-
-.save-search-btn:hover {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-white);
-}
-
-.save-search-btn.success {
-  background: var(--color-success);
-  border-color: var(--color-success);
-  color: var(--color-white);
-}
-
-.save-search-btn.success svg {
-  stroke: var(--color-white);
 }
 
 .view-label-desktop,
@@ -946,17 +1017,17 @@ onUnmounted(() => {
     gap: 0.5rem;
   }
 
-  .categories-inline {
+  .catalog-actions-inline {
     gap: 0.5rem;
   }
 
-  .category-btn {
-    font-size: var(--font-size-xs);
-    padding: 0.4rem 0.6rem;
-    letter-spacing: 0.0125rem;
+  .action-btn {
+    padding: 0.4rem 0.75rem;
     height: 2.25rem;
-    display: inline-flex;
-    align-items: center;
+  }
+
+  .action-label {
+    display: inline;
   }
 
   .search-box .search-input {
@@ -994,19 +1065,6 @@ onUnmounted(() => {
   }
 
   .favorites-btn svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  /* Save search: larger */
-  .save-search-btn {
-    width: 2.25rem;
-    height: 2.25rem;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
-  }
-
-  .save-search-btn svg {
     width: 1.25rem;
     height: 1.25rem;
   }

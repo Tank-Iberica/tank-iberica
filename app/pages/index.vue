@@ -15,7 +15,6 @@
         @search="onSearchChange"
         @sort="onSortChange"
         @toggle-menu="menuVisible = !menuVisible"
-        @action-change="onActionChange"
         @open-favorites="
           () => {
             /* favorites filter handled inside ControlsBar */
@@ -25,7 +24,6 @@
       />
 
       <CatalogActiveFilters @change="onFilterChange" />
-      <CatalogAlertCTA />
 
       <CatalogVehicleGrid
         id="catalog-results"
@@ -238,10 +236,27 @@ function onOpenDemand() {
   openDemandModal()
 }
 
-// Create alert reuses the existing save-search logic in ControlsBar
-function onCreateAlert() {
-  const saveBtn = document.querySelector<HTMLButtonElement>('[data-save-search]')
-  saveBtn?.click()
+// Create alert — triggered from EmptyState/VehicleGrid
+const supabaseClient = useSupabaseClient()
+const currentUser = useSupabaseUser()
+const openSubscribeModal = inject<() => void>('openSubscribeModal', () => {})
+
+async function onCreateAlert() {
+  if (!currentUser.value) {
+    openSubscribeModal()
+    return
+  }
+  try {
+    const allFilters = { ...toRaw(filters.value) }
+    await supabaseClient.from('search_alerts').insert({
+      user_id: currentUser.value.id,
+      filters: allFilters,
+      frequency: 'daily',
+      active: true,
+    } as never)
+  } catch {
+    // Silent
+  }
 }
 
 // Unlock hidden vehicles — navigate to credits page (flow TBD)
@@ -255,11 +270,6 @@ async function onLoadMoreCascade() {
   if (nextCascadeDepth.value <= 3) {
     await loadCascadeLevel(nextCascadeDepth.value, filters.value, total.value)
   }
-}
-
-async function onActionChange() {
-  resetFilters()
-  await loadVehicles()
 }
 
 async function onCategoryChange() {
