@@ -22,7 +22,9 @@ const APP_VERSION = process.env.APP_VERSION || '1.0.0'
 function verifyHealthAccess(event: Parameters<Parameters<typeof defineEventHandler>[0]>[0]): void {
   const healthToken = process.env.HEALTH_TOKEN
   if (healthToken) {
-    const header = getHeader(event, 'x-health-token') || getHeader(event, 'authorization')?.replace('Bearer ', '')
+    const header =
+      getHeader(event, 'x-health-token') ||
+      getHeader(event, 'authorization')?.replace('Bearer ', '')
     if (timingSafeCompare(header, healthToken)) return
   }
   // Fallback to cron secret
@@ -86,6 +88,8 @@ async function handleVerticalCheck(
     .eq('vertical', VERTICAL)
     .single()
 
+  // Schema pending: vertical_config.feature_flags, subscription_prices columns
+  const configAny = config as any // eslint-disable-line @typescript-eslint/no-explicit-any
   if (configErr || !config) {
     checks.push({
       check: 'vertical_config_row',
@@ -95,7 +99,7 @@ async function handleVerticalCheck(
   } else {
     checks.push({ check: 'vertical_config_row', status: 'ok' })
     for (const field of REQUIRED_VERTICAL_FIELDS) {
-      const val = (config as Record<string, unknown>)[field]
+      const val = (configAny as Record<string, unknown>)[field]
       const missing = val === null || val === undefined
       checks.push({
         check: `field_${field}`,
@@ -103,7 +107,7 @@ async function handleVerticalCheck(
         detail: missing ? 'missing or null' : undefined,
       })
     }
-    if (config.feature_flags !== null && config.feature_flags !== undefined) {
+    if (configAny.feature_flags !== null && configAny.feature_flags !== undefined) {
       checks.push({ check: 'feature_flags_json', status: 'ok' })
     }
   }
@@ -122,11 +126,11 @@ async function handleVerticalCheck(
   }
 
   if (
-    config &&
-    typeof config.subscription_prices === 'object' &&
-    config.subscription_prices !== null
+    configAny &&
+    typeof configAny.subscription_prices === 'object' &&
+    configAny.subscription_prices !== null
   ) {
-    const tiers = Object.keys(config.subscription_prices as Record<string, unknown>)
+    const tiers = Object.keys(configAny.subscription_prices as Record<string, unknown>)
     checks.push({
       check: 'subscription_tiers',
       status: tiers.length ? 'ok' : 'warn',

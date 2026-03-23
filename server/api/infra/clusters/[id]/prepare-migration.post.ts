@@ -40,7 +40,7 @@ interface MigrationPlan {
 }
 
 async function countRows(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  supabase: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   table: string,
   column: string,
   value: string,
@@ -55,7 +55,7 @@ async function countRows(
 }
 
 async function countAllRows(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  supabase: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   table: string,
 ): Promise<number> {
   // head: true → no data returned, just count

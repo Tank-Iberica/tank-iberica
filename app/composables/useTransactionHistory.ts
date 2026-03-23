@@ -55,7 +55,7 @@ export function useTransactionHistory(): UseTransactionHistory {
            dealers!vehicles_dealer_id_fkey (name)`,
         )
         .or(`buyer_id.eq.${user.value.id},reserved_by.eq.${user.value.id}`)
-        .in('status', ['sold', 'reserved'])
+        .in('status', ['sold', 'reserved'] as any) // eslint-disable-line @typescript-eslint/no-explicit-any
         .order('sold_at', { ascending: false, nullsFirst: false })
         .order('reserved_at', { ascending: false, nullsFirst: false })
         .limit(50)

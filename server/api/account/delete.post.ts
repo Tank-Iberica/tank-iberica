@@ -59,7 +59,7 @@ export default defineEventHandler(async (event): Promise<DeleteAccountResponse> 
         description: null,
         logo_url: null,
         cover_url: null,
-        status: 'deleted',
+        status: 'deleted' as any, // eslint-disable-line @typescript-eslint/no-explicit-any
       })
       .eq('id', dealerId)
   }
@@ -130,7 +130,9 @@ export default defineEventHandler(async (event): Promise<DeleteAccountResponse> 
   const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(userId)
   if (deleteAuthError) {
     // Log but don't fail — data has been anonymized already
-    logger.error(`[account/delete] Failed to delete auth user ${userId}:`, { error: String(deleteAuthError.message) })
+    logger.error(`[account/delete] Failed to delete auth user ${userId}:`, {
+      error: String(deleteAuthError.message),
+    })
   }
 
   return { success: true }

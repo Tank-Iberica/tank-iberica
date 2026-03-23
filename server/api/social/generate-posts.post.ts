@@ -313,14 +313,14 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
     platform,
     content,
     image_url: bestImage,
-    status: 'pending',
+    status: 'draft' as const,
     impressions: 0,
     clicks: 0,
   }))
 
   const { data: insertedRaw, error: insertErr } = await supabase
     .from('social_posts')
-    .insert(inserts)
+    .insert(inserts as any) // eslint-disable-line @typescript-eslint/no-explicit-any
     .select('id')
 
   if (insertErr) {

@@ -112,7 +112,7 @@ export function useOperationTimeline() {
       buyer_id: opts?.buyerId || null,
       stage,
       notes: opts?.notes || null,
-      metadata: opts?.metadata || {},
+      metadata: (opts?.metadata || {}) as import('~/types/database.types').Json,
       created_by: user.value.id,
     })
 

@@ -241,7 +241,8 @@ export function useAdminBrokerage() {
   const error = ref<string | null>(null)
   const total = ref(0)
 
-  const sb = supabase
+  // Schema pending: brokerage_deals relations (buyer_id, seller_dealer)
+  const sb = supabase as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
   async function fetchDeals(filters: DealFilters = {}) {
     loading.value = true

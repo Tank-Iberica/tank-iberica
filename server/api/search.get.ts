@@ -74,15 +74,15 @@ export default defineEventHandler(async (event) => {
 
   const { data, error } = await supabase.rpc('search_vehicles', {
     search_query: q,
-    filter_category_id: categoryId,
-    filter_price_min: priceMin,
-    filter_price_max: priceMax,
-    filter_year_min: yearMin,
-    filter_year_max: yearMax,
-    filter_province: province,
-    filter_country: country,
-    cursor_id: cursor,
-    cursor_rank: null,
+    filter_category_id: categoryId ?? undefined,
+    filter_price_min: priceMin ?? undefined,
+    filter_price_max: priceMax ?? undefined,
+    filter_year_min: yearMin ?? undefined,
+    filter_year_max: yearMax ?? undefined,
+    filter_province: province ?? undefined,
+    filter_country: country ?? undefined,
+    cursor_id: cursor ?? undefined,
+    cursor_rank: undefined,
     page_limit: limit,
   })
 

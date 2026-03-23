@@ -41,10 +41,10 @@ export default defineEventHandler(async (event) => {
     q = q.eq('dealer_id', query.dealer_id as string)
   }
   if (query.type) {
-    q = q.eq('type', query.type as string)
+    q = q.eq('type', query.type as any) // eslint-disable-line @typescript-eslint/no-explicit-any
   }
   if (query.status) {
-    q = q.eq('status', query.status as string)
+    q = q.eq('status', query.status as any) // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   const {

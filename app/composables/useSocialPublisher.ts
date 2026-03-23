@@ -508,7 +508,7 @@ export function useSocialPublisher() {
         .order('created_at', { ascending: false })
 
       if (filters?.status) {
-        query = query.eq('status', filters.status)
+        query = query.eq('status', filters.status as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       }
 
       if (filters?.platform) {

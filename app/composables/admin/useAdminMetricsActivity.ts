@@ -26,7 +26,7 @@ function resolveCompanyName(companyName: Record<string, string> | string | null)
 }
 
 async function resolveDealerNames(
-    supabase: SupabaseClient,
+  supabase: SupabaseClient,
   dealerIds: string[],
 ): Promise<Map<string, string>> {
   const nameMap = new Map<string, string>()
@@ -327,7 +327,7 @@ export function useAdminMetricsActivity() {
       const { count: c } = await supabase
         .from('subscriptions')
         .select('id', { count: 'exact', head: true })
-        .eq('status', 'cancelled')
+        .eq('status', 'canceled')
       cancelledDealers = c ?? 0
     } catch {
       /* subscriptions table issue */

@@ -106,7 +106,7 @@ export function useCustomFields() {
           'id, vertical, entity_type, field_name, field_type, label, placeholder, validation, options, sort_order, required',
         )
         .eq('vertical', vertical)
-        .eq('entity_type', entityType)
+        .eq('entity_type', entityType as 'dealer' | 'vehicle' | 'article')
         .eq('active', true)
         .order('sort_order', { ascending: true })
 

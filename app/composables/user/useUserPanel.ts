@@ -253,7 +253,9 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   async function saveSubscriptions() {
     if (!sessionUser.value) return
     try {
-      await supabase.from('subscriptions').upsert({
+      // Schema pending: subscriptions.email/pref_* columns
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('subscriptions').upsert({
         email: sessionUser.value.email || '',
         pref_web: subscriptions.value.web,
         pref_press: subscriptions.value.prensa,
@@ -363,7 +365,8 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
         }
       }
 
-      const { data: subData } = await supabase
+      // Schema pending: subscriptions.pref_* columns
+      const { data: subData } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
         .from('subscriptions')
         .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
         .eq('email', sessionUser.value.email || '')

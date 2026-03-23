@@ -317,7 +317,9 @@
       <div v-else class="reviews-list">
         <article v-for="review in dealerReviews" :key="review.id" class="review-card">
           <div class="review-card__header">
-            <span class="review-stars" aria-hidden="true">{{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }}</span>
+            <span class="review-stars" aria-hidden="true"
+              >{{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }}</span
+            >
             <span class="review-rating">{{ review.rating }}/5</span>
             <span v-if="review.verified_purchase" class="review-verified">
               {{ t('sellerProfile.verifiedPurchase') }}
@@ -611,7 +613,9 @@ async function fetchDealerReviews() {
       .order('created_at', { ascending: false })
       .limit(10)
     dealerReviews.value = (data ?? []) as unknown as DealerReview[]
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
   dealerReviewsLoading.value = false
 }
 
@@ -678,7 +682,9 @@ useHead({
 
 // #175 (S15) — AggregateRating schema from dealer reviews
 const { data: ratingSummary } = useLazyAsyncData(`dealer-rating-${props.dealer.id}`, async () => {
-  const { data } = await supabase.rpc('get_dealer_rating_summary', {
+  // Schema pending: get_dealer_rating_summary RPC
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase as any).rpc('get_dealer_rating_summary', {
     p_dealer_id: props.dealer.id,
   })
   return (data as unknown as Array<{ average_rating: number; review_count: number }>)?.[0] ?? null

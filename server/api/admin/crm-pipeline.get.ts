@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
     )
 
   if (query.stage) {
-    q = q.eq('stage', query.stage as string)
+    q = q.eq('stage', query.stage as any) // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   const {

@@ -92,7 +92,8 @@ export function useDealerDashboard() {
       const vertical = getVerticalSlug()
 
       // 3 queries in parallel → 1 round-trip (was 10 queries / 4 round-trips)
-      const sb = supabase
+      // Schema pending: RPCs get_dealer_dashboard_stats, get_dealer_top_vehicles
+      const sb = supabase as any // eslint-disable-line @typescript-eslint/no-explicit-any
       const [statsRes, recentLeadsRes, topVehiclesRes] = await Promise.all([
         // All 8 KPIs in one server-side CTE
         sb.rpc('get_dealer_dashboard_stats', {
