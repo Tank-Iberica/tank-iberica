@@ -177,6 +177,18 @@
           <span class="view-label-desktop">{{ $t('catalog.viewShow') }}:</span>
           <div class="view-switcher">
             <button
+              :class="['view-btn', { active: viewMode === 'compact' }]"
+              :title="$t('catalog.viewCompact')"
+              @click="setView('compact')"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="5" width="7" height="14" rx="1" />
+                <rect x="11" y="6" width="11" height="2.5" rx="1" />
+                <rect x="11" y="11" width="8" height="2.5" rx="1" />
+                <rect x="11" y="15.5" width="6" height="2.5" rx="1" />
+              </svg>
+            </button>
+            <button
               :class="['view-btn', { active: viewMode === 'grid' }]"
               :title="$t('catalog.viewGrid')"
               @click="setView('grid')"
@@ -256,7 +268,7 @@ const emit = defineEmits<{
   sort: [sortBy: string]
   toggleMenu: []
   openFavorites: []
-  viewChange: [mode: 'grid' | 'list']
+  viewChange: [mode: 'grid' | 'list' | 'compact']
   categoryChange: [categories: string[]]
   saveSearchAuth: []
 }>()
@@ -367,7 +379,7 @@ function onMobileSearchBlur() {
   }
 }
 
-function setView(mode: 'grid' | 'list') {
+function setView(mode: 'grid' | 'list' | 'compact') {
   setViewMode(mode)
   emit('viewChange', mode)
 }
@@ -817,7 +829,7 @@ onUnmounted(() => {
   transition: all 0.2s ease;
 }
 
-.view-btn:first-child {
+.view-btn:not(:last-child) {
   border-right: 1px solid var(--color-primary);
 }
 

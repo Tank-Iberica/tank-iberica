@@ -19,6 +19,26 @@
       :vehicles="displayedVehicles"
     />
 
+    <!-- Vehicle compact list (mobile default) -->
+    <div
+      v-else-if="displayedVehicles.length && viewMode === 'compact'"
+      class="vehicle-compact-list"
+    >
+      <template v-for="(item, idx) in gridItems" :key="item.key">
+        <CatalogVehicleCardCompact
+          v-if="item.type === 'vehicle'"
+          :vehicle="item.vehicle!"
+          :priority="idx < 8"
+        />
+        <CatalogPromoCard
+          v-else
+          :slots="item.promoSlots!"
+          @action="onPromoAction(item.promoId!, $event)"
+          @action-secondary="onPromoSecondaryAction(item.promoId!, $event)"
+        />
+      </template>
+    </div>
+
     <!-- Vehicle grid with interleaved promo cards -->
     <div v-else-if="displayedVehicles.length" class="vehicle-grid">
       <template v-for="(item, idx) in gridItems" :key="item.key">
@@ -134,7 +154,7 @@ const props = defineProps<{
   loading: boolean
   loadingMore: boolean
   hasMore: boolean
-  viewMode?: 'grid' | 'list'
+  viewMode?: 'grid' | 'list' | 'compact'
   // Geo-fallback + similar searches state
   isFewResults?: boolean
   locationLevel?: LocationLevel | null
@@ -162,10 +182,16 @@ const emit = defineEmits<{
   loadMoreCascade: []
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { favoritesOnly, isFavorite } = useFavorites()
-const { searchQuery } = useCatalogState()
-const { locale } = useI18n()
+const { searchQuery, viewMode: stateViewMode, setViewMode } = useCatalogState()
+
+onMounted(() => {
+  // Auto-switch to compact on mobile if still at default 'grid'
+  if (window.innerWidth < 768 && stateViewMode.value === 'grid') {
+    setViewMode('compact')
+  }
+})
 
 const displayedVehicles = computed(() => {
   let result = props.vehicles as Vehicle[]
@@ -454,6 +480,27 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
   display: flex;
   justify-content: center;
   padding: var(--spacing-4) 0;
+}
+
+/* Compact list */
+.vehicle-compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.5rem;
+}
+
+@media (min-width: 48em) {
+  .vehicle-compact-list {
+    padding: 1rem 1.5rem;
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 64em) {
+  .vehicle-compact-list {
+    padding: 1rem 3rem;
+  }
 }
 
 /* Load more */

@@ -13,7 +13,7 @@ export type SortOption =
   | 'year_desc'
   | 'brand_az'
   | 'brand_za'
-export type ViewMode = 'grid' | 'list'
+export type ViewMode = 'grid' | 'list' | 'compact'
 
 export interface CatalogState {
   activeAction: VehicleAction | null
