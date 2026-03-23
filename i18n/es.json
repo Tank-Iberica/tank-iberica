@@ -446,6 +446,12 @@
     "responseTimeSlow": "Responde en más de 4h",
     "viewSellerProfile": "Ver perfil del vendedor",
     "relatedVehicles": "Vehículos similares",
+    "similarSearches": "Búsquedas similares",
+    "searchMoreSubcategory": "Más {name}",
+    "searchMoreBrand": "Más vehículos {brand}",
+    "searchInLocation": "Vehículos en {location}",
+    "searchAllCategory": "Todas las {name}",
+    "searchPriceRange": "Vehículos de {min} a {max} €",
     "browseCategories": "Explorar por categoría",
     "moreBrand": "Más de",
     "highlightStyle": "Estilo destacado",
@@ -640,6 +646,8 @@
     "offlinePending": "({count} pendientes)",
     "searchPlaceholder": "Marca o modelo...",
     "view": "Ver",
+    "showMore": "Ver más",
+    "showLess": "Ver menos",
     "copy": "Copiar",
     "send": "Enviar",
     "update": "Actualizar",
@@ -3608,7 +3616,25 @@
       "brokerageLabel": "Recibir ofertas de compra intermediadas",
       "address": "Dirección",
       "addressPlaceholder": "Calle y número, ciudad",
-      "companyNamePlaceholder": "Nombre de tu empresa"
+      "companyNamePlaceholder": "Nombre de tu empresa",
+      "sectionQR": "Código QR de tu portal",
+      "qrDesc": "Descarga y comparte el código QR de tu portal para atraer clientes.",
+      "qrDownload": "Descargar QR",
+      "qrCopyLink": "Copiar enlace",
+      "qrCopied": "Enlace copiado",
+      "qrShareWhatsApp": "Compartir en WhatsApp",
+      "qrShareFacebook": "Compartir en Facebook",
+      "qrShareTwitter": "Compartir en Twitter / X",
+      "qrShareTelegram": "Compartir en Telegram",
+      "qrShareEmail": "Compartir por email",
+      "qrGenerating": "Generando QR...",
+      "analyticsTitle": "Analytics de enlaces y QR",
+      "analyticsDesc": "Estadísticas de los últimos 30 días sobre escaneos QR y clics en enlaces compartidos.",
+      "analyticsQrScans": "Escaneos QR",
+      "analyticsLinkClicks": "Clics en enlaces",
+      "analyticsTotal": "Total visitas",
+      "analyticsBySource": "Por fuente",
+      "analyticsByDevice": "Por dispositivo"
     },
     "stats": {
       "title": "Estadísticas",
@@ -4517,6 +4543,7 @@
     "reasonCounterfeit": "Producto falsificado",
     "reasonSpam": "Spam",
     "reasonPrivacy": "Violación de privacidad",
+    "reasonHarassment": "Acoso o amenaza",
     "reasonOther": "Otro",
     "admin": {
       "title": "Reportes de contenido",
@@ -4543,7 +4570,12 @@
       "saveNotes": "Guardar notas",
       "markReviewing": "Marcar en revisión",
       "resolveRemove": "Resolver: Eliminar",
-      "resolveKeep": "Resolver: Mantener"
+      "resolveKeep": "Resolver: Mantener",
+      "entityVehicle": "Vehículo",
+      "entityDealer": "Dealer",
+      "entityArticle": "Artículo",
+      "entityComment": "Comentario",
+      "entityMessage": "Mensaje"
     },
     "reasons": {
       "illegal_content": "Contenido ilegal",
@@ -4554,6 +4586,7 @@
       "hate_speech": "Discurso de odio",
       "spam": "Spam",
       "privacy_violation": "Violación de privacidad",
+      "harassment": "Acoso o amenaza",
       "other": "Otro"
     }
   },

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { reportFilters, useAdminReportes } from '~/composables/admin/useAdminReportes'
+import {
+  reportFilters,
+  entityTypeFilters,
+  useAdminReportes,
+} from '~/composables/admin/useAdminReportes'
 
 definePageMeta({
   layout: 'admin',
@@ -11,6 +15,7 @@ const {
   loading,
   activeFilter,
   expandedId,
+  activeEntityFilter,
   savingId,
   pendingCount,
   toggleExpand,
@@ -37,6 +42,12 @@ init()
       :active-filter="activeFilter"
       :filters="reportFilters"
       @update:active-filter="activeFilter = $event"
+    />
+
+    <ReportesFilters
+      :active-filter="activeEntityFilter"
+      :filters="entityTypeFilters"
+      @update:active-filter="activeEntityFilter = $event"
     />
 
     <!-- Loading -->

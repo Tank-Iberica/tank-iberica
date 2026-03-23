@@ -10,7 +10,7 @@ export function useReports() {
 
   async function submitReport(report: {
     reporter_email: string
-    entity_type: 'vehicle' | 'dealer' | 'article' | 'comment'
+    entity_type: 'vehicle' | 'dealer' | 'article' | 'comment' | 'message'
     entity_id: string
     reason: string
     details?: string

@@ -65,6 +65,10 @@ export function useDealerPortal() {
   const socialInstagram = ref('')
   const socialFacebook = ref('')
   const socialYouTube = ref('')
+  const socialTwitter = ref('')
+  const socialTelegram = ref('')
+  const socialPinterest = ref('')
+  const socialTiktok = ref('')
 
   // Certifications
   const certifications = ref<DealerCertification[]>([])
@@ -148,6 +152,10 @@ export function useDealerPortal() {
     socialInstagram.value = sl.instagram || ''
     socialFacebook.value = sl.facebook || ''
     socialYouTube.value = sl.youtube || ''
+    socialTwitter.value = sl.twitter || ''
+    socialTelegram.value = sl.telegram || ''
+    socialPinterest.value = sl.pinterest || ''
+    socialTiktok.value = sl.tiktok || ''
 
     // Certifications
     const certs = (data.certifications as DealerCertification[]) || []
@@ -267,6 +275,10 @@ export function useDealerPortal() {
         instagram: socialInstagram.value || null,
         facebook: socialFacebook.value || null,
         youtube: socialYouTube.value || null,
+        twitter: socialTwitter.value || null,
+        telegram: socialTelegram.value || null,
+        pinterest: socialPinterest.value || null,
+        tiktok: socialTiktok.value || null,
       },
       certifications: certifications.value.map((c) => ({
         id: c.id,
@@ -364,6 +376,8 @@ export function useDealerPortal() {
     error,
     needsProfile,
     portalUrl,
+    dealerId,
+    dealerSlug,
     // Identity
     companyName,
     logoUrl,
@@ -388,6 +402,10 @@ export function useDealerPortal() {
     socialInstagram,
     socialFacebook,
     socialYouTube,
+    socialTwitter,
+    socialTelegram,
+    socialPinterest,
+    socialTiktok,
     // Certifications
     certifications,
     iconOptions,

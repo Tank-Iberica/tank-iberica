@@ -446,6 +446,12 @@
     "responseTimeSlow": "Responds in more than 4h",
     "viewSellerProfile": "View seller profile",
     "relatedVehicles": "Similar vehicles",
+    "similarSearches": "Similar searches",
+    "searchMoreSubcategory": "More {name}",
+    "searchMoreBrand": "More {brand} vehicles",
+    "searchInLocation": "Vehicles in {location}",
+    "searchAllCategory": "All {name}",
+    "searchPriceRange": "Vehicles from {min} to {max} €",
     "browseCategories": "Browse by category",
     "moreBrand": "More from",
     "highlightStyle": "Highlight style",
@@ -640,6 +646,8 @@
     "offlinePending": "({count} pending)",
     "searchPlaceholder": "Brand or model...",
     "view": "View",
+    "showMore": "Show more",
+    "showLess": "Show less",
     "copy": "Copy",
     "send": "Send",
     "update": "Update",
@@ -3606,7 +3614,25 @@
       "brokerageLabel": "Receive brokered purchase offers",
       "address": "Address",
       "addressPlaceholder": "Street and number, city",
-      "companyNamePlaceholder": "Your company name"
+      "companyNamePlaceholder": "Your company name",
+      "sectionQR": "Your portal QR code",
+      "qrDesc": "Download and share your portal QR code to attract customers.",
+      "qrDownload": "Download QR",
+      "qrCopyLink": "Copy link",
+      "qrCopied": "Link copied",
+      "qrShareWhatsApp": "Share on WhatsApp",
+      "qrShareFacebook": "Share on Facebook",
+      "qrShareTwitter": "Share on Twitter / X",
+      "qrShareTelegram": "Share on Telegram",
+      "qrShareEmail": "Share via email",
+      "qrGenerating": "Generating QR...",
+      "analyticsTitle": "Link & QR Analytics",
+      "analyticsDesc": "Last 30 days statistics for QR scans and shared link clicks.",
+      "analyticsQrScans": "QR Scans",
+      "analyticsLinkClicks": "Link Clicks",
+      "analyticsTotal": "Total Visits",
+      "analyticsBySource": "By source",
+      "analyticsByDevice": "By device"
     },
     "stats": {
       "title": "Analytics",
@@ -4515,6 +4541,7 @@
     "reasonCounterfeit": "Counterfeit product",
     "reasonSpam": "Spam",
     "reasonPrivacy": "Privacy violation",
+    "reasonHarassment": "Harassment or threats",
     "reasonOther": "Other",
     "admin": {
       "title": "Content Reports",
@@ -4541,7 +4568,12 @@
       "saveNotes": "Save notes",
       "markReviewing": "Mark reviewing",
       "resolveRemove": "Resolve: Remove",
-      "resolveKeep": "Resolve: Keep"
+      "resolveKeep": "Resolve: Keep",
+      "entityVehicle": "Vehicle",
+      "entityDealer": "Dealer",
+      "entityArticle": "Article",
+      "entityComment": "Comment",
+      "entityMessage": "Message"
     },
     "reasons": {
       "illegal_content": "Illegal content",
@@ -4552,6 +4584,7 @@
       "hate_speech": "Hate speech",
       "spam": "Spam",
       "privacy_violation": "Privacy violation",
+      "harassment": "Harassment or threats",
       "other": "Other"
     }
   },

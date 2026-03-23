@@ -128,8 +128,11 @@
         </div>
       </article>
 
-      <!-- Related vehicles (internal linking) -->
+      <!-- Related vehicles carousel (internal linking) -->
       <VehicleRelatedVehicles :vehicle="vehicle" />
+
+      <!-- Similar searches (SEO internal linking) -->
+      <VehicleSimilarSearches :vehicle="vehicle" />
 
       <!-- Related articles (internal linking — SEO) -->
       <ArticleRelatedArticles :keyword="vehicle.brand" :limit="3" />

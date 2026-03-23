@@ -69,6 +69,7 @@ import { useSimilarSearches } from '~/composables/catalog/useSimilarSearches'
 import { useHiddenVehicles } from '~/composables/catalog/useHiddenVehicles'
 import { useAnalyticsTracking } from '~/composables/useAnalyticsTracking'
 
+const route = useRoute()
 const { t, locale } = useI18n()
 const menuVisible = ref(true)
 const { vehicles, loading, loadingMore, hasMore, total, fetchVehicles, fetchMore } = useVehicles()
@@ -82,7 +83,23 @@ const {
   locationLevel,
   setLocationLevel,
   resetCatalog,
+  updateFilters,
 } = useCatalogState()
+
+// Apply URL query params as initial filters (SEO: similar searches links)
+{
+  const q = route.query
+  const initialFilters: Record<string, unknown> = {}
+  if (q.brand) initialFilters.brand = q.brand as string
+  if (q.category_id) initialFilters.category_id = q.category_id as string
+  if (q.subcategory_id) initialFilters.subcategory_id = q.subcategory_id as string
+  if (q.location_province_eq) initialFilters.location_province_eq = q.location_province_eq as string
+  if (q.price_min) initialFilters.price_min = Number(q.price_min)
+  if (q.price_max) initialFilters.price_max = Number(q.price_max)
+  if (Object.keys(initialFilters).length) {
+    updateFilters(initialFilters)
+  }
+}
 const {
   fetchByCategoryAndSubcategory,
   clearAll: clearAllFilters,

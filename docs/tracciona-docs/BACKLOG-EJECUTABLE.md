@@ -1137,6 +1137,22 @@ No bloquean ni son bloqueadas por codigo. Ejecutar cuando sea posible.
 
 ---
 
+### Bloque 55: UX Engagement & Marketing Tools
+
+Criterio: Herramientas de engagement (reportes, similares, QR, redes sociales, analytics de tráfico).
+
+| #   | Item                                                                                          | Esfuerzo | Tipo | Depende de | Hecho cuando...                                                                                                                                                                                    |
+| --- | --------------------------------------------------------------------------------------------- | -------- | ---- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| N87 | Carrusel vehículos similares + bloque búsquedas similares SEO en ficha vehículo               | M        | Code | —          | `RelatedVehicles.vue` → carousel horizontal con scoring `useSimilarVehicles.ts`. Nuevo `VehicleSimilarSearches.vue` con NuxtLinks a catálogo con filtros (crawlable). SEO internal linking. Tests. |
+| N88 | Redes sociales en perfiles dealer + Tracciona (CRUD + display con overflow desplegable)       | M        | Code | —          | `dealers.social_links` JSONB ya existe. UI gestión en DealerPortal. Display en perfil dealer + ficha vendedor. Si >4 → icono desplegable. Tracciona: desde `vertical_config`. Tests.               |
+| N89 | Generador QR de portal dealer con compartir (WhatsApp, FB, Twitter, email, Telegram, IG)      | M        | Code | —          | QR único por dealer con UTM tracking. Visible en gestión de portal. Botones compartir nativos (Web Share API + fallbacks). `qrcode` package. Tests.                                                |
+| N90 | Extender sistema reportes a mensajes + dashboard admin de moderación                          | S        | Code | —          | `ReportModal` + `useReports` + tabla `reports` ya existen (vehicle/dealer/article/comment). Añadir `'message'` como entity_type. Botón report en chat. Vista admin para gestionar reportes. Tests. |
+| N91 | Analytics de QR y enlaces: escaneos, fuentes de tráfico, comparticiones, atribución marketing | L        | Code | N89        | Tabla `tracking_events`. QR redirect endpoint con logging. UTM capture middleware. Dashboard analytics en portal dealer (escaneos QR, clicks, referrers, canales). Tests.                          |
+
+**Total Bloque 55:** ~6 sesiones
+
+---
+
 **Total Fase 10:** 20 items | No estimable en sesiones — es tiempo calendario post-lanzamiento (~6-12 meses)
 
 **Criterio de completitud 100/100 real:**

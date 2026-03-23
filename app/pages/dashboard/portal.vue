@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useDealerPortal } from '~/composables/dashboard/useDealerPortal'
+import { useDealerQR } from '~/composables/dashboard/useDealerQR'
+import { useDealerLinkAnalytics } from '~/composables/dashboard/useDealerLinkAnalytics'
 
 definePageMeta({
   layout: 'default',
@@ -15,6 +17,8 @@ const {
   error,
   needsProfile,
   portalUrl,
+  dealerId,
+  dealerSlug,
   companyName,
   logoUrl,
   faviconUrl,
@@ -34,6 +38,10 @@ const {
   socialInstagram,
   socialFacebook,
   socialYouTube,
+  socialTwitter,
+  socialTelegram,
+  socialPinterest,
+  socialTiktok,
   certifications,
   iconOptions,
   catalogSort,
@@ -55,6 +63,32 @@ const {
   removeCertification,
   updateCertificationField,
 } = useDealerPortal()
+
+const { stats: linkStats, loading: linkStatsLoading } = useDealerLinkAnalytics(dealerId)
+
+const {
+  qrDataUrl,
+  generating: qrGenerating,
+  portalFullUrl,
+  downloadQR,
+  shareWhatsApp,
+  shareFacebook,
+  shareTwitter,
+  shareTelegram,
+  shareEmail,
+  copyLink,
+} = useDealerQR(dealerSlug)
+
+const linkCopied = ref(false)
+async function onCopyLink() {
+  const ok = await copyLink()
+  if (ok) {
+    linkCopied.value = true
+    setTimeout(() => {
+      linkCopied.value = false
+    }, 2000)
+  }
+}
 
 const newDealerName = ref('')
 
@@ -430,6 +464,46 @@ const coverRecommendations = [
             placeholder="https://youtube.com/@..."
           >
         </div>
+        <div class="form-group">
+          <label for="twitter">Twitter / X</label>
+          <input
+            id="twitter"
+            v-model="socialTwitter"
+            type="url"
+            autocomplete="url"
+            placeholder="https://x.com/..."
+          >
+        </div>
+        <div class="form-group">
+          <label for="telegram">Telegram</label>
+          <input
+            id="telegram"
+            v-model="socialTelegram"
+            type="url"
+            autocomplete="url"
+            placeholder="https://t.me/..."
+          >
+        </div>
+        <div class="form-group">
+          <label for="pinterest">Pinterest</label>
+          <input
+            id="pinterest"
+            v-model="socialPinterest"
+            type="url"
+            autocomplete="url"
+            placeholder="https://pinterest.com/..."
+          >
+        </div>
+        <div class="form-group">
+          <label for="tiktok">TikTok</label>
+          <input
+            id="tiktok"
+            v-model="socialTiktok"
+            type="url"
+            autocomplete="url"
+            placeholder="https://tiktok.com/@..."
+          >
+        </div>
       </section>
 
       <!-- ── 6. CERTIFICACIONES ──────────────────────────────── -->
@@ -618,6 +692,184 @@ const coverRecommendations = [
             {{ t('dashboard.portal.brokerageHint') }}
           </p>
         </div>
+      </section>
+
+      <!-- ── QR CODE ────────────────────────────────────────── -->
+      <section v-if="dealerSlug" class="form-section qr-section">
+        <h2>{{ t('dashboard.portal.sectionQR') }}</h2>
+        <p class="section-desc">{{ t('dashboard.portal.qrDesc') }}</p>
+
+        <div class="qr-content">
+          <div v-if="qrGenerating" class="qr-placeholder">
+            {{ t('dashboard.portal.qrGenerating') }}
+          </div>
+          <img
+            v-else-if="qrDataUrl"
+            :src="qrDataUrl"
+            :alt="t('dashboard.portal.sectionQR')"
+            class="qr-image"
+            width="256"
+            height="256"
+          >
+
+          <div class="qr-url">
+            <code>{{ portalFullUrl }}</code>
+          </div>
+
+          <div class="qr-actions">
+            <button type="button" class="btn-secondary btn-sm" @click="downloadQR">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              {{ t('dashboard.portal.qrDownload') }}
+            </button>
+            <button type="button" class="btn-secondary btn-sm" @click="onCopyLink">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              {{ linkCopied ? t('dashboard.portal.qrCopied') : t('dashboard.portal.qrCopyLink') }}
+            </button>
+          </div>
+
+          <div class="qr-share">
+            <button
+              type="button"
+              class="share-btn whatsapp"
+              :title="t('dashboard.portal.qrShareWhatsApp')"
+              @click="shareWhatsApp"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+                />
+                <path
+                  d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 0 0 .612.612l4.458-1.495A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.94 9.94 0 0 1-5.39-1.582l-.386-.236-2.648.888.888-2.648-.236-.386A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="share-btn facebook"
+              :title="t('dashboard.portal.qrShareFacebook')"
+              @click="shareFacebook"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="share-btn twitter"
+              :title="t('dashboard.portal.qrShareTwitter')"
+              @click="shareTwitter"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="share-btn telegram"
+              :title="t('dashboard.portal.qrShareTelegram')"
+              @click="shareTelegram"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="share-btn email"
+              :title="t('dashboard.portal.qrShareEmail')"
+              @click="shareEmail"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── LINK ANALYTICS ──────────────────────────────────── -->
+      <section v-if="dealerId && linkStats" class="form-section analytics-section">
+        <h2>{{ t('dashboard.portal.analyticsTitle') }}</h2>
+        <p class="section-desc">{{ t('dashboard.portal.analyticsDesc') }}</p>
+
+        <div v-if="linkStatsLoading" class="analytics-loading">{{ t('common.loading') }}</div>
+        <template v-else>
+          <div class="analytics-cards">
+            <div class="stat-card">
+              <span class="stat-value">{{ linkStats.totalQrScans }}</span>
+              <span class="stat-label">{{ t('dashboard.portal.analyticsQrScans') }}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">{{ linkStats.totalLinkClicks }}</span>
+              <span class="stat-label">{{ t('dashboard.portal.analyticsLinkClicks') }}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">{{ linkStats.totalAll }}</span>
+              <span class="stat-label">{{ t('dashboard.portal.analyticsTotal') }}</span>
+            </div>
+          </div>
+
+          <div v-if="linkStats.bySource.length" class="analytics-breakdown">
+            <h3 class="breakdown-title">{{ t('dashboard.portal.analyticsBySource') }}</h3>
+            <div class="breakdown-list">
+              <div v-for="s in linkStats.bySource" :key="s.source" class="breakdown-row">
+                <span class="breakdown-label">{{ s.source }}</span>
+                <span class="breakdown-value">{{ s.count }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="linkStats.byDevice.length" class="analytics-breakdown">
+            <h3 class="breakdown-title">{{ t('dashboard.portal.analyticsByDevice') }}</h3>
+            <div class="breakdown-list">
+              <div v-for="d in linkStats.byDevice" :key="d.device" class="breakdown-row">
+                <span class="breakdown-label">{{ d.device }}</span>
+                <span class="breakdown-value">{{ d.count }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
       </section>
 
       <!-- ── SUBMIT ─────────────────────────────────────────── -->
@@ -1069,6 +1321,180 @@ const coverRecommendations = [
 .form-actions {
   display: flex;
   justify-content: flex-end;
+}
+
+/* QR Section */
+.qr-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.qr-image {
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border, #e2e8f0);
+}
+
+.qr-placeholder {
+  width: 256px;
+  height: 256px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary, #f7fafc);
+  border-radius: var(--border-radius);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.qr-url {
+  width: 100%;
+  text-align: center;
+}
+
+.qr-url code {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.qr-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-sm {
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.75rem;
+  min-height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.qr-share {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.share-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border, #e2e8f0);
+  background: var(--bg-primary, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+  color: var(--text-secondary);
+}
+
+.share-btn:hover {
+  transform: scale(1.08);
+}
+
+.share-btn.whatsapp:hover {
+  background: #25d366;
+  color: #fff;
+}
+.share-btn.facebook:hover {
+  background: #1877f2;
+  color: #fff;
+}
+.share-btn.twitter:hover {
+  background: #000;
+  color: #fff;
+}
+.share-btn.telegram:hover {
+  background: #0088cc;
+  color: #fff;
+}
+.share-btn.email:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Analytics Section */
+.analytics-loading {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-4);
+}
+
+.analytics-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-3);
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-4);
+  background: var(--bg-secondary, #f7fafc);
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.analytics-breakdown {
+  margin-top: var(--spacing-4);
+}
+
+.breakdown-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  border-radius: var(--border-radius-sm);
+}
+
+.breakdown-row:nth-child(odd) {
+  background: var(--bg-secondary, #f7fafc);
+}
+
+.breakdown-label {
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.breakdown-value {
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .btn-primary {

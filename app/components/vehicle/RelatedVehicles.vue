@@ -1,27 +1,35 @@
 <template>
   <section v-if="related.length" class="related-vehicles">
     <h2>{{ $t('vehicle.relatedVehicles') }}</h2>
-    <div class="related-grid">
-      <NuxtLink v-for="v in related" :key="v.id" :to="`/vehiculo/${v.slug}`" class="related-card">
+    <div class="related-carousel" role="list">
+      <NuxtLink
+        v-for="v in related"
+        :key="v.id"
+        :to="`/vehiculo/${v.slug}`"
+        class="related-card"
+        role="listitem"
+      >
         <div class="related-img-wrapper">
           <NuxtImg
-            v-if="v.vehicle_images?.[0]?.url?.includes('cloudinary.com')"
+            v-if="firstImageUrl(v)?.includes('cloudinary.com')"
             provider="cloudinary"
-            :src="cloudinaryPath(v.vehicle_images[0])"
+            :src="cloudinaryPath(firstImageUrl(v)!)"
             :alt="buildProductName(v, locale, true)"
-            width="280"
-            height="200"
+            width="240"
+            height="180"
             fit="cover"
             loading="lazy"
             decoding="async"
             format="webp"
-            sizes="(max-width: 29.94em) 50vw, 25vw"
+            sizes="(max-width: 29.94em) 45vw, (max-width: 48em) 30vw, 20vw"
             class="related-img"
           />
           <img
-            v-else-if="v.vehicle_images?.[0]?.url"
-            :src="v.vehicle_images[0].url"
+            v-else-if="firstImageUrl(v)"
+            :src="firstImageUrl(v)!"
             :alt="buildProductName(v, locale, true)"
+            loading="lazy"
+            decoding="async"
             class="related-img"
           >
           <div v-else class="related-img-placeholder">
@@ -42,6 +50,9 @@
         <div class="related-info">
           <span class="related-name">{{ buildProductName(v, locale, true) }}</span>
           <span v-if="v.price" class="related-price">{{ formatPrice(v.price) }}</span>
+          <span v-else-if="v.rental_price" class="related-price"
+            >{{ formatPrice(v.rental_price) }}/{{ $t('catalog.month') }}</span
+          >
           <span v-else class="related-price muted">{{ $t('vehicle.consultar') }}</span>
         </div>
       </NuxtLink>
@@ -50,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Vehicle, VehicleImage } from '~/composables/useVehicles'
+import type { Vehicle } from '~/composables/useVehicles'
 import { formatPrice } from '~/composables/shared/useListingUtils'
 
 const props = defineProps<{
@@ -62,49 +73,86 @@ const supabase = useSupabaseClient()
 
 const related = ref<Vehicle[]>([])
 
-function cloudinaryPath(img: VehicleImage): string {
-  const url = img.url
+function firstImageUrl(v: Vehicle): string | null {
+  if (!v.vehicle_images?.length) return null
+  const sorted = [...v.vehicle_images].sort((a, b) => a.position - b.position)
+  return sorted[0]?.url ?? null
+}
+
+function cloudinaryPath(url: string): string {
   const match = url.match(/\/upload\/(?:v\d+\/)?(.+)$/)
   return match ? (match[1] ?? url) : url
 }
 
 async function fetchRelated() {
   const v = props.vehicle
-  if (!v.brand) return
+  const results: Vehicle[] = []
 
-  const { data } = await supabase
-    .from('vehicles')
-    .select(
-      'id, slug, brand, model, year, price, vehicle_images(url, position), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
-    )
-    .eq('status', 'published')
-    .neq('id', v.id)
-    .eq('brand', v.brand)
-    .order('created_at', { ascending: false })
-    .limit(4)
-
-  if (data != null && data.length) {
-    related.value = data as unknown as Vehicle[]
-    return
-  }
-
-  // Fallback: same category_id if brand has no other vehicles
-  if (v.category_id) {
-    const { data: catData } = await supabase
+  // 1. Same subcategory (most relevant)
+  if (v.subcategory_id) {
+    const { data } = await supabase
       .from('vehicles')
       .select(
-        'id, slug, brand, model, year, price, vehicle_images(url, position), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
+        'id, slug, brand, model, year, price, rental_price, vehicle_images(url, position), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
+      )
+      .eq('status', 'published')
+      .neq('id', v.id)
+      .eq('subcategory_id', v.subcategory_id)
+      .order('created_at', { ascending: false })
+      .limit(8)
+
+    if (data?.length) {
+      results.push(...(data as unknown as Vehicle[]))
+    }
+  }
+
+  // 2. Same brand (if not enough from subcategory)
+  if (results.length < 8 && v.brand) {
+    const existingIds = new Set(results.map((r) => r.id))
+    const { data } = await supabase
+      .from('vehicles')
+      .select(
+        'id, slug, brand, model, year, price, rental_price, vehicle_images(url, position), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
+      )
+      .eq('status', 'published')
+      .neq('id', v.id)
+      .eq('brand', v.brand)
+      .order('created_at', { ascending: false })
+      .limit(8 - results.length)
+
+    if (data?.length) {
+      for (const item of data as unknown as Vehicle[]) {
+        if (!existingIds.has(item.id)) {
+          results.push(item)
+        }
+      }
+    }
+  }
+
+  // 3. Same category (broader fallback)
+  if (results.length < 4 && v.category_id) {
+    const existingIds = new Set(results.map((r) => r.id))
+    const { data } = await supabase
+      .from('vehicles')
+      .select(
+        'id, slug, brand, model, year, price, rental_price, vehicle_images(url, position), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
       )
       .eq('status', 'published')
       .neq('id', v.id)
       .eq('category_id', v.category_id)
       .order('created_at', { ascending: false })
-      .limit(4)
+      .limit(8 - results.length)
 
-    if (catData) {
-      related.value = catData as unknown as Vehicle[]
+    if (data?.length) {
+      for (const item of data as unknown as Vehicle[]) {
+        if (!existingIds.has(item.id)) {
+          results.push(item)
+        }
+      }
     }
   }
+
+  related.value = results.slice(0, 8)
 }
 
 onMounted(() => {
@@ -115,7 +163,7 @@ onMounted(() => {
 <style scoped>
 .related-vehicles {
   margin-top: var(--spacing-6);
-  padding-top: var(--spacing-6);
+  padding: var(--spacing-6) 0.5rem 0;
   border-top: 1px solid var(--border-color);
 }
 
@@ -128,13 +176,31 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 
-.related-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* Horizontal scroll carousel */
+.related-carousel {
+  display: flex;
   gap: var(--spacing-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--spacing-3);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.related-carousel::-webkit-scrollbar {
+  height: 4px;
+}
+
+.related-carousel::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
 }
 
 .related-card {
+  flex: 0 0 45%;
+  max-width: 45%;
+  scroll-snap-align: start;
   text-decoration: none;
   color: inherit;
   border-radius: var(--border-radius);
@@ -198,15 +264,37 @@ onMounted(() => {
   font-weight: 500;
 }
 
+/* Tablet: 4 visible */
 @media (min-width: 30em) {
-  .related-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .related-card {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+}
+
+/* Desktop: 5 visible */
+@media (min-width: 48em) {
+  .related-vehicles {
+    padding: var(--spacing-6) 1.5rem 0;
+  }
+
+  .related-card {
+    flex: 0 0 22%;
+    max-width: 22%;
   }
 }
 
 @media (min-width: 64em) {
-  .related-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .related-vehicles {
+    padding: var(--spacing-6) 3rem 0;
+  }
+
+  .related-card {
+    flex: 0 0 18%;
+    max-width: 18%;
+  }
+
+  .related-carousel {
     gap: var(--spacing-4);
   }
 }

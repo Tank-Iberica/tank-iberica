@@ -17,8 +17,15 @@ export interface Report {
   created_at: string
 }
 
+export type ReportEntityType = 'vehicle' | 'dealer' | 'article' | 'comment' | 'message'
+
 export interface FilterOption {
   value: ReportStatus | 'all'
+  labelKey: string
+}
+
+export interface EntityFilterOption {
+  value: ReportEntityType | 'all'
   labelKey: string
 }
 
@@ -31,6 +38,15 @@ export const reportFilters: FilterOption[] = [
   { value: 'reviewing', labelKey: 'report.admin.filterReviewing' },
   { value: 'resolved_removed', labelKey: 'report.admin.filterResolvedRemoved' },
   { value: 'resolved_kept', labelKey: 'report.admin.filterResolvedKept' },
+]
+
+export const entityTypeFilters: EntityFilterOption[] = [
+  { value: 'all', labelKey: 'report.admin.filterAll' },
+  { value: 'vehicle', labelKey: 'report.admin.entityVehicle' },
+  { value: 'dealer', labelKey: 'report.admin.entityDealer' },
+  { value: 'article', labelKey: 'report.admin.entityArticle' },
+  { value: 'comment', labelKey: 'report.admin.entityComment' },
+  { value: 'message', labelKey: 'report.admin.entityMessage' },
 ]
 
 export const statusColors: Record<ReportStatus, string> = {
@@ -82,6 +98,7 @@ export function useAdminReportes() {
   const reports = ref<Report[]>([])
   const loading = ref(true)
   const activeFilter = ref<ReportStatus | 'all'>('all')
+  const activeEntityFilter = ref<ReportEntityType | 'all'>('all')
   const expandedId = ref<string | null>(null)
   const savingId = ref<string | null>(null)
   const editNotes = ref<Record<string, string>>({})
@@ -98,10 +115,18 @@ export function useAdminReportes() {
   // ============================================
   async function loadReports() {
     loading.value = true
-    let query = supabase.from('reports').select('id, vertical, reporter_email, entity_type, entity_id, reason, details, status, admin_notes, resolved_at, created_at').order('created_at', { ascending: false })
+    let query = supabase
+      .from('reports')
+      .select(
+        'id, vertical, reporter_email, entity_type, entity_id, reason, details, status, admin_notes, resolved_at, created_at',
+      )
+      .order('created_at', { ascending: false })
 
     if (activeFilter.value !== 'all') {
       query = query.eq('status', activeFilter.value)
+    }
+    if (activeEntityFilter.value !== 'all') {
+      query = query.eq('entity_type', activeEntityFilter.value)
     }
 
     const { data } = await query
@@ -163,6 +188,7 @@ export function useAdminReportes() {
   function init() {
     loadReports()
     watch(activeFilter, loadReports)
+    watch(activeEntityFilter, loadReports)
   }
 
   return {
@@ -170,6 +196,7 @@ export function useAdminReportes() {
     reports,
     loading,
     activeFilter,
+    activeEntityFilter,
     expandedId,
     savingId,
     editNotes,

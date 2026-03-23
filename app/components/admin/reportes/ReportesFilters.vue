@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { ReportStatus, FilterOption } from '~/composables/admin/useAdminReportes'
-
 defineProps<{
-  activeFilter: ReportStatus | 'all'
-  filters: FilterOption[]
+  activeFilter: string
+  filters: { value: string; labelKey: string }[]
 }>()
 
 const emit = defineEmits<{
-  'update:activeFilter': [value: ReportStatus | 'all']
+  'update:activeFilter': [value: string]
 }>()
 
 const { t } = useI18n()

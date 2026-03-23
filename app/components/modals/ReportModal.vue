@@ -5,7 +5,7 @@
  */
 const props = defineProps<{
   visible: boolean
-  entityType: 'vehicle' | 'dealer' | 'article' | 'comment'
+  entityType: 'vehicle' | 'dealer' | 'article' | 'comment' | 'message'
   entityId: string
 }>()
 
@@ -24,16 +24,26 @@ const email = ref(user.value?.email || '')
 const reason = ref('')
 const details = ref('')
 
-const reasons = computed(() => [
-  { value: 'illegal_content', label: t('report.reasonIllegal') },
-  { value: 'fraud_scam', label: t('report.reasonFraud') },
-  { value: 'misleading_info', label: t('report.reasonMisleading') },
-  { value: 'stolen_vehicle', label: t('report.reasonStolen') },
-  { value: 'counterfeit', label: t('report.reasonCounterfeit') },
-  { value: 'spam', label: t('report.reasonSpam') },
-  { value: 'privacy_violation', label: t('report.reasonPrivacy') },
-  { value: 'other', label: t('report.reasonOther') },
-])
+const reasons = computed(() => {
+  const base = [
+    { value: 'illegal_content', label: t('report.reasonIllegal') },
+    { value: 'fraud_scam', label: t('report.reasonFraud') },
+    { value: 'misleading_info', label: t('report.reasonMisleading') },
+    { value: 'spam', label: t('report.reasonSpam') },
+    { value: 'privacy_violation', label: t('report.reasonPrivacy') },
+  ]
+  if (props.entityType === 'vehicle') {
+    base.push(
+      { value: 'stolen_vehicle', label: t('report.reasonStolen') },
+      { value: 'counterfeit', label: t('report.reasonCounterfeit') },
+    )
+  }
+  if (props.entityType === 'message') {
+    base.push({ value: 'harassment', label: t('report.reasonHarassment') })
+  }
+  base.push({ value: 'other', label: t('report.reasonOther') })
+  return base
+})
 
 async function handleSubmit() {
   if (!email.value || !reason.value) return
