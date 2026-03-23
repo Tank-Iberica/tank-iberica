@@ -220,6 +220,35 @@ watch(
   { deep: true },
 )
 
+// ── Dropdown toggles (avoids multiline inline handlers) ──
+function openTransaction() {
+  transactionOpen.value = !transactionOpen.value
+  categoryOpen.value = false
+  subcategoryOpen.value = false
+}
+
+function openCategory() {
+  categoryOpen.value = !categoryOpen.value
+  transactionOpen.value = false
+  subcategoryOpen.value = false
+}
+
+function openSubcategory() {
+  subcategoryOpen.value = !subcategoryOpen.value
+  transactionOpen.value = false
+  categoryOpen.value = false
+}
+
+function clearCategoryAndClose() {
+  clearCategory()
+  categoryOpen.value = false
+}
+
+function clearSubcategoryAndClose() {
+  clearSubcategory()
+  subcategoryOpen.value = false
+}
+
 // ── Desktop scroll ──
 function updateScrollState() {
   const el = scrollContainer.value
@@ -258,11 +287,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
       <div class="dropdown-wrapper dropdown-transaction">
         <button
           :class="['selector-btn', { active: transactionOpen || activeActions.length > 0 }]"
-          @click.stop="
-            transactionOpen = !transactionOpen
-            categoryOpen = false
-            subcategoryOpen = false
-          "
+          @click.stop="openTransaction"
         >
           <span class="selector-label">{{ transactionLabel }}</span>
           <svg
@@ -300,11 +325,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
       <div class="dropdown-wrapper dropdown-category">
         <button
           :class="['selector-btn', { active: categoryOpen || !!activeCategoryId }]"
-          @click.stop="
-            categoryOpen = !categoryOpen
-            transactionOpen = false
-            subcategoryOpen = false
-          "
+          @click.stop="openCategory"
         >
           <span class="selector-label">{{
             activeCategoryId ? selectedCategoryName : $t('catalog.allTypes')
@@ -325,10 +346,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
         <div v-show="categoryOpen" class="dropdown-menu">
           <button
             :class="['dropdown-item', { selected: !activeCategoryId }]"
-            @click="
-              clearCategory()
-              categoryOpen = false
-            "
+            @click="clearCategoryAndClose"
           >
             {{ $t('catalog.allTypes') }}
           </button>
@@ -350,11 +368,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
       >
         <button
           :class="['selector-btn', { active: subcategoryOpen || !!activeSubcategoryId }]"
-          @click.stop="
-            subcategoryOpen = !subcategoryOpen
-            transactionOpen = false
-            categoryOpen = false
-          "
+          @click.stop="openSubcategory"
         >
           <span class="selector-label">{{
             activeSubcategoryId ? selectedSubcategoryName : $t('catalog.allSubtypes')
@@ -375,10 +389,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
         <div v-show="subcategoryOpen" class="dropdown-menu">
           <button
             :class="['dropdown-item', { selected: !activeSubcategoryId }]"
-            @click="
-              clearSubcategory()
-              subcategoryOpen = false
-            "
+            @click="clearSubcategoryAndClose"
           >
             {{ $t('catalog.allSubtypes') }}
           </button>
