@@ -1,9 +1,38 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-20 (Batch prioridades: 4 docs operativos + 8 Tanda 1+2) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup + doc migration (ver git log)
+**Última actualización:** 2026-03-23 (Schema sync completo + cast cleanup + backlog autónomo) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup + doc migration + schema sync 23-mar (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 23-mar — Schema sync + cast cleanup + backlog autónomo
+
+**Tareas:** Migraciones SQL para schema pending (3 tablas, ~10 columnas, 3 RPCs) + regenerar tipos + eliminar `as any` + 3 items autónomos backlog.
+
+### Realizado:
+
+**Tarea 6 — Schema sync completo:**
+
+- **00192** `dealer_reviews`: tabla con RLS (3 políticas), unique reviewer/dealer, indexes
+- **00193** `glossary`: tabla con slug+vertical unique, JSONB term/definition, RLS
+- **00194** `error_events`: tabla con RLS service_role + admins
+- **00195** columnas faltantes: `vehicles.title_es/title_en/scheduled_publish_at`, `users.digest_frequency`, `favorites.price_threshold`, `email_preferences.created_at`, `dealers.address`, `vertical_config.feature_flags`, `subscriptions.email/pref_*`
+- **00196** RPCs dealer dashboard: `get_dealer_dashboard_stats`, `get_dealer_top_vehicles`, `get_dealer_rating_summary`
+- Types regenerados: `app/types/database.types.ts` + `types/supabase.ts` (9055 líneas)
+- 13 `as any` eliminados — 3 justificados restantes (2 brokerage auth.users, 1 subscriptions upsert)
+- Typecheck: 0 errores
+
+**Tarea 7 — Items autónomos backlog:**
+
+- **#246** Sentry APM: `sentryTracesSampleRate` configurable por env `NUXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE`
+- **#N35** Dependabot auto-merge: `.github/workflows/dependabot-auto-merge.yml`
+- **00197** 4 partial indexes compuestos para catálogo WHERE status='published'
+
+### Pendiente:
+
+- Refactor subscriptions upsert en `useUserPanel.ts` (separar newsletter prefs de billing)
+
+---
 
 ## Sesión 20-mar (4/4) — Batch prioridades: 4 docs operativos críticos
 

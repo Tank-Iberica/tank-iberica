@@ -307,6 +307,9 @@ export default defineNuxtConfig({
       gtmId: process.env.NUXT_PUBLIC_GTM_ID || '',
       turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || '',
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
+      sentryTracesSampleRate: Number.parseFloat(
+        process.env.NUXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE || '0',
+      ),
       vapidPublicKey: process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY || '',
       adsenseId: process.env.NUXT_PUBLIC_ADSENSE_ID || '',
       adsenseSlotId: process.env.NUXT_PUBLIC_ADSENSE_SLOT_ID || '',

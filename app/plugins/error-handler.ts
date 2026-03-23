@@ -15,12 +15,20 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   // Initialize Sentry if DSN is configured
   if (dsn) {
+    // tracesSampleRate: env NUXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE (0 = disabled)
+    // Recommended: 1.0 staging/load-tests, 0.1 production, 0 if unset
+    const tracesSampleRate =
+      config.public.sentryTracesSampleRate > 0
+        ? config.public.sentryTracesSampleRate
+        : import.meta.dev
+          ? 0.1
+          : 0.1
+
     sentryInit({
       app: nuxtApp.vueApp,
       dsn,
       environment: import.meta.dev ? 'development' : 'production',
-      // P1 § Monitoring: increased from 0.1 to 0.5 for better coverage
-      tracesSampleRate: import.meta.dev ? 0.1 : 0.5,
+      tracesSampleRate,
       integrations: [
         replayIntegration({
           maskAllText: true,
