@@ -155,7 +155,7 @@
   {
     "name": "useAdminBrokerage",
     "file": "app/composables/admin/useAdminBrokerage.ts",
-    "lines": 350,
+    "lines": 349,
     "domain": "admin",
     "exports": [
       "function getStatusLabel",
@@ -181,7 +181,7 @@
   {
     "name": "useAdminBrokerageDeal",
     "file": "app/composables/admin/useAdminBrokerageDeal.ts",
-    "lines": 344,
+    "lines": 340,
     "domain": "admin",
     "exports": [
       "function getDealPhase",
@@ -925,7 +925,7 @@
   {
     "name": "useAdminSidebar",
     "file": "app/composables/admin/useAdminSidebar.ts",
-    "lines": 256,
+    "lines": 255,
     "domain": "admin",
     "exports": ["function useAdminSidebar", "type SidebarNavItem"],
     "dependencies": ["useSiteName", "useVerticalConfig"],
@@ -1339,6 +1339,16 @@
     "testFile": "tests/unit/useAbTest.test.ts"
   },
   {
+    "name": "useActiveSessions",
+    "file": "app/composables/useActiveSessions.ts",
+    "lines": 129,
+    "domain": "core",
+    "exports": ["function parseDeviceLabel", "function useActiveSessions", "type DeviceSession"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useActiveSessions.test.ts"
+  },
+  {
     "name": "useAdaptiveLoading",
     "file": "app/composables/useAdaptiveLoading.ts",
     "lines": 64,
@@ -1554,6 +1564,21 @@
     "testFile": "tests/unit/useCorrelationId.test.ts"
   },
   {
+    "name": "useCustomFields",
+    "file": "app/composables/useCustomFields.ts",
+    "lines": 153,
+    "domain": "core",
+    "exports": [
+      "function validateFieldValue",
+      "function useCustomFields",
+      "type CustomFieldDef",
+      "type ValidationResult"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useCustomFields.test.ts"
+  },
+  {
     "name": "useDatos",
     "file": "app/composables/useDatos.ts",
     "lines": 334,
@@ -1566,7 +1591,7 @@
   {
     "name": "useEmailPreferences",
     "file": "app/composables/useEmailPreferences.ts",
-    "lines": 246,
+    "lines": 242,
     "domain": "core",
     "exports": [
       "function useEmailPreferences",
@@ -1576,6 +1601,16 @@
     "dependencies": [],
     "hasTests": true,
     "testFile": "tests/unit/useEmailPreferences.test.ts"
+  },
+  {
+    "name": "useFaq",
+    "file": "app/composables/useFaq.ts",
+    "lines": 101,
+    "domain": "core",
+    "exports": ["function useFaq", "type FaqEntry"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useFaq.test.ts"
   },
   {
     "name": "useFavorites",
@@ -2014,7 +2049,7 @@
   {
     "name": "useOperationTimeline",
     "file": "app/composables/useOperationTimeline.ts",
-    "lines": 141,
+    "lines": 140,
     "domain": "core",
     "exports": ["function useOperationTimeline", "type OperationStage", "type TimelineEntry"],
     "dependencies": [],
@@ -2253,6 +2288,16 @@
     "testFile": null
   },
   {
+    "name": "useSearch",
+    "file": "app/composables/useSearch.ts",
+    "lines": 166,
+    "domain": "core",
+    "exports": ["function useSearch", "type UseSearchOptions", "type SearchFilters"],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useSearch.test.ts"
+  },
+  {
     "name": "useSearchAutocomplete",
     "file": "app/composables/useSearchAutocomplete.ts",
     "lines": 102,
@@ -2363,6 +2408,28 @@
     "dependencies": [],
     "hasTests": true,
     "testFile": "tests/unit/useSubscriptionPlan.test.ts"
+  },
+  {
+    "name": "useSupplyChainIntelligence",
+    "file": "app/composables/useSupplyChainIntelligence.ts",
+    "lines": 247,
+    "domain": "core",
+    "exports": [
+      "function computeCategoryFlows",
+      "function computeTopBuyers",
+      "function computeSeasonalPatterns",
+      "function buildSupplyChainSummary",
+      "function useSupplyChainIntelligence",
+      "type CompanyType",
+      "type TransactionRecord",
+      "type CategoryFlow",
+      "type TopBuyer",
+      "type SeasonalPattern",
+      "type SupplyChainSummary"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useSupplyChainIntelligence.test.ts"
   },
   {
     "name": "useSwrQuery",
@@ -2476,7 +2543,7 @@
   {
     "name": "useUserPanel",
     "file": "app/composables/user/useUserPanel.ts",
-    "lines": 460,
+    "lines": 459,
     "domain": "core",
     "exports": [
       "function useUserPanel",
@@ -2492,12 +2559,12 @@
   {
     "name": "useUserProfile",
     "file": "app/composables/useUserProfile.ts",
-    "lines": 193,
+    "lines": 209,
     "domain": "core",
     "exports": ["function useUserProfile"],
     "dependencies": [],
     "hasTests": true,
-    "testFile": "tests/unit/useUserProfile.test.ts"
+    "testFile": "tests/unit/composables/useUserProfile.test.ts"
   },
   {
     "name": "useValoracion",
@@ -2941,7 +3008,7 @@
   {
     "name": "useDealerDashboard",
     "file": "app/composables/useDealerDashboard.ts",
-    "lines": 176,
+    "lines": 175,
     "domain": "dashboard",
     "exports": ["function mapLeads", "function useDealerDashboard"],
     "dependencies": ["useAuth"],
@@ -2978,7 +3045,7 @@
   {
     "name": "useDealerPortal",
     "file": "app/composables/dashboard/useDealerPortal.ts",
-    "lines": 423,
+    "lines": 421,
     "domain": "dashboard",
     "exports": [
       "function useDealerPortal",
@@ -3111,6 +3178,20 @@
     "dependencies": [],
     "hasTests": true,
     "testFile": "tests/unit/usePriceRelativeToMarket.test.ts"
+  },
+  {
+    "name": "useUserVerticalHistory",
+    "file": "app/composables/useUserVerticalHistory.ts",
+    "lines": 163,
+    "domain": "multi-vertical",
+    "exports": [
+      "function useUserVerticalHistory",
+      "type VerticalActivity",
+      "type UserVerticalHistory"
+    ],
+    "dependencies": [],
+    "hasTests": true,
+    "testFile": "tests/unit/composables/useUserVerticalHistory.test.ts"
   },
   {
     "name": "useVerticalConfig",

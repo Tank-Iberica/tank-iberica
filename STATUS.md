@@ -1,28 +1,95 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-20 (Migración documental Proyecto/ completa — Bloques 1-5) · SonarQube ~0 bloques
+**Última actualización:** 2026-03-20 (Batch prioridades: 4 docs operativos + 8 Tanda 1+2) · SonarQube ~0 bloques
 **Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup + doc migration (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
 
-## Sesión 20-mar — Migración documental Proyecto/ (Bloques 1-5)
+## Sesión 20-mar (4/4) — Batch prioridades: 4 docs operativos críticos
 
-Migración completa de documentos .md de C:\TradeBase\ a estructura Proyecto/ con 6 subcarpetas temáticas.
+Debate multi-AI depuró prioridades → 5 items, 4 ejecutables. Orden: #2→#1→#4→#5. 86 .md total en Proyecto/.
 
 ### Realizado:
 
-- **Bloque 1**: Revisión Grupo A + movimientos iniciales
-- **Bloque 2**: Mover 16 .md restantes a Proyecto/
-- **Bloque 3+3.1**: Actualizar refs e índices en todos los documentos
-- **Bloque 4+4.1**: Parchear 20 scripts PS1 + reparar corrupción sed (15 scripts con bytes 0x05/0x06)
-- **Bloque 5**: Verificación final (8/8 checks PASS) + remates de cierre
-- **Commits**: `3be6f9b`, `7f7cc99`, `d531218`
-- **Resultado**: 71 .md en Proyecto/ (66 docs + 5 migration logs), 21 scripts activos limpios, repo limpio
+- **ACTA-DECISIONES-FOUNDERS.md** (04-gobernanza/): 9 decisiones de sistema-operativo §9, propuesta+espacio decisión, confirmación WhatsApp
+- **MODELO-FINANCIERO-DINAMICO.md** (05-financiero/): Template Google Sheets 5 pestañas, supuestos trazados a maestros, 36 meses, 5 escenarios, KPIs
+- **POLITICA-COBROS-IMPAGOS.md** (04-gobernanza/): Ciclo cobro (mensual/anual/Founding), 4 tipos impago, cancelaciones, reembolsos (límites aprobación), pausas 3 meses, IVA multi-país, 3 comunicaciones tipo
+- **PLAN-DIA-D.md** (04-gobernanza/): 20 requisitos previos (legal/técnico/comercial), hora a hora D-1/D+0/D+1, 7 contingencias, 15 FAQ dealer, plan semana 1
+- **MATRIZ-IMPACTO-DECISIONES.md** (04-gobernanza/): 16 tipos de decisión → docs afectados, 6 maestros, registro cascadas + instrucción en CLAUDE.md
 
-### Pendiente (otro trabajo, no migración):
+### Pendiente:
 
-- Regenerar PDFs con rutas actualizadas
-- Prompt para continuar: "Regenerar PDFs ejecutando generate-tradebase-doc-pdfs.ps1 con las rutas actualizadas a Proyecto/"
+- #3 Cierre legal con abogado — requiere profesional externo, no documento
+- Tier 2 (cerrar existentes): T&C final, DSA, material comercial externo, protocolo brecha, migración Tank, seguro RC
+
+---
+
+## Sesión 20-mar (3/3) — Tanda 1+2: 8 documentos operativos Proyecto/
+
+Debate multi-AI validado. 8 docs nuevos en 2 tandas. 82 .md total en Proyecto/.
+
+### Realizado:
+
+**Tanda 1 (5 docs — aprobada):**
+
+- **ROADMAP-EJECUTIVO-12M.md** (04-gobernanza/): §0 punto de partida, hitos trimestrales, vista 90 días, 8 triggers, 8 riesgos
+- **CIERRE-MENSUAL.md** (04-gobernanza/): 4 fases, overlay trimestral/anual, vinculadas como referencia (no duplicado)
+- **TRACKER-SUBVENCIONES.md** (06-subvenciones/): 14 líneas, EV 34.4K+49.5K, 10 compatibilidades, calendario
+- **MATRIZ-ACCESOS.md** (04-gobernanza/): ~25 servicios, titular actual vs objetivo, plan transferencia 4 semanas
+- **REGISTRO-OPERACIONES-VINCULADAS.md** (04-gobernanza/): §0 partes vinculadas, arm's length, registro cronológico
+
+**Tanda 2 (3 docs — aprobada):**
+
+- **CONDICIONES-DEALER.md** (03-comercial/): Admisión, pricing 3 planes + Founding, disciplina 4 niveles, baja
+- **SOP-SOPORTE-Y-RECLAMACIONES.md** (04-gobernanza/): 4 canales SLA, 5×4 clasificación, fraude, mediación
+- **PLAN-PRIMERA-CONTRATACION.md** (04-gobernanza/): 5 triggers, 2 perfiles, impacto runway (1.3K→3-4K/mes), proceso legal+selección
+
+### Correcciones post-review:
+
+- MATRIZ-ACCESOS.md §2: "Partes vinculadas" → "Personas con acceso" (evitar confusión con registro fiscal)
+- Recuento: 82 .md en Proyecto/ (45 principales + 37 tomos biblia)
+
+### Pendiente (Tanda 3, baja prioridad):
+
+- DATA-ROOM.md — solo si hay cita con abogado/gestoría/banco próxima
+- COMPLIANCE-MARKETPLACE.md — para cuando toque validación jurídica real
+
+---
+
+## Sesión 20-mar (2/2) — Reconciliación financiera + 3 docs operativos
+
+Rebuild completo del derivado inversor + 3 documentos operativos nuevos. Validado con debate multi-AI (6 correcciones incorporadas).
+
+### Realizado:
+
+- **CHECKLIST-CONSTITUCION.md** (01-legal-constitutiva/): 5 fases, 28 pasos con owner/dependencia/evidencia/estado. Items "si aplica" marcados.
+- **IMPLEMENTACION-SEDE.md** (04-gobernanza-operativa/): Fresno = DECIDIDA. 6 secciones + checklist 7 pasos. Implicaciones fiscales y subvenciones.
+- **CALENDARIO-FISCAL.md** (05-financiero/): Borrador operativo pendiente gestoría. Modelo 202 (no 130). Plazos LSC correctos.
+- **PRESUPUESTO-INVERSORES-3-ANOS.md** (05-financiero/derivados/): Rebuild completo v1 reconciliada. Costes ~51.800€ (antes ~115K, -55%). Revenue base 72.600€ / aspiracional 132.300€. RETA=0€. Apéndice de supuestos eliminados.
+- **README.md** (Proyecto/): Actualizado árbol + tabla estado (74 .md total)
+- Verificación aritmética P&L: todos los cálculos cuadran
+
+### Correcciones clave (debate multi-AI):
+
+1. Modelo 202 (SL) en vez de 130 (personas físicas)
+2. Zero invention rule: sin CAC/LTV/churn/break-even hasta datos reales
+3. Sede Fresno = DECIDIDA (doc se centra en implementación, no decisión)
+4. Orden: CHECKLIST → SEDE → CALENDARIO → REBUILD
+5. Checklist con owner/dependencia/evidencia + "si aplica"
+6. Apéndice de supuestos eliminados en rebuild inversor
+
+### Reglas de ejecución (usuario):
+
+- CALENDARIO-FISCAL = borrador operativo pendiente de gestoría
+- PRESUPUESTO-INVERSORES = v1 reconciliada, no definitivo
+- Si cambia RETA → reabrir derivado inversor
+
+### Siguiente (ya no es "crear docs" — es ejecutar):
+
+1. Validar fiscalidad con gestoría
+2. Cerrar dirección exacta/título de uso de Fresno
+3. Decidir expedientes de subvención a atacar primero
+4. Regenerar PDFs con rutas actualizadas a Proyecto/
 
 CLOSING_SESSION
 

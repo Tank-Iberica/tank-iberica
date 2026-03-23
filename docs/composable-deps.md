@@ -337,7 +337,7 @@ flowchart LR
   useVendedorDetail --> useSiteUrl
 ```
 
-**Generated:** 2026-03-19
-**Total composables:** 248
+**Generated:** 2026-03-23
+**Total composables:** 254
 **Total dependencies:** 190
-**Files scanned:** 268
+**Files scanned:** 274

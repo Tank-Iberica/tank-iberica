@@ -280,6 +280,15 @@ Ver `CONTRIBUTING.md` para stack, estructura, convenciones, comandos, tests, git
 - **PROYECTO-CONTEXTO.md:** Si hay decisión estratégica → PARA, pregunta "¿Actualizo?", espera confirmación.
 - **ENTORNO-DESARROLLO.md:** Siempre que se instale/configure algo que requiera setup en PC nuevo (CLI global, servicio cloud, hooks). NO para npm dependencies o nuevos componentes. Añadir fila en tabla + pasos de instalación + checklist.
 
+### Cascada de decisiones (Proyecto/)
+
+Cuando se modifique un **documento maestro** de `Proyecto/` (PRESUPUESTOS, MODELO-INGRESOS-FINAL, DECISIONES-FINANCIERAS, CONDICIONES-DEALER, sistema-operativo, SUBVENCIONES) o cuando el usuario comunique una **decisión de negocio** (cambio de sede, pricing, contratación, constitución, etc.):
+
+1. Consultar `Proyecto/04-gobernanza-operativa/MATRIZ-IMPACTO-DECISIONES.md` §1
+2. Listar los documentos afectados al usuario
+3. Proponer actualizaciones en cascada **antes de cerrar sesión**
+4. Registrar la cascada en §2 de la matriz
+
 ## Gestión de sesión
 
 ### Node: siempre limpiar antes

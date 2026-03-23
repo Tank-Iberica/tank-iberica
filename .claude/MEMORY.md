@@ -515,15 +515,39 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Pendiente push:** Migraciones 00179-00184 necesitan `supabase db push`
 - **Supabase mock pattern confirmado:** Proxy-based chain con thenable objects para await destructuring. `range()` returns thenable, NOT is thenable.
 
+## Documentos Operativos Tanda 1+2 (completada 20-mar-2026)
+
+- **8 docs nuevos** en 2 tandas, validados con debate multi-AI
+- **Tanda 1 (5):** ROADMAP-EJECUTIVO-12M, CIERRE-MENSUAL, TRACKER-SUBVENCIONES, MATRIZ-ACCESOS, REGISTRO-OPERACIONES-VINCULADAS
+- **Tanda 2 (3):** CONDICIONES-DEALER, SOP-SOPORTE-Y-RECLAMACIONES, PLAN-PRIMERA-CONTRATACION
+- **Batch prioridades (4):** ACTA-DECISIONES-FOUNDERS, MODELO-FINANCIERO-DINAMICO, POLITICA-COBROS-IMPAGOS, PLAN-DIA-D
+- **Matriz impacto:** MATRIZ-IMPACTO-DECISIONES.md + instrucción cascada en CLAUDE.md §"Cascada de decisiones"
+- **Total Proyecto/:** 87 .md (50 principales + 37 tomos biblia)
+- **Corrección aplicada:** MATRIZ-ACCESOS §2 renombrado de "Partes vinculadas" a "Personas con acceso"
+- **Regla trazabilidad:** toda cifra financiera lleva `(→ FUENTE §X)`. Derivados no inventan.
+- **Regla depuración multi-AI:** distinguir "no existe" vs "existe pero pendiente de cerrar" — error frecuente en gap analysis
+- **Pendiente Tanda 3:** DATA-ROOM.md (solo si hay cita próxima) + COMPLIANCE-MARKETPLACE.md (validación jurídica)
+- **Pendiente Tier 2 (cerrar):** T&C final, DSA, material comercial externo, protocolo brecha, migración Tank, seguro RC
+
 ## Migración Documental Proyecto/ (completada 20-mar-2026)
 
 - **Estructura:** `C:\TradeBase\Proyecto\` con 6 subcarpetas temáticas (01-legal a 06-subvenciones)
-- **Resultado:** 71 .md (66 docs + 5 migration logs), 20 scripts PS1 parcheados, repo limpio
+- **Resultado:** 74 .md (66 docs + 5 migration logs + 3 nuevos operativos), 20 scripts PS1 parcheados, repo limpio
 - **Commits:** `3be6f9b` (scripts), `7f7cc99` (docs), `d531218` (tooling)
 - **Logs:** `Proyecto/MIGRATION-LOG-BLOQUE{1..5}.md`
 - **Exclusión:** `rewrite-tank-iberica-subsidies.ps1` = legacy Tank Ibérica, fuera del scope
 - **Artefactos en raíz:** 16 PDFs (regenerables) + `Instalación.txt` (operativo) — fuera del scope documental .md
 - **Lección sed:** NUNCA usar sed con rutas que contienen `\0N` — interpreta como octales. Usar Python binary-safe.
+
+## Reconciliación Financiera + Docs Operativos (20-mar-2026)
+
+- **Derivado roto:** PRESUPUESTO-INVERSORES-3-ANOS.md tenía costes inflados 2.23x (~115K vs ~52K maestro), RETA incluida, APIs infladas 4-8x, marketing 2.3x, HR fantasma 15K€. Rebuild completo, no parche.
+- **3 docs nuevos:** CHECKLIST-CONSTITUCION.md (28 pasos), IMPLEMENTACION-SEDE.md (Fresno = DECIDIDA), CALENDARIO-FISCAL.md (borrador pendiente gestoría)
+- **Corrección fiscal crítica:** Modelo 202 (pagos fraccionados IS para SL), NO modelo 130 (personas físicas IRPF estimación directa)
+- **Cifras maestros alineadas:** OPEX 3yr ~47.4K sin Stripe / ~51.8K con Stripe. Revenue base 72.6K / aspiracional 132.3K.
+- **Regla trazabilidad:** toda cifra en derivados lleva `(→ FUENTE §X)`. Si no está en maestro, no aparece.
+- **Debate multi-AI:** 6 correcciones de la otra AI incorporadas. Proceso validado por ambas partes.
+- **Estado post-sesión:** Docs completos. Siguiente = ejecutar (gestoría, sede, subvenciones).
 
 ## Sub-archivos (leer bajo demanda)
 

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factura VER-2026-003 — Versalion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #1a1a1a; background: #f0f2f5; padding: 40px 20px; }
+    .page { max-width: 780px; margin: 0 auto; background: #ffffff; padding: 56px 60px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+    .brand h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: #1a1a1a; }
+    .brand p { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .invoice-meta { text-align: right; }
+    .invoice-meta .invoice-number { font-size: 22px; font-weight: 700; color: #1a1a1a; }
+    .invoice-meta table { margin-top: 8px; margin-left: auto; font-size: 13px; }
+    .invoice-meta td { padding: 2px 0 2px 16px; }
+    .invoice-meta td:first-child { color: #6b7280; text-align: right; }
+    .invoice-meta td:last-child { font-weight: 600; text-align: right; }
+    .divider { border: none; border-top: 2px solid #e5e7eb; margin: 0 0 36px 0; }
+    .parties { display: flex; gap: 40px; margin-bottom: 40px; }
+    .party { flex: 1; }
+    .party-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #9ca3af; margin-bottom: 10px; }
+    .party h2 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #111827; }
+    .party p { font-size: 13px; color: #4b5563; line-height: 1.6; }
+    .party .tax-id { margin-top: 8px; font-size: 12px; color: #6b7280; }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #9ca3af; margin-bottom: 12px; }
+    table.services { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    table.services thead tr { background: #f9fafb; border-bottom: 2px solid #e5e7eb; }
+    table.services thead th { padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #6b7280; text-align: left; }
+    table.services thead th:last-child { text-align: right; }
+    table.services tbody tr { border-bottom: 1px solid #f3f4f6; }
+    table.services tbody td { padding: 14px 14px; font-size: 13px; color: #374151; vertical-align: top; }
+    table.services tbody td:last-child { text-align: right; font-weight: 600; white-space: nowrap; }
+    .service-desc { font-size: 12px; color: #6b7280; margin-top: 4px; line-height: 1.5; }
+    .totals { display: flex; justify-content: flex-end; margin-bottom: 40px; }
+    .totals-box { width: 280px; }
+    .totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; color: #4b5563; border-bottom: 1px solid #f3f4f6; }
+    .totals-row.note { font-size: 11px; color: #9ca3af; border-bottom: none; padding-top: 4px; }
+    .totals-row.total { padding: 12px 0 4px; font-size: 16px; font-weight: 700; color: #111827; border-bottom: none; }
+    .payment-section { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+    .payment-section .section-title { margin-bottom: 14px; }
+    .payment-grid { display: grid; grid-template-columns: 160px 1fr; gap: 6px 12px; font-size: 13px; }
+    .payment-grid .label { color: #6b7280; font-weight: 500; }
+    .payment-grid .value { color: #111827; font-weight: 600; font-family: 'Courier New', monospace; font-size: 12.5px; }
+    .payment-grid .value.normal { font-family: inherit; font-size: 13px; }
+    .notes { border-top: 1px solid #e5e7eb; padding-top: 20px; font-size: 12px; color: #6b7280; line-height: 1.7; }
+    .notes strong { color: #374151; }
+    @media print { body { background: white; padding: 0; } .page { box-shadow: none; padding: 40px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="brand">
+        <h1>Versalion</h1>
+        <p>Servicios Profesionales</p>
+      </div>
+      <div class="invoice-meta">
+        <div class="invoice-number">Factura VER-2026-003</div>
+        <table>
+          <tr><td>Fecha de emisión</td><td>31 de marzo de 2026</td></tr>
+          <tr><td>Fecha de vencimiento</td><td>30 de abril de 2026</td></tr>
+          <tr><td>Moneda</td><td>EUR</td></tr>
+        </table>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="parties">
+      <div class="party">
+        <div class="party-label">Emisor</div>
+        <h2>Juan Manuel González Tirados</h2>
+        <p>Actividad bajo Versalion<br>27 Dukes Terrace<br>Liverpool, L1 4JS<br>Reino Unido</p>
+        <p class="tax-id">UTR: 58879 51267</p>
+      </div>
+      <div class="party">
+        <div class="party-label">Facturar a</div>
+        <h2>TRUCKTANKIBERICA SL</h2>
+        <p>Ctra. Nacional 630 (parcela El Valle) s/n<br>24231 Onzonilla<br>León, España</p>
+        <p class="tax-id">NIF: B24724684</p>
+      </div>
+    </div>
+    <div class="section-title">Servicios</div>
+    <table class="services">
+      <thead>
+        <tr><th>Descripción</th><th style="text-align:right; width:120px;">Importe</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            Consultoría en Logística Internacional y Comercio Exterior — Marzo 2026
+            <div class="service-desc">Servicios de asesoramiento en logística internacional, comercio exterior e intermediación comercial transfronteriza, incluyendo análisis técnicos, evaluación de productos, identificación de proveedores y compradores, asesoramiento estratégico y apoyo profesional en operaciones transfronterizas.</div>
+          </td>
+          <td>2.309,91 EUR</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="totals">
+      <div class="totals-box">
+        <div class="totals-row"><span>Base imponible</span><span>2.309,91 EUR</span></div>
+        <div class="totals-row"><span>IVA</span><span>0,00 EUR</span></div>
+        <div class="totals-row note"><span>Inversión del sujeto pasivo — Art. 196, Directiva 2006/112/CE</span></div>
+        <div class="totals-row total"><span>Total a pagar</span><span>2.309,91 EUR</span></div>
+      </div>
+    </div>
+    <div class="payment-section">
+      <div class="section-title">Datos de pago</div>
+      <div class="payment-grid">
+        <span class="label">Titular de la cuenta</span><span class="value normal">Juan Manuel González Tirados</span>
+        <span class="label">IBAN</span><span class="value">BE04 9675 0921 7731</span>
+        <span class="label">BIC / SWIFT</span><span class="value">TRWIBEB1XXX</span>
+        <span class="label">Entidad bancaria</span><span class="value normal">Wise (Rue du Trône 100, 3.ª planta, Bruselas, 1050, Bélgica)</span>
+        <span class="label">Referencia</span><span class="value normal">VER-2026-003</span>
+      </div>
+    </div>
+    <div class="notes">
+      <strong>Condiciones de pago:</strong> Pago a 30 días desde la fecha de emisión (vencimiento: 30 de abril de 2026).<br>
+      <strong>Nota sobre IVA:</strong> En calidad de profesional autónomo establecido en el Reino Unido que presta servicios B2B a una empresa en España, no se aplica IVA. El destinatario es responsable de declarar el IVA en virtud del mecanismo de inversión del sujeto pasivo (artículo 196, Directiva 2006/112/CE del Consejo). Indique el número de factura en la referencia del pago.
+    </div>
+  </div>
+</body>
+</html>

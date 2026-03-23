@@ -1,18 +1,18 @@
 # Coupling Metrics Report
 
-**Generated:** 2026-03-19
+**Generated:** 2026-03-23
 **Threshold:** Ca+Ce > 1 flagged as high coupling
 
 ## Module Coupling
 
 | Module       | Files | Ca (incoming) | Ce (outgoing) | Total | Instability | Flag    |
 | ------------ | ----- | ------------- | ------------- | ----- | ----------- | ------- |
-| composables  | 268   | 3             | 3             | 6     | 0.50        | ⚠️ HIGH |
+| composables  | 274   | 3             | 3             | 6     | 0.50        | ⚠️ HIGH |
 | components   | 536   | 2             | 2             | 4     | 0.50        | ⚠️ HIGH |
 | pages        | 134   | 0             | 4             | 4     | 1.00        | ⚠️ HIGH |
 | app-utils    | 36    | 3             | 1             | 4     | 0.25        | ⚠️ HIGH |
-| server-utils | 63    | 4             | 0             | 4     | 0.00        | ⚠️ HIGH |
-| api          | 137   | 0             | 2             | 2     | 1.00        | ⚠️ HIGH |
+| server-utils | 66    | 4             | 0             | 4     | 0.00        | ⚠️ HIGH |
+| api          | 142   | 0             | 2             | 2     | 1.00        | ⚠️ HIGH |
 | services     | 12    | 1             | 1             | 2     | 0.50        | ⚠️ HIGH |
 
 ## Interpretation

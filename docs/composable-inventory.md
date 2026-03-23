@@ -1,23 +1,23 @@
 # Composable Inventory
 
-**Generated:** 2026-03-19
-**Total composables:** 247
-**With tests:** 210 (85%)
-**Files scanned:** 268
+**Generated:** 2026-03-23
+**Total composables:** 253
+**With tests:** 216 (85%)
+**Files scanned:** 274
 
 ## Summary by Domain
 
 | Domain         | Count | Tested | Lines |
 | -------------- | ----- | ------ | ----- |
-| core           | 103   | 78/103 | 16857 |
-| admin          | 86    | 78/86  | 25729 |
-| dashboard      | 34    | 32/34  | 10605 |
+| core           | 108   | 83/108 | 17663 |
+| admin          | 86    | 78/86  | 25723 |
+| dashboard      | 34    | 32/34  | 10602 |
 | vehicles       | 10    | 9/10   | 2756  |
 | market         | 4     | 4/4    | 737   |
 | shared         | 4     | 3/4    | 396   |
 | analytics      | 3     | 3/3    | 703   |
 | auth           | 2     | 2/2    | 508   |
-| multi-vertical | 1     | 1/1    | 146   |
+| multi-vertical | 2     | 2/2    | 309   |
 
 ## Full Inventory
 
@@ -35,8 +35,8 @@
 | `useAdminBalance`               | `app/composables/admin/useAdminBalance.ts`               | 397   | 0    | ✅    |
 | `useAdminBalanceUI`             | `app/composables/admin/useAdminBalanceUI.ts`             | 727   | 7    | ✅    |
 | `useAdminBanner`                | `app/composables/admin/useAdminBanner.ts`                | 423   | 2    | ✅    |
-| `useAdminBrokerage`             | `app/composables/admin/useAdminBrokerage.ts`             | 350   | 0    | ✅    |
-| `useAdminBrokerageDeal`         | `app/composables/admin/useAdminBrokerageDeal.ts`         | 344   | 0    | ✅    |
+| `useAdminBrokerage`             | `app/composables/admin/useAdminBrokerage.ts`             | 349   | 0    | ✅    |
+| `useAdminBrokerageDeal`         | `app/composables/admin/useAdminBrokerageDeal.ts`         | 340   | 0    | ✅    |
 | `useAdminCapacityAlerts`        | `app/composables/admin/useAdminCapacityAlerts.ts`        | 106   | 0    | ✅    |
 | `useAdminCaptacion`             | `app/composables/admin/useAdminCaptacion.ts`             | 543   | 0    | ✅    |
 | `useAdminCaracteristicas`       | `app/composables/admin/useAdminCaracteristicas.ts`       | 387   | 2    | ✅    |
@@ -86,7 +86,7 @@
 | `useAdminRole`                  | `app/composables/useAdminRole.ts`                        | 46    | 0    | ✅    |
 | `useAdminSearchAnalytics`       | `app/composables/admin/useAdminSearchAnalytics.ts`       | 123   | 0    | ❌    |
 | `useAdminServicios`             | `app/composables/admin/useAdminServicios.ts`             | 244   | 0    | ✅    |
-| `useAdminSidebar`               | `app/composables/admin/useAdminSidebar.ts`               | 256   | 2    | ✅    |
+| `useAdminSidebar`               | `app/composables/admin/useAdminSidebar.ts`               | 255   | 2    | ✅    |
 | `useAdminSocialCalendar`        | `app/composables/admin/useAdminSocialCalendar.ts`        | 348   | 0    | ❌    |
 | `useAdminSolicitantes`          | `app/composables/admin/useAdminSolicitantes.ts`          | 209   | 1    | ✅    |
 | `useAdminSubcategoriasPage`     | `app/composables/admin/useAdminSubcategoriasPage.ts`     | 291   | 3    | ✅    |
@@ -129,111 +129,116 @@
 
 ### core
 
-| Composable                | File                                             | Lines | Deps | Tests |
-| ------------------------- | ------------------------------------------------ | ----- | ---- | ----- |
-| `useAbTest`               | `app/composables/useAbTest.ts`                   | 85    | 0    | ✅    |
-| `useAdaptiveLoading`      | `app/composables/useAdaptiveLoading.ts`          | 64    | 0    | ❌    |
-| `useAds`                  | `app/composables/useAds.ts`                      | 231   | 0    | ✅    |
-| `useAdvertiseModal`       | `app/composables/modals/useAdvertiseModal.ts`    | 342   | 1    | ✅    |
-| `useAdViewability`        | `app/composables/useAdViewability.ts`            | 140   | 0    | ✅    |
-| `useAuction`              | `app/composables/useAuction.ts`                  | 333   | 0    | ✅    |
-| `useAuctionDetail`        | `app/composables/useAuctionDetail.ts`            | 280   | 5    | ✅    |
-| `useAuctionRegistration`  | `app/composables/useAuctionRegistration.ts`      | 210   | 0    | ✅    |
-| `useAudienceSegmentation` | `app/composables/useAudienceSegmentation.ts`     | 203   | 0    | ✅    |
-| `useCacheAside`           | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
-| `useCacheCategories`      | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
-| `useCacheVehicleCounts`   | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
-| `useCacheVerticalConfig`  | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
-| `useConfirmModal`         | `app/composables/useConfirmModal.ts`             | 74    | 0    | ✅    |
-| `useConsent`              | `app/composables/useConsent.ts`                  | 230   | 0    | ✅    |
-| `useConversation`         | `app/composables/useConversation.ts`             | 505   | 0    | ✅    |
-| `useCopyToClipboard`      | `app/composables/useCopyToClipboard.ts`          | 48    | 0    | ✅    |
-| `useCorrelationId`        | `app/composables/useCorrelationId.ts`            | 56    | 0    | ✅    |
-| `useDatos`                | `app/composables/useDatos.ts`                    | 334   | 1    | ✅    |
-| `useEmailPreferences`     | `app/composables/useEmailPreferences.ts`         | 246   | 0    | ✅    |
-| `useFavorites`            | `app/composables/useFavorites.ts`                | 216   | 0    | ✅    |
-| `useFeatureFlag`          | `app/composables/useFeatureFlags.ts`             | 80    | 0    | ❌    |
-| `useFeatureGate`          | `app/composables/useFeatureGate.ts`              | 98    | 2    | ✅    |
-| `useFilterBar`            | `app/composables/catalog/useFilterBar.ts`        | 267   | 4    | ✅    |
-| `useFilters`              | `app/composables/useFilters.ts`                  | 234   | 0    | ✅    |
-| `useFinanceCalculator`    | `app/composables/useFinanceCalculator.ts`        | 32    | 0    | ✅    |
-| `useFocusTrap`            | `app/composables/useFocusTrap.ts`                | 96    | 0    | ❌    |
-| `useFormAutosave`         | `app/composables/useFormAutosave.ts`             | 121   | 0    | ✅    |
-| `useFormValidation`       | `app/composables/useFormValidation.ts`           | 67    | 0    | ✅    |
-| `useGeoFallback`          | `app/composables/catalog/useGeoFallback.ts`      | 155   | 3    | ✅    |
-| `useGlossary`             | `app/composables/useGlossary.ts`                 | 115   | 0    | ❌    |
-| `useGtag`                 | `app/composables/useGtag.ts`                     | 188   | 1    | ✅    |
-| `useHorizontalScroll`     | `app/composables/catalog/useHorizontalScroll.ts` | 84    | 0    | ✅    |
-| `useHreflang`             | `app/composables/useHreflang.ts`                 | 40    | 1    | ✅    |
-| `useImageUrl`             | `app/composables/useImageUrl.ts`                 | 73    | 0    | ✅    |
-| `useInfraMetrics`         | `app/composables/useInfraMetrics.ts`             | 215   | 0    | ✅    |
-| `useInfraRecommendations` | `app/composables/useInfraRecommendations.ts`     | 226   | 0    | ✅    |
-| `useInjectConfig`         | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
-| `useInjectOrDefault`      | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
-| `useInjectRoute`          | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
-| `useInjectRouter`         | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
-| `useInjectSupabase`       | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
-| `useInjectUser`           | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
-| `useInvoicing`            | `app/composables/useInvoicing.ts`                | 75    | 0    | ✅    |
-| `useJsonLd`               | `app/composables/useStructuredData.ts`           | 149   | 2    | ❌    |
-| `useListingLifecycle`     | `app/composables/useListingLifecycle.ts`         | 297   | 0    | ✅    |
-| `useListingQuality`       | `app/composables/useListingQuality.ts`           | 159   | 0    | ✅    |
-| `useListingRenewal`       | `app/composables/useListingRenewal.ts`           | 142   | 1    | ✅    |
-| `useLocalStorageCache`    | `app/composables/useLocalStorageCache.ts`        | 76    | 0    | ❌    |
-| `useNegotiation`          | `app/composables/useNegotiation.ts`              | 184   | 0    | ❌    |
-| `useNews`                 | `app/composables/useNews.ts`                     | 145   | 0    | ✅    |
-| `useOfflineSync`          | `app/composables/useOfflineSync.ts`              | 173   | 0    | ✅    |
-| `useOnboarding`           | `app/composables/useOnboarding.ts`               | 266   | 0    | ✅    |
-| `useOnboardingTour`       | `app/composables/useOnboardingTour.ts`           | 128   | 0    | ✅    |
-| `useOperationTimeline`    | `app/composables/useOperationTimeline.ts`        | 141   | 0    | ❌    |
-| `usePageSeo`              | `app/composables/usePageSeo.ts`                  | 74    | 1    | ✅    |
-| `usePerfilAlertas`        | `app/composables/usePerfilAlertas.ts`            | 152   | 1    | ✅    |
-| `usePerfilComparador`     | `app/composables/usePerfilComparador.ts`         | 227   | 1    | ✅    |
-| `usePerfilMensajes`       | `app/composables/usePerfilMensajes.ts`           | 253   | 2    | ✅    |
-| `usePerfilReservas`       | `app/composables/usePerfilReservas.ts`           | 145   | 1    | ✅    |
-| `usePrebid`               | `app/composables/usePrebid.ts`                   | 256   | 0    | ✅    |
-| `usePrecios`              | `app/composables/usePrecios.ts`                  | 291   | 0    | ✅    |
-| `usePresence`             | `app/composables/usePresence.ts`                 | 88    | 0    | ✅    |
-| `usePricingSuggestion`    | `app/composables/usePricingSuggestion.ts`        | 90    | 0    | ✅    |
-| `usePushNotifications`    | `app/composables/usePushNotifications.ts`        | 232   | 0    | ✅    |
-| `useQueryBudget`          | `app/composables/useQueryBudget.ts`              | 76    | 0    | ✅    |
-| `useQueryCostEstimation`  | `app/composables/useQueryCostEstimation.ts`      | 107   | 0    | ✅    |
-| `useReferral`             | `app/composables/useReferral.ts`                 | 181   | 0    | ✅    |
-| `useReports`              | `app/composables/useReports.ts`                  | 56    | 0    | ✅    |
-| `useReservation`          | `app/composables/useReservation.ts`              | 397   | 2    | ✅    |
-| `useRetryOperation`       | `app/composables/useRetryOperation.ts`           | 172   | 0    | ✅    |
-| `useRevenueMetrics`       | `app/composables/useRevenueMetrics.ts`           | 172   | 0    | ✅    |
-| `useSanitize`             | `app/composables/useSanitize.ts`                 | 25    | 0    | ✅    |
-| `useSavedFilters`         | `app/composables/catalog/useSavedFilters.ts`     | 109   | 0    | ✅    |
-| `useScrollDepth`          | `app/composables/useScrollDepth.ts`              | 52    | 1    | ❌    |
-| `useScrollLock`           | `app/composables/useScrollLock.ts`               | 19    | 0    | ❌    |
-| `useSearchAutocomplete`   | `app/composables/useSearchAutocomplete.ts`       | 102   | 0    | ✅    |
-| `useSearchHistory`        | `app/composables/useSearchHistory.ts`            | 55    | 0    | ❌    |
-| `useSellerProfile`        | `app/composables/useSellerProfile.ts`            | 265   | 0    | ✅    |
-| `useSessionTimeout`       | `app/composables/useSessionTimeout.ts`           | 146   | 0    | ✅    |
-| `useSimilarSearches`      | `app/composables/catalog/useSimilarSearches.ts`  | 262   | 3    | ✅    |
-| `useSiteName`             | `app/composables/useSiteName.ts`                 | 14    | 0    | ❌    |
-| `useSiteUrl`              | `app/composables/useSiteUrl.ts`                  | 14    | 0    | ❌    |
-| `useSocialPublisher`      | `app/composables/useSocialPublisher.ts`          | 604   | 1    | ✅    |
-| `useSubastasIndex`        | `app/composables/useSubastasIndex.ts`            | 200   | 3    | ✅    |
-| `useSubscriptionPlan`     | `app/composables/useSubscriptionPlan.ts`         | 296   | 0    | ✅    |
-| `useSwrQuery`             | `app/composables/useSwrQuery.ts`                 | 111   | 0    | ❌    |
-| `useTableOfContents`      | `app/composables/useTableOfContents.ts`          | 91    | 0    | ✅    |
-| `useToast`                | `app/composables/useToast.ts`                    | 113   | 0    | ✅    |
-| `useTransactionHistory`   | `app/composables/useTransactionHistory.ts`       | 95    | 0    | ❌    |
-| `useTransport`            | `app/composables/useTransport.ts`                | 229   | 0    | ✅    |
-| `useUndoAction`           | `app/composables/useUndoAction.ts`               | 148   | 0    | ✅    |
-| `useUnreadMessages`       | `app/composables/useUnreadMessages.ts`           | 105   | 0    | ✅    |
-| `useUnsavedChanges`       | `app/composables/useUnsavedChanges.ts`           | 35    | 0    | ✅    |
-| `useUserChat`             | `app/composables/useUserChat.ts`                 | 214   | 0    | ✅    |
-| `useUserLocation`         | `app/composables/useUserLocation.ts`             | 338   | 0    | ✅    |
-| `useUserPanel`            | `app/composables/user/useUserPanel.ts`           | 460   | 3    | ✅    |
-| `useUserProfile`          | `app/composables/useUserProfile.ts`              | 193   | 0    | ✅    |
-| `useValoracion`           | `app/composables/useValoracion.ts`               | 291   | 0    | ✅    |
-| `useVendedorDetail`       | `app/composables/useVendedorDetail.ts`           | 292   | 2    | ✅    |
-| `useViewHistory`          | `app/composables/useViewHistory.ts`              | 123   | 0    | ✅    |
-| `useVirtualList`          | `app/composables/useVirtualList.ts`              | 126   | 0    | ✅    |
-| `useVoiceSearch`          | `app/composables/useVoiceSearch.ts`              | 118   | 0    | ✅    |
+| Composable                   | File                                             | Lines | Deps | Tests |
+| ---------------------------- | ------------------------------------------------ | ----- | ---- | ----- |
+| `useAbTest`                  | `app/composables/useAbTest.ts`                   | 85    | 0    | ✅    |
+| `useActiveSessions`          | `app/composables/useActiveSessions.ts`           | 129   | 0    | ✅    |
+| `useAdaptiveLoading`         | `app/composables/useAdaptiveLoading.ts`          | 64    | 0    | ❌    |
+| `useAds`                     | `app/composables/useAds.ts`                      | 231   | 0    | ✅    |
+| `useAdvertiseModal`          | `app/composables/modals/useAdvertiseModal.ts`    | 342   | 1    | ✅    |
+| `useAdViewability`           | `app/composables/useAdViewability.ts`            | 140   | 0    | ✅    |
+| `useAuction`                 | `app/composables/useAuction.ts`                  | 333   | 0    | ✅    |
+| `useAuctionDetail`           | `app/composables/useAuctionDetail.ts`            | 280   | 5    | ✅    |
+| `useAuctionRegistration`     | `app/composables/useAuctionRegistration.ts`      | 210   | 0    | ✅    |
+| `useAudienceSegmentation`    | `app/composables/useAudienceSegmentation.ts`     | 203   | 0    | ✅    |
+| `useCacheAside`              | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
+| `useCacheCategories`         | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
+| `useCacheVehicleCounts`      | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
+| `useCacheVerticalConfig`     | `app/composables/useCacheAside.ts`               | 144   | 0    | ❌    |
+| `useConfirmModal`            | `app/composables/useConfirmModal.ts`             | 74    | 0    | ✅    |
+| `useConsent`                 | `app/composables/useConsent.ts`                  | 230   | 0    | ✅    |
+| `useConversation`            | `app/composables/useConversation.ts`             | 505   | 0    | ✅    |
+| `useCopyToClipboard`         | `app/composables/useCopyToClipboard.ts`          | 48    | 0    | ✅    |
+| `useCorrelationId`           | `app/composables/useCorrelationId.ts`            | 56    | 0    | ✅    |
+| `useCustomFields`            | `app/composables/useCustomFields.ts`             | 153   | 0    | ✅    |
+| `useDatos`                   | `app/composables/useDatos.ts`                    | 334   | 1    | ✅    |
+| `useEmailPreferences`        | `app/composables/useEmailPreferences.ts`         | 242   | 0    | ✅    |
+| `useFaq`                     | `app/composables/useFaq.ts`                      | 101   | 0    | ✅    |
+| `useFavorites`               | `app/composables/useFavorites.ts`                | 216   | 0    | ✅    |
+| `useFeatureFlag`             | `app/composables/useFeatureFlags.ts`             | 80    | 0    | ❌    |
+| `useFeatureGate`             | `app/composables/useFeatureGate.ts`              | 98    | 2    | ✅    |
+| `useFilterBar`               | `app/composables/catalog/useFilterBar.ts`        | 267   | 4    | ✅    |
+| `useFilters`                 | `app/composables/useFilters.ts`                  | 234   | 0    | ✅    |
+| `useFinanceCalculator`       | `app/composables/useFinanceCalculator.ts`        | 32    | 0    | ✅    |
+| `useFocusTrap`               | `app/composables/useFocusTrap.ts`                | 96    | 0    | ❌    |
+| `useFormAutosave`            | `app/composables/useFormAutosave.ts`             | 121   | 0    | ✅    |
+| `useFormValidation`          | `app/composables/useFormValidation.ts`           | 67    | 0    | ✅    |
+| `useGeoFallback`             | `app/composables/catalog/useGeoFallback.ts`      | 155   | 3    | ✅    |
+| `useGlossary`                | `app/composables/useGlossary.ts`                 | 115   | 0    | ❌    |
+| `useGtag`                    | `app/composables/useGtag.ts`                     | 188   | 1    | ✅    |
+| `useHorizontalScroll`        | `app/composables/catalog/useHorizontalScroll.ts` | 84    | 0    | ✅    |
+| `useHreflang`                | `app/composables/useHreflang.ts`                 | 40    | 1    | ✅    |
+| `useImageUrl`                | `app/composables/useImageUrl.ts`                 | 73    | 0    | ✅    |
+| `useInfraMetrics`            | `app/composables/useInfraMetrics.ts`             | 215   | 0    | ✅    |
+| `useInfraRecommendations`    | `app/composables/useInfraRecommendations.ts`     | 226   | 0    | ✅    |
+| `useInjectConfig`            | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
+| `useInjectOrDefault`         | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
+| `useInjectRoute`             | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
+| `useInjectRouter`            | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
+| `useInjectSupabase`          | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
+| `useInjectUser`              | `app/composables/useInject.ts`                   | 74    | 0    | ❌    |
+| `useInvoicing`               | `app/composables/useInvoicing.ts`                | 75    | 0    | ✅    |
+| `useJsonLd`                  | `app/composables/useStructuredData.ts`           | 149   | 2    | ❌    |
+| `useListingLifecycle`        | `app/composables/useListingLifecycle.ts`         | 297   | 0    | ✅    |
+| `useListingQuality`          | `app/composables/useListingQuality.ts`           | 159   | 0    | ✅    |
+| `useListingRenewal`          | `app/composables/useListingRenewal.ts`           | 142   | 1    | ✅    |
+| `useLocalStorageCache`       | `app/composables/useLocalStorageCache.ts`        | 76    | 0    | ❌    |
+| `useNegotiation`             | `app/composables/useNegotiation.ts`              | 184   | 0    | ❌    |
+| `useNews`                    | `app/composables/useNews.ts`                     | 145   | 0    | ✅    |
+| `useOfflineSync`             | `app/composables/useOfflineSync.ts`              | 173   | 0    | ✅    |
+| `useOnboarding`              | `app/composables/useOnboarding.ts`               | 266   | 0    | ✅    |
+| `useOnboardingTour`          | `app/composables/useOnboardingTour.ts`           | 128   | 0    | ✅    |
+| `useOperationTimeline`       | `app/composables/useOperationTimeline.ts`        | 140   | 0    | ❌    |
+| `usePageSeo`                 | `app/composables/usePageSeo.ts`                  | 74    | 1    | ✅    |
+| `usePerfilAlertas`           | `app/composables/usePerfilAlertas.ts`            | 152   | 1    | ✅    |
+| `usePerfilComparador`        | `app/composables/usePerfilComparador.ts`         | 227   | 1    | ✅    |
+| `usePerfilMensajes`          | `app/composables/usePerfilMensajes.ts`           | 253   | 2    | ✅    |
+| `usePerfilReservas`          | `app/composables/usePerfilReservas.ts`           | 145   | 1    | ✅    |
+| `usePrebid`                  | `app/composables/usePrebid.ts`                   | 256   | 0    | ✅    |
+| `usePrecios`                 | `app/composables/usePrecios.ts`                  | 291   | 0    | ✅    |
+| `usePresence`                | `app/composables/usePresence.ts`                 | 88    | 0    | ✅    |
+| `usePricingSuggestion`       | `app/composables/usePricingSuggestion.ts`        | 90    | 0    | ✅    |
+| `usePushNotifications`       | `app/composables/usePushNotifications.ts`        | 232   | 0    | ✅    |
+| `useQueryBudget`             | `app/composables/useQueryBudget.ts`              | 76    | 0    | ✅    |
+| `useQueryCostEstimation`     | `app/composables/useQueryCostEstimation.ts`      | 107   | 0    | ✅    |
+| `useReferral`                | `app/composables/useReferral.ts`                 | 181   | 0    | ✅    |
+| `useReports`                 | `app/composables/useReports.ts`                  | 56    | 0    | ✅    |
+| `useReservation`             | `app/composables/useReservation.ts`              | 397   | 2    | ✅    |
+| `useRetryOperation`          | `app/composables/useRetryOperation.ts`           | 172   | 0    | ✅    |
+| `useRevenueMetrics`          | `app/composables/useRevenueMetrics.ts`           | 172   | 0    | ✅    |
+| `useSanitize`                | `app/composables/useSanitize.ts`                 | 25    | 0    | ✅    |
+| `useSavedFilters`            | `app/composables/catalog/useSavedFilters.ts`     | 109   | 0    | ✅    |
+| `useScrollDepth`             | `app/composables/useScrollDepth.ts`              | 52    | 1    | ❌    |
+| `useScrollLock`              | `app/composables/useScrollLock.ts`               | 19    | 0    | ❌    |
+| `useSearch`                  | `app/composables/useSearch.ts`                   | 166   | 0    | ✅    |
+| `useSearchAutocomplete`      | `app/composables/useSearchAutocomplete.ts`       | 102   | 0    | ✅    |
+| `useSearchHistory`           | `app/composables/useSearchHistory.ts`            | 55    | 0    | ❌    |
+| `useSellerProfile`           | `app/composables/useSellerProfile.ts`            | 265   | 0    | ✅    |
+| `useSessionTimeout`          | `app/composables/useSessionTimeout.ts`           | 146   | 0    | ✅    |
+| `useSimilarSearches`         | `app/composables/catalog/useSimilarSearches.ts`  | 262   | 3    | ✅    |
+| `useSiteName`                | `app/composables/useSiteName.ts`                 | 14    | 0    | ❌    |
+| `useSiteUrl`                 | `app/composables/useSiteUrl.ts`                  | 14    | 0    | ❌    |
+| `useSocialPublisher`         | `app/composables/useSocialPublisher.ts`          | 604   | 1    | ✅    |
+| `useSubastasIndex`           | `app/composables/useSubastasIndex.ts`            | 200   | 3    | ✅    |
+| `useSubscriptionPlan`        | `app/composables/useSubscriptionPlan.ts`         | 296   | 0    | ✅    |
+| `useSupplyChainIntelligence` | `app/composables/useSupplyChainIntelligence.ts`  | 247   | 0    | ✅    |
+| `useSwrQuery`                | `app/composables/useSwrQuery.ts`                 | 111   | 0    | ❌    |
+| `useTableOfContents`         | `app/composables/useTableOfContents.ts`          | 91    | 0    | ✅    |
+| `useToast`                   | `app/composables/useToast.ts`                    | 113   | 0    | ✅    |
+| `useTransactionHistory`      | `app/composables/useTransactionHistory.ts`       | 95    | 0    | ❌    |
+| `useTransport`               | `app/composables/useTransport.ts`                | 229   | 0    | ✅    |
+| `useUndoAction`              | `app/composables/useUndoAction.ts`               | 148   | 0    | ✅    |
+| `useUnreadMessages`          | `app/composables/useUnreadMessages.ts`           | 105   | 0    | ✅    |
+| `useUnsavedChanges`          | `app/composables/useUnsavedChanges.ts`           | 35    | 0    | ✅    |
+| `useUserChat`                | `app/composables/useUserChat.ts`                 | 214   | 0    | ✅    |
+| `useUserLocation`            | `app/composables/useUserLocation.ts`             | 338   | 0    | ✅    |
+| `useUserPanel`               | `app/composables/user/useUserPanel.ts`           | 459   | 3    | ✅    |
+| `useUserProfile`             | `app/composables/useUserProfile.ts`              | 209   | 0    | ✅    |
+| `useValoracion`              | `app/composables/useValoracion.ts`               | 291   | 0    | ✅    |
+| `useVendedorDetail`          | `app/composables/useVendedorDetail.ts`           | 292   | 2    | ✅    |
+| `useViewHistory`             | `app/composables/useViewHistory.ts`              | 123   | 0    | ✅    |
+| `useVirtualList`             | `app/composables/useVirtualList.ts`              | 126   | 0    | ✅    |
+| `useVoiceSearch`             | `app/composables/useVoiceSearch.ts`              | 118   | 0    | ✅    |
 
 ### dashboard
 
@@ -262,10 +267,10 @@
 | `useDashboardVehiculoDetail`  | `app/composables/dashboard/useDashboardVehiculoDetail.ts`  | 383   | 5    | ✅    |
 | `useDashboardVisitas`         | `app/composables/dashboard/useDashboardVisitas.ts`         | 328   | 1    | ✅    |
 | `useDashboardWidget`          | `app/composables/dashboard/useDashboardWidget.ts`          | 129   | 4    | ✅    |
-| `useDealerDashboard`          | `app/composables/useDealerDashboard.ts`                    | 176   | 1    | ✅    |
+| `useDealerDashboard`          | `app/composables/useDealerDashboard.ts`                    | 175   | 1    | ✅    |
 | `useDealerHealthScore`        | `app/composables/useDealerHealthScore.ts`                  | 254   | 0    | ✅    |
 | `useDealerLeads`              | `app/composables/useDealerLeads.ts`                        | 384   | 0    | ✅    |
-| `useDealerPortal`             | `app/composables/dashboard/useDealerPortal.ts`             | 423   | 0    | ✅    |
+| `useDealerPortal`             | `app/composables/dashboard/useDealerPortal.ts`             | 421   | 0    | ✅    |
 | `useDealerReviews`            | `app/composables/useDealerReviews.ts`                      | 122   | 0    | ✅    |
 | `useDealerStats`              | `app/composables/useDealerStats.ts`                        | 226   | 0    | ✅    |
 | `useDealerTheme`              | `app/composables/useDealerTheme.ts`                        | 48    | 1    | ✅    |
@@ -285,9 +290,10 @@
 
 ### multi-vertical
 
-| Composable          | File                                   | Lines | Deps | Tests |
-| ------------------- | -------------------------------------- | ----- | ---- | ----- |
-| `useVerticalConfig` | `app/composables/useVerticalConfig.ts` | 146   | 0    | ✅    |
+| Composable               | File                                        | Lines | Deps | Tests |
+| ------------------------ | ------------------------------------------- | ----- | ---- | ----- |
+| `useUserVerticalHistory` | `app/composables/useUserVerticalHistory.ts` | 163   | 0    | ✅    |
+| `useVerticalConfig`      | `app/composables/useVerticalConfig.ts`      | 146   | 0    | ✅    |
 
 ### shared
 
@@ -337,16 +343,16 @@
 | `useDashboardMantenimientos`  | 472   | `app/composables/dashboard/useDashboardMantenimientos.ts`  |
 | `useAdminProductForm`         | 462   | `app/composables/admin/useAdminProductForm.ts`             |
 | `useDashboardAlquileres`      | 461   | `app/composables/dashboard/useDashboardAlquileres.ts`      |
-| `useUserPanel`                | 460   | `app/composables/user/useUserPanel.ts`                     |
+| `useUserPanel`                | 459   | `app/composables/user/useUserPanel.ts`                     |
 | `useDashboardCalculadora`     | 458   | `app/composables/dashboard/useDashboardCalculadora.ts`     |
 | `useDashboardPipeline`        | 455   | `app/composables/dashboard/useDashboardPipeline.ts`        |
 | `useContractGenerator`        | 454   | `app/composables/admin/useContractGenerator.ts`            |
 | `useVehicleVerification`      | 430   | `app/composables/useVehicleVerification.ts`                |
 | `useAdminChat`                | 429   | `app/composables/admin/useAdminChat.ts`                    |
 | `useAdminBanner`              | 423   | `app/composables/admin/useAdminBanner.ts`                  |
-| `useDealerPortal`             | 423   | `app/composables/dashboard/useDealerPortal.ts`             |
 | `useAdminAuctionDetail`       | 421   | `app/composables/admin/useAdminAuctionDetail.ts`           |
 | `useAdminProductoDetail`      | 421   | `app/composables/admin/useAdminProductoDetail.ts`          |
+| `useDealerPortal`             | 421   | `app/composables/dashboard/useDealerPortal.ts`             |
 | `useAdminDashboard`           | 419   | `app/composables/admin/useAdminDashboard.ts`               |
 | `useAnalyticsTracking`        | 418   | `app/composables/useAnalyticsTracking.ts`                  |
 | `useInvoice`                  | 414   | `app/composables/dashboard/useInvoice.ts`                  |
@@ -371,12 +377,12 @@
 | `useAdminWhatsApp`            | 360   | `app/composables/admin/useAdminWhatsApp.ts`                |
 | `useAdminFilters`             | 359   | `app/composables/admin/useAdminFilters.ts`                 |
 | `useAdminMetricsActivity`     | 355   | `app/composables/admin/useAdminMetricsActivity.ts`         |
-| `useAdminBrokerage`           | 350   | `app/composables/admin/useAdminBrokerage.ts`               |
 | `useAuth`                     | 350   | `app/composables/useAuth.ts`                               |
+| `useAdminBrokerage`           | 349   | `app/composables/admin/useAdminBrokerage.ts`               |
 | `useAdminSocialCalendar`      | 348   | `app/composables/admin/useAdminSocialCalendar.ts`          |
 | `useAdminDashboardPage`       | 346   | `app/composables/admin/useAdminDashboardPage.ts`           |
-| `useAdminBrokerageDeal`       | 344   | `app/composables/admin/useAdminBrokerageDeal.ts`           |
 | `useAdvertiseModal`           | 342   | `app/composables/modals/useAdvertiseModal.ts`              |
+| `useAdminBrokerageDeal`       | 340   | `app/composables/admin/useAdminBrokerageDeal.ts`           |
 | `useDashboardTransaccion`     | 339   | `app/composables/dashboard/useDashboardTransaccion.ts`     |
 | `useUserLocation`             | 338   | `app/composables/useUserLocation.ts`                       |
 | `useDashboardCrm`             | 337   | `app/composables/dashboard/useDashboardCrm.ts`             |
@@ -419,7 +425,7 @@
 | `useJsonLd`                   | core      | 149   |
 | `useLocalStorageCache`        | core      | 76    |
 | `useNegotiation`              | core      | 184   |
-| `useOperationTimeline`        | core      | 141   |
+| `useOperationTimeline`        | core      | 140   |
 | `useScrollDepth`              | core      | 52    |
 | `useScrollLock`               | core      | 19    |
 | `useSearchHistory`            | core      | 55    |
