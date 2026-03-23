@@ -246,6 +246,8 @@
     "requestSearchDesc": "Submit a personalised search request and we'll notify you when something matching appears. We also share it with our partner advertisers.",
     "requestSearch": "Request a search",
     "createAlert": "Create alert",
+    "alertBannerText": "Get alerts when vehicles matching these filters appear",
+    "alertCreated": "Alert created",
     "similarSearches": "Similar searches",
     "similarNoBrand": "Without brand filter",
     "similarWiderPrice": "Wider price range",

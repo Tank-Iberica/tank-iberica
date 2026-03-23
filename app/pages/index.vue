@@ -25,6 +25,7 @@
       />
 
       <CatalogActiveFilters @change="onFilterChange" />
+      <CatalogAlertCTA />
 
       <CatalogVehicleGrid
         id="catalog-results"

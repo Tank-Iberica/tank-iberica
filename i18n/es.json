@@ -246,6 +246,8 @@
     "requestSearchDesc": "Solicita una búsqueda personalizada y te avisamos cuando aparezca. También lo compartimos con nuestros anunciantes colaboradores.",
     "requestSearch": "Solicitar búsqueda",
     "createAlert": "Crear alerta",
+    "alertBannerText": "Recibe alertas cuando aparezcan vehículos con estos filtros",
+    "alertCreated": "Alerta creada",
     "similarSearches": "Búsquedas similares",
     "similarNoBrand": "Sin filtro de marca",
     "similarWiderPrice": "Rango de precio ampliado",
