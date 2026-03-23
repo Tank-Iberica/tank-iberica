@@ -41,8 +41,7 @@ export function useUserVerticalHistory() {
       // Query analytics_events grouped by vertical for this user
       // Using RPC or raw query isn't possible from client — use multiple queries per vertical
       // Instead, fetch events with vertical info and aggregate client-side
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: err } = await (supabase as any)
+      const { data, error: err } = await supabase
         .from('analytics_events')
         .select('vertical, created_at')
         .eq('user_id', user.value.id)
@@ -135,8 +134,7 @@ export function useUserVerticalHistory() {
     if (!user.value?.id) return null
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: err } = await (supabase as any)
+      const { data, error: err } = await supabase
         .from('leads')
         .select('id, source_vertical, created_at')
         .eq('buyer_user_id', user.value.id)

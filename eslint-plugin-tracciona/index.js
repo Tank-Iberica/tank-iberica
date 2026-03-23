@@ -7,6 +7,7 @@ const requireJsdocExports = require('./rules/require-jsdoc-exports')
 const requireKeyboardHandler = require('./rules/require-keyboard-handler')
 const noUnsafeExternalScript = require('./rules/no-unsafe-external-script')
 const maxModuleDeps = require('./rules/max-module-deps')
+const requireAutocomplete = require('./rules/require-autocomplete')
 
 module.exports = {
   rules: {
@@ -17,5 +18,6 @@ module.exports = {
     'require-keyboard-handler': requireKeyboardHandler,
     'no-unsafe-external-script': noUnsafeExternalScript,
     'max-module-deps': maxModuleDeps,
+    'require-autocomplete': requireAutocomplete,
   },
 }

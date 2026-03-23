@@ -37,8 +37,7 @@ export default defineEventHandler(async (event) => {
     throw safeError(400, 'No fields to update')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error: err } = await (supabase as any)
+  const { data, error: err } = await supabase
     .from('dealer_documents')
     .update(fields as Record<string, unknown>)
     .eq('id', id)

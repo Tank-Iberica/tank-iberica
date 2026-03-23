@@ -40,8 +40,7 @@ export default defineEventHandler(async (event) => {
   // If stage is changing, record history
   if (fields.stage) {
     // Get current stage
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: current } = await (supabase as any)
+    const { data: current } = await supabase
       .from('crm_pipeline')
       .select('stage')
       .eq('id', id)
@@ -49,8 +48,7 @@ export default defineEventHandler(async (event) => {
 
     if (current && current.stage !== fields.stage) {
       // Record history
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('crm_pipeline_history').insert({
+      await supabase.from('crm_pipeline_history').insert({
         pipeline_id: id,
         from_stage: current.stage,
         to_stage: fields.stage,
@@ -63,8 +61,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error: err } = await (supabase as any)
+  const { data, error: err } = await supabase
     .from('crm_pipeline')
     .update(fields as Record<string, unknown>)
     .eq('id', id)

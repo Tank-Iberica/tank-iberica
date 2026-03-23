@@ -36,6 +36,14 @@ export default createConfigForNuxt({
       'tracciona/require-jsdoc-exports': 'warn',
     },
   })
+  // require-autocomplete: enforce autocomplete on input elements
+  .append({
+    files: ['app/**/*.vue'],
+    ignores: ['**/*.test.ts'],
+    rules: {
+      'tracciona/require-autocomplete': 'warn',
+    },
+  })
   // max-module-deps: warn when a module has too many imports
   .append({
     files: ['app/composables/**/*.ts', 'server/utils/**/*.ts', 'server/services/**/*.ts'],

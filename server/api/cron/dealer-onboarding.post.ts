@@ -11,6 +11,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { Resend } from 'resend'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '~~/types/supabase'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
@@ -314,10 +315,9 @@ export function buildOnboardingHtml(
 /**
  * Fetch active dealers created within the last 14 days (with onboarding pending).
  */
-export async function getPendingDealers(supabase: SupabaseClient): Promise<DealerRow[]> {
+export async function getPendingDealers(supabase: SupabaseClient<Database>): Promise<DealerRow[]> {
   const cutoff = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from('dealers')
     .select('id, user_id, company_name, email, created_at, locale')
     .eq('status', 'active')
@@ -334,9 +334,11 @@ export async function getPendingDealers(supabase: SupabaseClient): Promise<Deale
 /**
  * Fetch already-sent steps for a dealer.
  */
-export async function getSentSteps(supabase: SupabaseClient, dealerId: string): Promise<number[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase as any)
+export async function getSentSteps(
+  supabase: SupabaseClient<Database>,
+  dealerId: string,
+): Promise<number[]> {
+  const { data } = await supabase
     .from('dealer_onboarding_emails')
     .select('step')
     .eq('dealer_id', dealerId)
@@ -348,12 +350,11 @@ export async function getSentSteps(supabase: SupabaseClient, dealerId: string): 
  * Mark a step as sent.
  */
 export async function markStepSent(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   dealerId: string,
   step: number,
 ): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase as any)
+  await supabase
     .from('dealer_onboarding_emails')
     .upsert({ dealer_id: dealerId, step, sent_at: new Date().toISOString() })
 }

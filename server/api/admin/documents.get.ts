@@ -30,8 +30,7 @@ export default defineEventHandler(async (event) => {
   const limit = Math.min(100, Math.max(1, Number(query.limit) || 50))
   const offset = (page - 1) * limit
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let q = (supabase as any)
+  let q = supabase
     .from('dealer_documents')
     .select(
       'id, dealer_id, type, status, title, file_url, file_size_bytes, mime_type, notes, expires_at, created_at, updated_at',

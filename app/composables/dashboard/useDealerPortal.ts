@@ -311,9 +311,7 @@ export function useDealerPortal() {
 
     // Log consent change for GDPR traceability
     if (user.value?.id) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sb = supabase as any
-      await sb.from('brokerage_consent_log').insert({
+      await supabase.from('brokerage_consent_log').insert({
         user_id: user.value.id,
         consent_type: newValue ? 'seller_brokerage_optout' : 'seller_brokerage_optin',
         granted: !newValue,

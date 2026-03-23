@@ -63,8 +63,7 @@ export function useActiveSessions() {
     error.value = null
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: err } = await (supabase as any)
+      const { data, error: err } = await supabase
         .from('user_fingerprints')
         .select('id, fp_hash, ua_hint, ip_hint, first_seen, last_seen, request_count')
         .eq('user_id', user.value.id)
@@ -103,8 +102,7 @@ export function useActiveSessions() {
     if (!user.value?.id) return false
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: err } = await (supabase as any)
+      const { error: err } = await supabase
         .from('user_fingerprints')
         .delete()
         .eq('id', sessionId)

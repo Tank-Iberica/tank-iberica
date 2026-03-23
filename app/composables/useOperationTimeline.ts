@@ -106,8 +106,7 @@ export function useOperationTimeline() {
   ): Promise<void> {
     if (!user.value) return
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from('operation_timeline').insert({
+    const { error } = await supabase.from('operation_timeline').insert({
       vehicle_id: vehicleId,
       dealer_id: dealerId,
       buyer_id: opts?.buyerId || null,

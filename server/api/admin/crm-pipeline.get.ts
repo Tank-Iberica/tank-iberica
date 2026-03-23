@@ -28,8 +28,7 @@ export default defineEventHandler(async (event) => {
   const limit = Math.min(100, Math.max(1, Number(query.limit) || 50))
   const offset = (page - 1) * limit
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let q = (supabase as any)
+  let q = supabase
     .from('crm_pipeline')
     .select(
       'id, dealer_id, stage, notes, next_action_date, next_action_desc, assigned_to, entered_stage_at, created_at, updated_at',

@@ -100,8 +100,7 @@ export function useCustomFields() {
     error.value = null
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: err } = await (supabase as any)
+      const { data, error: err } = await supabase
         .from('vertical_custom_fields')
         .select(
           'id, vertical, entity_type, field_name, field_type, label, placeholder, validation, options, sort_order, required',

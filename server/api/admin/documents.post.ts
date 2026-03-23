@@ -43,8 +43,7 @@ export default defineEventHandler(async (event) => {
 
   if (!dealer) throw safeError(404, 'Dealer not found')
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error: err } = await (supabase as any)
+  const { data, error: err } = await supabase
     .from('dealer_documents')
     .insert({
       ...body,

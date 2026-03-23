@@ -29,8 +29,7 @@ export function useFaq() {
     error.value = null
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: err } = await (supabase as any)
+      const { data, error: err } = await supabase
         .from('faq_entries')
         .select('id, category, question, answer, sort_order')
         .eq('published', true)

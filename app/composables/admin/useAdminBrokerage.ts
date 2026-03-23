@@ -241,8 +241,7 @@ export function useAdminBrokerage() {
   const error = ref<string | null>(null)
   const total = ref(0)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = supabase as any
+  const sb = supabase
 
   async function fetchDeals(filters: DealFilters = {}) {
     loading.value = true

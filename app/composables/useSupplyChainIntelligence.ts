@@ -204,8 +204,7 @@ export function useSupplyChainIntelligence() {
     error.value = null
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let query = (supabase as any)
+      let query = supabase
         .from('transaction_graph')
         .select(
           'id, seller_id, buyer_id, vehicle_id, vehicle_category, price_range, transaction_date',

@@ -203,8 +203,7 @@ export function useAdminSidebar() {
 
   // Brokerage pending deals
   async function fetchPendingDeals() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any
+    const sb = supabase
     try {
       const { count } = await sb
         .from('brokerage_deals')
