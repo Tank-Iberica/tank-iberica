@@ -31,6 +31,14 @@
 ### Pendiente:
 
 - Refactor subscriptions upsert en `useUserPanel.ts` (separar newsletter prefs de billing)
+- `#58` Compliance tracking (Euro standard, ITV, cargas) — extender `VehicleReport` + UI en ficha
+- Items Config (requieren dashboard): #124/125/126 Early Hints/HTTP3/Brotli, #135 PgBouncer, #139 CDN cache rules
+
+### Prompt para continuar:
+
+> "Continúa pendientes técnicos sin intervención: implementa `#58` Compliance tracking — extiende `VehicleReport` en `vehicleReportProvider.ts` con campos Euro standard/ITV/cargas y muéstralos en la ficha de vehículo."
+
+CLOSING_SESSION
 
 ---
 

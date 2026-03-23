@@ -76,6 +76,10 @@
 - **Quality gate**: `tests/unit/build/test-quality-gate.test.ts` — 0% structural en unit/
 - **Classifier script**: `scripts/classify-tests.mjs` (--json, --structural-only)
 - **Roadmap Autónomo v5**: `.claude/ROADMAP-AUTONOMO.md` — **14/14 COMPLETADO** (19-mar). 7 backlog activo + 7 FUTURO. 3 adapter patterns (searchEngine, cacheLayer, vehicleReportProvider) con fallback funcional. 6 migraciones (00179-00184). 242 tests nuevos.
+- **Schema sync (23-mar)**: 5 migraciones (00192–00196): dealer_reviews, glossary, error_events, ~10 columnas, 3 RPCs dealer dashboard. Types regenerados (9055 líneas). 13 `as any` eliminados. 3 `as any` justificados: 2 brokerage (auth.users cross-schema no tipable), 1 subscriptions upsert (newsletter prefs mezcladas con billing table — pendiente refactor).
+- **Typecheck (23-mar)**: 0 errores. database.types.ts y types/supabase.ts sincronizados con schema real.
+- **Backlog autónomo (23-mar)**: #246 ✅, #N35 ✅, #302 ✅, #57 ✅, #99 ✅. Marcados #4 y #246 como done en BACKLOG-EJECUTABLE.md.
+- **Distributed tracing (#302)**: `browserTracingIntegration()` en error-handler.ts + `tracePropagationTargets: [/^\/api\//]`. `request-id.ts` extrae sentry-trace + baggage headers → `event.context.sentryTrace/baggage`. `createLogger` incluye sentryTrace en logs estructurados.
 - **Backlog analysis (19-mar):** ~205 pendientes / ~510 total. Código ejecutable: 7. Código bloqueado: 68 (15 activos + 17 DEFERRED + 34 FUTURO + 2 OP). No-código: 130 (32 config + 18 founders + 40 pre-launch + 6 DEFERRED + 16 FUTURO + 18 OP). SINCRONIZADO con BACKLOG-EJECUTABLE.md.
 - **Profesionalización roadmap**: `.claude/ROADMAP-TEST-PROFESIONALIZACION.md` — **COMPLETADO + AUDITADO 19-mar**
   - 111 items verificados, 0 saltados. Auditoría exhaustiva item-por-item completa.
