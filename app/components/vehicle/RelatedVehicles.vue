@@ -89,7 +89,8 @@ async function fetchRelated() {
   const results: Vehicle[] = []
 
   // 1. Same subcategory (most relevant)
-  if (v.subcategory_id) {
+  const subcatId = v.subcategories?.id
+  if (subcatId) {
     const { data } = await supabase
       .from('vehicles')
       .select(
@@ -97,7 +98,7 @@ async function fetchRelated() {
       )
       .eq('status', 'published')
       .neq('id', v.id)
-      .eq('subcategory_id', v.subcategory_id)
+      .eq('subcategory_id', subcatId)
       .order('created_at', { ascending: false })
       .limit(8)
 

@@ -47,11 +47,12 @@ const searches = computed<SimilarSearch[]>(() => {
   const catName = localizedName(cat, locale.value)
 
   // 1. Same subcategory, any brand: "Más [subcategory]"
-  if (v.subcategory_id && subcatName) {
+  const subcatId = v.subcategories?.id
+  if (subcatId && subcatName) {
     result.push({
       key: 'subcat',
       label: t('vehicle.searchMoreSubcategory', { name: subcatName }),
-      to: buildCatalogUrl({ subcategory_id: v.subcategory_id }),
+      to: buildCatalogUrl({ subcategory_id: subcatId }),
     })
   }
 
@@ -74,7 +75,7 @@ const searches = computed<SimilarSearch[]>(() => {
   }
 
   // 4. Same category (broader): "Todas las [category]"
-  if (v.category_id && catName && v.subcategory_id) {
+  if (v.category_id && catName && subcatId) {
     result.push({
       key: 'cat',
       label: t('vehicle.searchAllCategory', { name: catName }),
@@ -83,11 +84,11 @@ const searches = computed<SimilarSearch[]>(() => {
   }
 
   // 5. Same brand + subcategory: "[brand] [subcategory]"
-  if (v.brand && v.subcategory_id && subcatName) {
+  if (v.brand && subcatId && subcatName) {
     result.push({
       key: 'brand-subcat',
       label: `${v.brand} ${subcatName}`,
-      to: buildCatalogUrl({ brand: v.brand, subcategory_id: v.subcategory_id }),
+      to: buildCatalogUrl({ brand: v.brand, subcategory_id: subcatId }),
     })
   }
 
