@@ -62,4 +62,42 @@ describe('request-id middleware', () => {
     handler(event2)
     expect(event1.context.requestId).not.toBe(event2.context.requestId)
   })
+
+  describe('Sentry distributed trace headers (#302)', () => {
+    it('extracts sentry-trace header into context.sentryTrace', () => {
+      const traceValue = '3e15cd22-e1f7-42b7-b06e-f4a3e9d7e2a1-1'
+      const event = makeEvent({ 'sentry-trace': traceValue })
+      handler(event)
+      expect(event.context.sentryTrace).toBe(traceValue)
+    })
+
+    it('sets context.sentryTrace to undefined when header absent', () => {
+      const event = makeEvent()
+      handler(event)
+      expect(event.context.sentryTrace).toBeUndefined()
+    })
+
+    it('extracts baggage header into context.baggage', () => {
+      const baggageValue = 'sentry-environment=production,sentry-release=1.0.0'
+      const event = makeEvent({ baggage: baggageValue })
+      handler(event)
+      expect(event.context.baggage).toBe(baggageValue)
+    })
+
+    it('sets context.baggage to undefined when header absent', () => {
+      const event = makeEvent()
+      handler(event)
+      expect(event.context.baggage).toBeUndefined()
+    })
+
+    it('propagates both sentry-trace and baggage together', () => {
+      const event = makeEvent({
+        'sentry-trace': 'abc123-1',
+        baggage: 'sentry-environment=staging',
+      })
+      handler(event)
+      expect(event.context.sentryTrace).toBe('abc123-1')
+      expect(event.context.baggage).toBe('sentry-environment=staging')
+    })
+  })
 })

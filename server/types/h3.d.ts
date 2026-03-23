@@ -16,6 +16,10 @@ declare module 'h3' {
     correlationId?: string
     /** Active vertical slug (e.g. 'tracciona'), injected by vertical-context middleware */
     vertical?: string
+    /** Sentry W3C trace header from client browserTracingIntegration, for e2e correlation */
+    sentryTrace?: string
+    /** W3C baggage header carrying Sentry trace metadata */
+    baggage?: string
   }
 }
 

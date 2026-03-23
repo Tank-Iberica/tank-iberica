@@ -7,7 +7,13 @@
  * In production: sends error reports to Sentry (if DSN configured).
  */
 
-import { init as sentryInit, captureException, setUser, replayIntegration } from '@sentry/vue'
+import {
+  init as sentryInit,
+  captureException,
+  setUser,
+  replayIntegration,
+  browserTracingIntegration,
+} from '@sentry/vue'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig()
@@ -29,7 +35,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       dsn,
       environment: import.meta.dev ? 'development' : 'production',
       tracesSampleRate,
+      // Inject sentry-trace + baggage headers into API requests for e2e tracing (#302)
+      tracePropagationTargets: [/^\/api\//],
       integrations: [
+        browserTracingIntegration(),
         replayIntegration({
           maskAllText: true,
           blockAllMedia: true,

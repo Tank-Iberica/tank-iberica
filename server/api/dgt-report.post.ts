@@ -16,6 +16,8 @@ import { z } from 'zod'
 import { safeError } from '../utils/safeError'
 import { validateBody } from '../utils/validateBody'
 import { logger } from '../utils/logger'
+import { createReportAdapter } from '../utils/vehicleReportProvider'
+import { analyzeKmReliability } from '../../app/utils/kmScore'
 
 /**
  * Spanish matricula formats:
@@ -88,43 +90,43 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
     throw safeError(404, 'Vehicle not found')
   }
 
-  // 6. Call report provider API
-  // ---------------------------------------------------------------
-  // PLACEHOLDER: Replace this block with the actual API call when
-  // InfoCar / CarVertical API keys are available.
-  //
-  // Example for InfoCar:
-  //   const response = await $fetch('https://api.infocar.es/v1/report', {
-  //     method: 'POST',
-  //     headers: { 'Authorization': `Bearer ${runtimeConfig.infocarApiKey}` },
-  //     body: { matricula }
-  //   })
-  //
-  // Example for CarVertical:
-  //   const response = await $fetch('https://api.carvertical.com/v1/report', {
-  //     method: 'POST',
-  //     headers: { 'x-api-key': runtimeConfig.carverticalApiKey },
-  //     body: { vin_or_plate: matricula, country: 'ES' }
-  //   })
-  // ---------------------------------------------------------------
+  // 6. Call report provider (InfoCar → CarVertical → mock fallback)
+  const adapterType = provider === 'manual' ? undefined : provider
+  const adapter = await createReportAdapter(adapterType)
+  let report
+  try {
+    report = await adapter.fetchReport(matricula)
+  } catch (err) {
+    logger.error('[dgt-report] Provider fetch failed', {
+      error: String(err),
+      provider: adapter.name,
+    })
+    throw safeError(502, 'Report provider unavailable')
+  }
 
   const now = new Date().toISOString()
 
-  const mockReportData = {
-    provider,
+  // Calculate KmScore from real ITV progression (#57)
+  const itvRecords = report.itvHistory
+    .filter((itv) => itv.km !== null)
+    .map((itv) => ({ date: itv.date, value: itv.km as number, result: itv.result }))
+  const kmAnalysis = analyzeKmReliability(itvRecords)
+
+  const reportData = {
+    provider: adapter.name,
     matricula,
     requestedAt: now,
     status: 'completed' as const,
-    kmHistory: [
-      { date: '2023-01-15', km: 45000, source: 'ITV' },
-      { date: '2024-03-20', km: 62000, source: 'ITV' },
-    ],
-    kmScore: 85,
-    reportUrl: `${getSiteUrl()}/reports/${vehicleId}/${provider}`,
-    accidents: 0,
-    previousOwners: 2,
-    technicalInspectionValid: true,
-    lastItvDate: '2024-03-20',
+    kmHistory: report.kmHistory,
+    itvHistory: report.itvHistory,
+    kmScore: kmAnalysis.score,
+    kmScoreLabel: kmAnalysis.label,
+    kmScoreExplanation: kmAnalysis.explanation,
+    kmScoreAnomalies: kmAnalysis.anomalies,
+    reportUrl: `${getSiteUrl()}/reports/${vehicleId}/${adapter.name}`,
+    previousOwners: report.totalOwners,
+    technicalInspectionValid: report.lastITV?.result === 'favorable',
+    lastItvDate: report.lastITV?.date ?? null,
   }
 
   // 7. Save report to verification_documents
@@ -138,10 +140,10 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
       doc_type: 'dgt_report',
       status: 'verified',
       level: 3,
-      file_url: mockReportData.reportUrl,
+      file_url: reportData.reportUrl,
       generated_at: now,
       verified_by: user.id,
-      data: mockReportData,
+      data: reportData,
     })
     .select('id')
     .single()
@@ -172,8 +174,8 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
 
   return {
     success: true,
-    reportUrl: mockReportData.reportUrl,
-    kmScore: mockReportData.kmScore,
+    reportUrl: reportData.reportUrl,
+    kmScore: reportData.kmScore,
     documentId: document.id,
   }
 })
