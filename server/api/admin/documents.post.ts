@@ -43,11 +43,11 @@ export default defineEventHandler(async (event) => {
 
   if (!dealer) throw safeError(404, 'Dealer not found')
 
-  // Schema pending: metadata type mismatch (Record vs Json)
-  const { data, error: err } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+  const { data, error: err } = await supabase
     .from('dealer_documents')
     .insert({
       ...body,
+      metadata: (body.metadata as import('~/types/database.types').Json) ?? undefined,
       uploaded_by: user.id,
     })
     .select('id, dealer_id, type, status, title, file_url, created_at')

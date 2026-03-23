@@ -241,7 +241,7 @@ export function useAdminBrokerage() {
   const error = ref<string | null>(null)
   const total = ref(0)
 
-  // Schema pending: brokerage_deals relations (buyer_id, seller_dealer)
+  // buyer:buyer_id references auth.users — not in public schema types
   const sb = supabase as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
   async function fetchDeals(filters: DealFilters = {}) {

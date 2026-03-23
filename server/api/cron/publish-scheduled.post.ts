@@ -66,8 +66,7 @@ export default defineEventHandler(async (event) => {
 
   // ── 2. Publish scheduled vehicles ────────────────────────────────────────
 
-  // Schema pending: vehicles.title_es column
-  const { data: vehicles, error: fetchVehicleErr } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+  const { data: vehicles, error: fetchVehicleErr } = await supabase
     .from('vehicles')
     .select('id, title_es, slug')
     .eq('status', 'draft')

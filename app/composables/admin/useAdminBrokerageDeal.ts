@@ -133,7 +133,7 @@ export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
     error.value = null
 
     try {
-      // Schema pending: brokerage_deals relations (buyer_id, seller_dealer)
+      // buyer:buyer_id references auth.users — not in public schema types
       const sb = supabase as any // eslint-disable-line @typescript-eslint/no-explicit-any
       const [dealResult, messagesResult, auditResult] = await Promise.all([
         sb.from('brokerage_deals').select(DEAL_SELECT).eq('id', dealId.value).single(),

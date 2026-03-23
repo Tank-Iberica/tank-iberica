@@ -253,7 +253,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   async function saveSubscriptions() {
     if (!sessionUser.value) return
     try {
-      // Schema pending: subscriptions.email/pref_* columns
+      // Upsert missing required fields (user_id, plan) — needs refactor to separate newsletter prefs from billing
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any).from('subscriptions').upsert({
         email: sessionUser.value.email || '',
@@ -365,8 +365,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
         }
       }
 
-      // Schema pending: subscriptions.pref_* columns
-      const { data: subData } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      const { data: subData } = await supabase
         .from('subscriptions')
         .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
         .eq('email', sessionUser.value.email || '')

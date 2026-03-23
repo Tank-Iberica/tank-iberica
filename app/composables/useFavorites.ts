@@ -196,8 +196,7 @@ export function useFavorites() {
    */
   async function setThreshold(vehicleId: string, threshold: number | null): Promise<void> {
     if (!user.value) return
-    // Schema pending: favorites.price_threshold column
-    await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    await supabase
       .from('favorites')
       .update({ price_threshold: threshold })
       .eq('user_id', user.value.id)

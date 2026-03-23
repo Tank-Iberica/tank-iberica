@@ -682,9 +682,7 @@ useHead({
 
 // #175 (S15) — AggregateRating schema from dealer reviews
 const { data: ratingSummary } = useLazyAsyncData(`dealer-rating-${props.dealer.id}`, async () => {
-  // Schema pending: get_dealer_rating_summary RPC
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase as any).rpc('get_dealer_rating_summary', {
+  const { data } = await supabase.rpc('get_dealer_rating_summary', {
     p_dealer_id: props.dealer.id,
   })
   return (data as unknown as Array<{ average_rating: number; review_count: number }>)?.[0] ?? null

@@ -45,8 +45,7 @@ export function useDealerReviews(dealerId: string) {
     loading.value = true
     error.value = null
     try {
-      // Schema pending: dealer_reviews table
-      const { data, error: err } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      const { data, error: err } = await supabase
         .from('dealer_reviews')
         .select('id, rating, comment, created_at, reviewer_id')
         .eq('dealer_id', dealerId)
@@ -80,9 +79,7 @@ export function useDealerReviews(dealerId: string) {
     submitSuccess.value = false
 
     try {
-      // Schema pending: dealer_reviews table
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: err } = await (supabase as any).from('dealer_reviews').insert({
+      const { error: err } = await supabase.from('dealer_reviews').insert({
         dealer_id: dealerId,
         reviewer_id: user.value.id,
         rating: form.rating,

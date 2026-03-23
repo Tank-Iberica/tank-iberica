@@ -30,10 +30,8 @@ export default defineEventHandler(async (event) => {
   const now = new Date()
   const startTime = new Date(now.getTime() - hoursBack * 60 * 60 * 1000)
 
-  // Query error_events table (schema: id, user_id, endpoint, status_code, error_message, stack_trace, created_at, vertical)
-  // If table doesn't exist, create a simplified count from API logs
-  // Schema pending: error_events table
-  const { data: errorEvents = [], error: queryError } = await (db as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+  // Query error_events table
+  const { data: errorEvents = [], error: queryError } = await db
     .from('error_events')
     .select('id, status_code', { count: 'exact' })
     .gte('created_at', startTime.toISOString())

@@ -36,8 +36,7 @@ export function useGlossary() {
     error.value = null
 
     try {
-      // Schema pending: glossary table
-      const { data, error: fetchError } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      const { data, error: fetchError } = await supabase
         .from('glossary')
         .select('id, slug, term, definition, category, related_terms, status, created_at')
         .eq('vertical', vertical)

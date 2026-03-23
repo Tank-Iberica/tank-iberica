@@ -92,18 +92,16 @@ export function useDealerDashboard() {
       const vertical = getVerticalSlug()
 
       // 3 queries in parallel → 1 round-trip (was 10 queries / 4 round-trips)
-      // Schema pending: RPCs get_dealer_dashboard_stats, get_dealer_top_vehicles
-      const sb = supabase as any // eslint-disable-line @typescript-eslint/no-explicit-any
       const [statsRes, recentLeadsRes, topVehiclesRes] = await Promise.all([
         // All 8 KPIs in one server-side CTE
-        sb.rpc('get_dealer_dashboard_stats', {
+        supabase.rpc('get_dealer_dashboard_stats', {
           p_dealer_id: dealer.id,
           p_vertical: vertical,
           p_month_start: monthStart,
         }),
 
         // Recent leads — PostgREST join (already a single query)
-        sb
+        supabase
           .from('leads')
           .select(
             'id, buyer_name, buyer_email, vehicle_id, status, message, created_at, vehicles(brand, model)',
@@ -113,7 +111,7 @@ export function useDealerDashboard() {
           .limit(5),
 
         // Top vehicles with leads + favorites (was 2 queries, now 1 RPC)
-        sb.rpc('get_dealer_top_vehicles', {
+        supabase.rpc('get_dealer_top_vehicles', {
           p_dealer_id: dealer.id,
           p_vertical: vertical,
           p_limit: 5,

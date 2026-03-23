@@ -47,14 +47,12 @@ export function useEmailPreferences() {
     error.value = null
 
     try {
-      // Schema pending: email_preferences.created_at, users.digest_frequency
-      const sb = supabase as any // eslint-disable-line @typescript-eslint/no-explicit-any
       const [prefsRes, userRes] = await Promise.all([
-        sb
+        supabase
           .from('email_preferences')
           .select('id, user_id, email_type, enabled, created_at, updated_at')
           .eq('user_id', user.value.id),
-        sb.from('users').select('digest_frequency').eq('id', user.value.id).single(),
+        supabase.from('users').select('digest_frequency').eq('id', user.value.id).single(),
       ])
 
       if (prefsRes.error) throw prefsRes.error
@@ -199,8 +197,7 @@ export function useEmailPreferences() {
     error.value = null
 
     try {
-      // Schema pending: users.digest_frequency
-      const { error: updateErr } = await (supabase as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      const { error: updateErr } = await supabase
         .from('users')
         .update({ digest_frequency: freq, updated_at: new Date().toISOString() })
         .eq('id', user.value.id)

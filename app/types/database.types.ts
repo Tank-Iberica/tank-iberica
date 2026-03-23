@@ -6,31 +6,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1'
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       actions: {
@@ -2896,6 +2871,47 @@ export type Database = {
           },
         ]
       }
+      dealer_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          dealer_id: string
+          id: string
+          rating: number
+          reviewer_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          dealer_id: string
+          id?: string
+          rating: number
+          reviewer_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          dealer_id?: string
+          id?: string
+          rating?: number
+          reviewer_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'dealer_reviews_dealer_id_fkey'
+            columns: ['dealer_id']
+            isOneToOne: false
+            referencedRelation: 'dealers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       dealer_stats: {
         Row: {
           avg_response_minutes: number | null
@@ -3037,6 +3053,7 @@ export type Database = {
       dealers: {
         Row: {
           active_listings: number | null
+          address: Json | null
           auto_featured: boolean
           auto_renew: boolean
           auto_reply_message: Json | null
@@ -3096,6 +3113,7 @@ export type Database = {
         }
         Insert: {
           active_listings?: number | null
+          address?: Json | null
           auto_featured?: boolean
           auto_renew?: boolean
           auto_reply_message?: Json | null
@@ -3155,6 +3173,7 @@ export type Database = {
         }
         Update: {
           active_listings?: number | null
+          address?: Json | null
           auto_featured?: boolean
           auto_renew?: boolean
           auto_reply_message?: Json | null
@@ -3480,6 +3499,7 @@ export type Database = {
       }
       email_preferences: {
         Row: {
+          created_at: string | null
           email_type: string
           enabled: boolean | null
           id: string
@@ -3487,6 +3507,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          created_at?: string | null
           email_type: string
           enabled?: boolean | null
           id?: string
@@ -3494,6 +3515,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          created_at?: string | null
           email_type?: string
           enabled?: boolean | null
           id?: string
@@ -3509,6 +3531,39 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      error_events: {
+        Row: {
+          created_at: string
+          endpoint: string | null
+          error_message: string | null
+          id: string
+          stack_trace: string | null
+          status_code: number | null
+          user_id: string | null
+          vertical: string | null
+        }
+        Insert: {
+          created_at?: string
+          endpoint?: string | null
+          error_message?: string | null
+          id?: string
+          stack_trace?: string | null
+          status_code?: number | null
+          user_id?: string | null
+          vertical?: string | null
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string | null
+          error_message?: string | null
+          id?: string
+          stack_trace?: string | null
+          status_code?: number | null
+          user_id?: string | null
+          vertical?: string | null
+        }
+        Relationships: []
       }
       experiment_assignments: {
         Row: {
@@ -3665,18 +3720,21 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          price_threshold: number | null
           user_id: string
           vehicle_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
+          price_threshold?: number | null
           user_id: string
           vehicle_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
+          price_threshold?: number | null
           user_id?: string
           vehicle_id?: string
         }
@@ -3816,6 +3874,45 @@ export type Database = {
           province?: string | null
           raw_response?: Json | null
           region?: string | null
+        }
+        Relationships: []
+      }
+      glossary: {
+        Row: {
+          category: string | null
+          created_at: string
+          definition: Json
+          id: string
+          related_terms: string[] | null
+          slug: string
+          status: string
+          term: Json
+          updated_at: string
+          vertical: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          definition?: Json
+          id?: string
+          related_terms?: string[] | null
+          slug: string
+          status?: string
+          term?: Json
+          updated_at?: string
+          vertical?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          definition?: Json
+          id?: string
+          related_terms?: string[] | null
+          slug?: string
+          status?: string
+          term?: Json
+          updated_at?: string
+          vertical?: string
         }
         Relationships: []
       }
@@ -6253,12 +6350,19 @@ export type Database = {
       subscriptions: {
         Row: {
           created_at: string | null
+          email: string | null
           expires_at: string | null
           founding_badge_permanent: boolean | null
           founding_started_at: string | null
           has_had_trial: boolean | null
           id: string
           plan: string
+          pref_csr: boolean | null
+          pref_events: boolean | null
+          pref_featured: boolean | null
+          pref_newsletter: boolean | null
+          pref_press: boolean | null
+          pref_web: boolean | null
           price_cents: number | null
           started_at: string | null
           status: Database['public']['Enums']['subscription_status'] | null
@@ -6270,12 +6374,19 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          email?: string | null
           expires_at?: string | null
           founding_badge_permanent?: boolean | null
           founding_started_at?: string | null
           has_had_trial?: boolean | null
           id?: string
           plan?: string
+          pref_csr?: boolean | null
+          pref_events?: boolean | null
+          pref_featured?: boolean | null
+          pref_newsletter?: boolean | null
+          pref_press?: boolean | null
+          pref_web?: boolean | null
           price_cents?: number | null
           started_at?: string | null
           status?: Database['public']['Enums']['subscription_status'] | null
@@ -6287,12 +6398,19 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          email?: string | null
           expires_at?: string | null
           founding_badge_permanent?: boolean | null
           founding_started_at?: string | null
           has_had_trial?: boolean | null
           id?: string
           plan?: string
+          pref_csr?: boolean | null
+          pref_events?: boolean | null
+          pref_featured?: boolean | null
+          pref_newsletter?: boolean | null
+          pref_press?: boolean | null
+          pref_web?: boolean | null
           price_cents?: number | null
           started_at?: string | null
           status?: Database['public']['Enums']['subscription_status'] | null
@@ -6757,6 +6875,7 @@ export type Database = {
           company_name: string | null
           company_type: Database['public']['Enums']['buyer_company_type'] | null
           created_at: string | null
+          digest_frequency: string | null
           email: string
           id: string
           lang: string | null
@@ -6787,6 +6906,7 @@ export type Database = {
           company_name?: string | null
           company_type?: Database['public']['Enums']['buyer_company_type'] | null
           created_at?: string | null
+          digest_frequency?: string | null
           email: string
           id: string
           lang?: string | null
@@ -6817,6 +6937,7 @@ export type Database = {
           company_name?: string | null
           company_type?: Database['public']['Enums']['buyer_company_type'] | null
           created_at?: string | null
+          digest_frequency?: string | null
           email?: string
           id?: string
           lang?: string | null
@@ -7221,6 +7342,7 @@ export type Database = {
           ref_code: string | null
           rental_price: number | null
           rental_records: Json | null
+          scheduled_publish_at: string | null
           search_vector: unknown
           slug: string
           sold_at: string | null
@@ -7228,6 +7350,8 @@ export type Database = {
           sold_via_tracciona: boolean | null
           sort_boost: number | null
           status: Database['public']['Enums']['vehicle_status'] | null
+          title_en: string | null
+          title_es: string | null
           title_hash: string | null
           updated_at: string | null
           verification_level: string | null
@@ -7290,6 +7414,7 @@ export type Database = {
           ref_code?: string | null
           rental_price?: number | null
           rental_records?: Json | null
+          scheduled_publish_at?: string | null
           search_vector?: unknown
           slug: string
           sold_at?: string | null
@@ -7297,6 +7422,8 @@ export type Database = {
           sold_via_tracciona?: boolean | null
           sort_boost?: number | null
           status?: Database['public']['Enums']['vehicle_status'] | null
+          title_en?: string | null
+          title_es?: string | null
           title_hash?: string | null
           updated_at?: string | null
           verification_level?: string | null
@@ -7359,6 +7486,7 @@ export type Database = {
           ref_code?: string | null
           rental_price?: number | null
           rental_records?: Json | null
+          scheduled_publish_at?: string | null
           search_vector?: unknown
           slug?: string
           sold_at?: string | null
@@ -7366,6 +7494,8 @@ export type Database = {
           sold_via_tracciona?: boolean | null
           sort_boost?: number | null
           status?: Database['public']['Enums']['vehicle_status'] | null
+          title_en?: string | null
+          title_es?: string | null
           title_hash?: string | null
           updated_at?: string | null
           verification_level?: string | null
@@ -7509,6 +7639,7 @@ export type Database = {
           default_locale: string | null
           email_templates: Json | null
           favicon_url: string | null
+          feature_flags: Json | null
           font_preset: string | null
           footer_links: Json | null
           footer_text: Json | null
@@ -7556,6 +7687,7 @@ export type Database = {
           default_locale?: string | null
           email_templates?: Json | null
           favicon_url?: string | null
+          feature_flags?: Json | null
           font_preset?: string | null
           footer_links?: Json | null
           footer_text?: Json | null
@@ -7603,6 +7735,7 @@ export type Database = {
           default_locale?: string | null
           email_templates?: Json | null
           favicon_url?: string | null
+          feature_flags?: Json | null
           font_preset?: string | null
           footer_links?: Json | null
           footer_text?: Json | null
@@ -8444,6 +8577,44 @@ export type Database = {
         Args: { p_landing_id: string; p_locale?: string }
         Returns: string
       }
+      get_dealer_dashboard_stats: {
+        Args: {
+          p_dealer_id: string
+          p_month_start?: string
+          p_vertical?: string
+        }
+        Returns: {
+          active_listings: number
+          contacts_this_month: number
+          conversion_rate: number
+          ficha_views_this_month: number
+          leads_this_month: number
+          response_rate: number
+          total_leads: number
+          total_views: number
+        }[]
+      }
+      get_dealer_rating_summary: {
+        Args: { p_dealer_id: string }
+        Returns: {
+          average_rating: number
+          review_count: number
+        }[]
+      }
+      get_dealer_top_vehicles: {
+        Args: { p_dealer_id: string; p_limit?: number; p_vertical?: string }
+        Returns: {
+          brand: string
+          favorites: number
+          id: string
+          leads: number
+          model: string
+          price: number
+          status: string
+          views: number
+          year: number
+        }[]
+      }
       get_dealer_vertical: { Args: never; Returns: string }
       get_seller_rating_summary: {
         Args: { p_seller_id: string }
@@ -8729,9 +8900,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       auction_status: ['draft', 'scheduled', 'active', 'ended', 'cancelled'],

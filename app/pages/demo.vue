@@ -140,6 +140,7 @@ function reset() {
             id="demo-brand"
             v-model="brand"
             type="text"
+            autocomplete="off"
             :placeholder="$t('demo.brandPlaceholder')"
           >
         </div>
@@ -149,6 +150,7 @@ function reset() {
             id="demo-model"
             v-model="model"
             type="text"
+            autocomplete="off"
             :placeholder="$t('demo.modelPlaceholder')"
           >
         </div>
