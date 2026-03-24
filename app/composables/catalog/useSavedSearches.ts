@@ -4,13 +4,10 @@
  * Requires authentication. Without auth, `requiresAuth` is true and save/load won't work.
  * 1 free saved search per user; unlimited after unlocking via 1 credit.
  */
-import type { VehicleFilters } from '~/composables/useVehicles'
-import type { LocationLevel } from '~/utils/geoData'
-
 export interface SavedSearch {
   id: string
   name: string
-  filters: VehicleFilters
+  filters: Record<string, unknown>
   search_query: string | null
   location_level: string | null
   is_favorite: boolean

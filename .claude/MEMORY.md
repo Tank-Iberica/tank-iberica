@@ -363,6 +363,17 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Tests:** 29 (alertMatcher) + 10 (endpoint) = 39, 0 failures
 - **Pending:** `supabase db push` for migration 00165
 
+## Credit-Gated Features (24-mar-2026)
+
+- **Migration 00198:** `saved_searches` + `feature_unlocks` tables with full RLS
+- **Pattern:** 1 free per user, unlimited after 1-credit unlock via `feature_unlocks` table
+- **Endpoints:** CRUD `/api/saved-searches`, `/api/feature-unlocks/status|unlock`, `/api/alerts/[id]/matches`
+- **Composables:** `useSavedSearches` (in `catalog/`, needs explicit import), `useFeatureUnlocks`
+- **Auth gating:** Unauthenticated users get registration prompt, no localStorage fallback
+- **creditsConfig.ts:** `UNLOCK_SAVED_SEARCHES: 1`, `UNLOCK_ALERTS: 1`
+- **Type gen:** Use `npx supabase gen types typescript --linked` (NOT `--project-id`, which misses new tables)
+- **Pending:** Tests, `/perfil/busquedas` page, alert matches → catalog integration
+
 ## Parallel Agent Pattern
 
 - **Estado 14-mar:** COMPLETADO Y LIMPIO. Todos los agentes (A–F) mergeados + 383 TS errors→0 + 17 stashes dropped + 19 branches deleted.

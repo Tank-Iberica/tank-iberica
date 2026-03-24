@@ -9,6 +9,7 @@
 import { defineEventHandler } from 'h3'
 import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import type { Json } from '~~/types/supabase'
 import { verifyCsrf } from '../../utils/verifyCsrf'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
@@ -53,7 +54,7 @@ export default defineEventHandler(async (event) => {
     .insert({
       user_id: user.id,
       name: body.name,
-      filters: body.filters,
+      filters: body.filters as unknown as Json,
       search_query: body.searchQuery ?? null,
       location_level: body.locationLevel ?? null,
       last_used_at: new Date().toISOString(),

@@ -1,9 +1,41 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-23 (Schema sync completo + cast cleanup + backlog autónomo) · SonarQube ~0 bloques
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup + doc migration + schema sync 23-mar (ver git log)
+**Última actualización:** 2026-03-24 (Credit-gated saved searches + feature unlocks + alert matches) · SonarQube ~0 bloques
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→19-mar + presupuestos + deep audit + test backfill + roadmap autónomo v1-v5 + setup servicios + test fixes + test professionalization + migration sync + cast cleanup + doc migration + schema sync 23-mar + saved searches 24-mar (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 24-mar — Credit-gated saved searches, feature unlocks, alert matches
+
+**Tareas:** Búsquedas guardadas (BD), feature unlocks con créditos, coincidencias por alerta, rediseño location picker, CategoryBar checkbox CSS.
+
+### Realizado:
+
+- **Migration 00198**: Tablas `saved_searches` + `feature_unlocks` con RLS completo, aplicada a remote
+- **Server endpoints**: CRUD saved-searches (GET/POST/PATCH/DELETE), feature-unlocks status+unlock, alert matches
+- **Composables**: `useSavedSearches` (DB-backed, auth-gated), `useFeatureUnlocks` (status/unlock)
+- **Gating**: 1 búsqueda/alerta gratis por usuario, ilimitadas tras unlock con 1 crédito
+- **Auth required**: Sin auth → prompt de registro al guardar/crear alerta
+- **UI**: CategoryBar checkbox CSS (ticks a la derecha), ControlsBar flujos save/alert, FilterBar strip de búsquedas
+- **FilterBarLocationPicker**: Rediseñado como dropdown escalonado (país → provincia → rango)
+- **usePerfilAlertas**: Extended con `canCreate` y `viewMatches(alertId)`
+- **i18n**: ~20 claves ES+EN para todas las features nuevas
+- **database.types.ts**: Regenerado con `--linked` para incluir nuevas tablas
+- Commits: `cc7dcc0`, `dd8d39d`
+
+### Pendiente:
+
+- Tests unitarios para `useSavedSearches`, `useFeatureUnlocks`, y endpoints server
+- Página `pages/perfil/busquedas.vue` (gestión de búsquedas guardadas)
+- Integración alerta matches con navegación al catálogo (`?from_alert=<id>`)
+
+### Prompt para continuar:
+
+> "Continúa pendientes de saved searches: tests unitarios para composables y endpoints, página /perfil/busquedas, integración alert matches con catálogo."
+
+CLOSING_SESSION
+
+---
 
 ## Sesión 23-mar (cont.) — Distributed tracing + KmScore real + Compact catalog view
 
