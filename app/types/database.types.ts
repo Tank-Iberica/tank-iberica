@@ -6,6 +6,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1'
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       actions: {
@@ -3802,6 +3827,30 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_unlocks: {
+        Row: {
+          created_at: string
+          credits_spent: number
+          feature: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits_spent?: number
+          feature: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits_spent?: number
+          feature?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       geo_regions: {
         Row: {
           country_code: string
@@ -5851,6 +5900,51 @@ export type Database = {
           id?: string
           resource?: string
           role?: string
+        }
+        Relationships: []
+      }
+      saved_searches: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          is_favorite: boolean
+          last_used_at: string | null
+          location_level: string | null
+          name: string
+          search_query: string | null
+          updated_at: string
+          use_count: number
+          user_id: string
+          vertical: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_favorite?: boolean
+          last_used_at?: string | null
+          location_level?: string | null
+          name: string
+          search_query?: string | null
+          updated_at?: string
+          use_count?: number
+          user_id: string
+          vertical?: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_favorite?: boolean
+          last_used_at?: string | null
+          location_level?: string | null
+          name?: string
+          search_query?: string | null
+          updated_at?: string
+          use_count?: number
+          user_id?: string
+          vertical?: string
         }
         Relationships: []
       }
@@ -8900,6 +8994,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       auction_status: ['draft', 'scheduled', 'active', 'ended', 'cancelled'],

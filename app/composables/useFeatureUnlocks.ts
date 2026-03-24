@@ -38,7 +38,10 @@ export function useFeatureUnlocks() {
       })
       if (result.unlocked) {
         unlocks.value[feature] = true
-        return { success: true, creditsRemaining: result.creditsRemaining }
+        return {
+          success: true,
+          creditsRemaining: 'creditsRemaining' in result ? result.creditsRemaining : undefined,
+        }
       }
       return { success: false }
     } catch (err: unknown) {

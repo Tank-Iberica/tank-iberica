@@ -342,6 +342,8 @@
 </template>
 
 <script setup lang="ts">
+import { useSavedSearches } from '~/composables/catalog/useSavedSearches'
+
 const props = defineProps<{
   vehicleCount?: number
   favCount?: number

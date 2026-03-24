@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
 import { useFilterBar } from '~/composables/catalog/useFilterBar'
+import { useSavedSearches } from '~/composables/catalog/useSavedSearches'
 import type { SavedSearch } from '~/composables/catalog/useSavedSearches'
 
 const props = defineProps<{
