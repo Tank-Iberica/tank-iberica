@@ -7,7 +7,7 @@ defineProps<{
   canSave: boolean
   newPresetName: string
   loadSearchQuery: string
-  filteredSearches: SavedSearch[]
+  filteredSearches: readonly SavedSearch[]
   editingId: string
   editName: string
 }>()
