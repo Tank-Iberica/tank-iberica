@@ -27,6 +27,8 @@ export default defineEventHandler((event) => {
   event.context.sentryTrace = sentryTrace
   event.context.baggage = baggage
 
-  setResponseHeader(event, 'x-request-id', requestId)
-  setResponseHeader(event, 'x-correlation-id', correlationId)
+  if (!event.node.res.headersSent) {
+    setResponseHeader(event, 'x-request-id', requestId)
+    setResponseHeader(event, 'x-correlation-id', correlationId)
+  }
 })

@@ -38,12 +38,14 @@ export default defineEventHandler((event) => {
       .filter(Boolean)
       .join(', ')
 
-    if (timingHeader) {
-      setHeader(event, 'Server-Timing', timingHeader)
+    // Guard: headers may already be sent (e.g. CORS preflight, SSE streams)
+    if (!event.node.res.headersSent) {
+      if (timingHeader) {
+        setHeader(event, 'Server-Timing', timingHeader)
+      }
+      // Also add to X-Response-Time header for debugging
+      setHeader(event, 'X-Response-Time', `${totalTime}ms`)
     }
-
-    // Also add to X-Response-Time header for debugging
-    setHeader(event, 'X-Response-Time', `${totalTime}ms`)
 
     // Record to latency metrics store for aggregation
     const path = event.path || event.node.req.url || '/'

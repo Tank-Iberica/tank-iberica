@@ -75,7 +75,14 @@ const {
 } = useSubastasIndex()
 
 // SSR: fetch initial auctions server-side for SEO + faster paint
-await useAsyncData('subastas-list', () => loadTab(), { server: true })
+await useAsyncData(
+  'subastas-list',
+  async () => {
+    await loadTab()
+    return auctions.value
+  },
+  { server: true },
+)
 
 onMounted(init)
 onUnmounted(destroy)

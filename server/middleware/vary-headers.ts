@@ -18,6 +18,8 @@ export default defineEventHandler((event) => {
   const path = event.path || ''
   const res = event.node.res
 
+  if (res.headersSent) return
+
   if (path.startsWith('/_nuxt/')) {
     // Static bundles: language-agnostic, encoding varies
     res.setHeader('Vary', 'Accept-Encoding')

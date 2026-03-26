@@ -24,7 +24,14 @@ usePageSeo({
   },
 })
 
-await useAsyncData('top-dealers', () => loadTopDealers(100), { server: true })
+await useAsyncData(
+  'top-dealers',
+  async () => {
+    await loadTopDealers(100)
+    return dealers.value
+  },
+  { server: true },
+)
 </script>
 
 <template>
