@@ -1,7 +1,9 @@
 <template>
   <div class="guides-page">
     <div class="guides-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('guide.title') }]" />
+      <UiBreadcrumbNav
+        :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('guide.title') }]"
+      />
       <h1 class="guides-title">{{ $t('guide.title') }}</h1>
       <p class="guides-subtitle">{{ $t('guide.subtitle') }}</p>
 
@@ -43,7 +45,16 @@
           class="guide-card"
         >
           <div class="guide-card-image">
-            <NuxtImg v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" width="400" height="225" decoding="async" sizes="(max-width: 48rem) 100vw, 400px" />
+            <NuxtImg
+              v-if="item.image_url"
+              :src="item.image_url"
+              :alt="getTitle(item)"
+              loading="lazy"
+              width="400"
+              height="225"
+              decoding="async"
+              sizes="(max-width: 48rem) 100vw, 400px"
+            />
             <div v-else class="guide-card-placeholder">
               <svg
                 width="32"
@@ -192,6 +203,14 @@ usePageSeo({
   title: t('seo.guidesTitle'),
   description: t('seo.guidesDescription'),
   path: '/guia',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: t('seo.guidesTitle'),
+    description: t('seo.guidesDescription'),
+    url: `${useSiteUrl()}/guia`,
+    isPartOf: { '@type': 'WebSite', name: t('site.title'), url: useSiteUrl() },
+  },
 })
 
 // SSR-compatible initial load — data arrives in HTML, no client-only flash

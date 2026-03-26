@@ -8,7 +8,7 @@
 
     <!-- Vehicle detail -->
     <template v-else>
-      <UiBreadcrumbNav :items="breadcrumbItems" />
+      <UiBreadcrumbNav :items="breadcrumbItems" no-schema />
 
       <article class="vehicle-content">
         <!-- Gallery + Sticky notification -->
@@ -393,7 +393,7 @@ if (vehicle.value) {
 
   const attrs = (vehicle.value.attributes_json || {}) as Record<string, unknown>
 
-  useJsonLd([
+  const schemas: Record<string, unknown>[] = [
     buildVehicleSchema({
       brand: vehicle.value.brand,
       model: vehicle.value.model,
@@ -413,7 +413,22 @@ if (vehicle.value) {
       { name: t('site.title'), url: siteUrl },
       { name: productName, url: canonicalUrl },
     ]),
-  ])
+  ]
+
+  // VideoObject schema for vehicles with video
+  if (vehicle.value.video_url) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: productName,
+      description: seoDesc,
+      thumbnailUrl: seoImage || undefined,
+      contentUrl: vehicle.value.video_url,
+      uploadDate: vehicle.value.created_at || undefined,
+    })
+  }
+
+  useJsonLd(schemas)
 }
 </script>
 

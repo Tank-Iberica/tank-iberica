@@ -20,7 +20,7 @@
     <!-- Article -->
     <template v-else>
       <div class="article-container">
-        <UiBreadcrumbNav :items="breadcrumbItems" />
+        <UiBreadcrumbNav :items="breadcrumbItems" no-schema />
 
         <article class="article-content">
           <div class="article-meta">

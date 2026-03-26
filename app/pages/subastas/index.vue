@@ -49,6 +49,14 @@ usePageSeo({
   title: t('auction.seoTitle'),
   description: t('auction.seoDescription'),
   path: '/subastas',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: t('auction.seoTitle'),
+    description: t('auction.seoDescription'),
+    url: `${useSiteUrl()}/subastas`,
+    isPartOf: { '@type': 'WebSite', name: t('site.title'), url: useSiteUrl() },
+  },
 })
 
 const {

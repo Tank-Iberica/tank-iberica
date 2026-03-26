@@ -10,9 +10,18 @@ definePageMeta({ layout: 'default' })
 const { t } = useI18n()
 const { dealers, loading, error, loadTopDealers } = useTopDealers()
 
-useSeoMeta({
-  title: () => t('topDealers.seoTitle'),
-  description: () => t('topDealers.seoDescription'),
+usePageSeo({
+  title: t('topDealers.seoTitle'),
+  description: t('topDealers.seoDescription'),
+  path: '/top-dealers',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: t('topDealers.seoTitle'),
+    description: t('topDealers.seoDescription'),
+    url: `${useSiteUrl()}/top-dealers`,
+    isPartOf: { '@type': 'WebSite', name: t('site.title'), url: useSiteUrl() },
+  },
 })
 
 await useAsyncData('top-dealers', () => loadTopDealers(100), { server: true })

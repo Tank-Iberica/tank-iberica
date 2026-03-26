@@ -31,9 +31,33 @@ interface BreadcrumbItem {
   to?: string
 }
 
-defineProps<{
+const props = defineProps<{
   items: BreadcrumbItem[]
+  /** Set to true to skip JSON-LD (e.g. when the page injects its own BreadcrumbList) */
+  noSchema?: boolean
 }>()
+
+// Auto-emit BreadcrumbList JSON-LD unless noSchema is set
+if (!props.noSchema && props.items.length) {
+  const siteUrl = useSiteUrl()
+  useHead({
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: props.items.map((item, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: item.label,
+            ...(item.to ? { item: `${siteUrl}${item.to}` } : {}),
+          })),
+        }),
+      },
+    ],
+  })
+}
 </script>
 
 <style scoped>

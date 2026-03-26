@@ -3,12 +3,22 @@ definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 
-useHead({ title: t('legalUk.pageTitle') })
+usePageSeo({
+  title: t('legalUk.pageTitle'),
+  description: t('legalUk.scopeText'),
+  path: '/legal/uk',
+})
 </script>
 
 <template>
   <div class="legal-uk-page">
-    <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('legal.title'), to: '/legal' }, { label: t('legalUk.title') }]" />
+    <UiBreadcrumbNav
+      :items="[
+        { label: $t('nav.home'), to: '/' },
+        { label: $t('legal.title'), to: '/legal' },
+        { label: t('legalUk.title') },
+      ]"
+    />
     <h1>{{ t('legalUk.title') }}</h1>
 
     <section class="legal-section">
