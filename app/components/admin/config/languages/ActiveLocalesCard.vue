@@ -88,7 +88,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
   accent-color: var(--color-primary);
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .config-card {
     padding: var(--spacing-4);
   }

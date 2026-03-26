@@ -139,7 +139,7 @@ function onSearchInput(event: Event): void {
   }
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .filters-bar {
     flex-direction: column;
   }

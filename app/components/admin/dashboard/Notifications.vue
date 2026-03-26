@@ -187,13 +187,13 @@ defineProps<{
   margin-bottom: var(--spacing-8);
 }
 
-(@media ()min-width: 37.5em())) {
+@media (min-width: 37.5em) {
   .notifications-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-(@media ()min-width: 56.25em())) {
+@media (min-width: 56.25em) {
   .notifications-grid {
     grid-template-columns: repeat(5, 1fr);
   }

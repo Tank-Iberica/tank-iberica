@@ -121,7 +121,7 @@ html.dark-mode {
   --color-teal-bg: #042f2e;
   --color-teal-text: #5eead4;
   --color-gold-bg: #3d1f00;
-  --color-gold-text: #fcd34d;     /* 6.20:1 on dark gold bg ✅ */
+  --color-gold-text: #fcd34d; /* 6.20:1 on dark gold bg ✅ */
 }
 
 html.dark-mode body {
@@ -177,43 +177,26 @@ html.high-contrast-mode {
   --shadow-ring: 0 0 0 2px #e0e0e0;
   --shadow-ring-strong: 0 0 0 2px #e0e0e0;
 
-  /* Estado: hue rotations desde --color-primary (CSS Relative Color Syntax)
-     +150° → error   — garantiza ≥60° del primary y entre sí
-     +210° → success — complementario al error
-     +60°  → warning — luminancia alta
-     +270° → info    — hue distinto de los tres anteriores
-     Sin red/green — distinguible por deuteranopes, protanopes y tritanopes */
-  --color-error: hsl(from var(--color-primary) calc(h + 150) 90% 65%);
-  --color-success: hsl(from var(--color-primary) calc(h + 210) 85% 68%);
-  --color-warning: hsl(from var(--color-primary) calc(h + 60) 95% 65%);
-  --color-info: hsl(from var(--color-primary) calc(h + 270) 85% 68%);
-  --color-error-bg: hsl(from var(--color-primary) calc(h + 150) 90% 65% / 0.15);
-  --color-success-bg: hsl(from var(--color-primary) calc(h + 210) 85% 68% / 0.15);
-  --color-warning-bg: hsl(from var(--color-primary) calc(h + 60) 95% 65% / 0.15);
-  --color-info-bg: hsl(from var(--color-primary) calc(h + 270) 85% 68% / 0.15);
-  --color-error-border: hsl(from var(--color-primary) calc(h + 150) 90% 65% / 0.6);
-  --color-success-border: hsl(from var(--color-primary) calc(h + 210) 85% 68% / 0.6);
-  --color-warning-text: hsl(from var(--color-primary) calc(h + 60) 95% 65%);
+  /* Estado: colores derivados del primary (#23424A ≈ hsl 190°)
+     Rotaciones: +150° error, +210° success, +60° warning, +270° info
+     Sin red/green puros — distinguible por deuteranopes, protanopes y tritanopes
+     Valores pre-calculados (PostCSS no soporta CSS Relative Color Syntax) */
+  --color-error: #ff8c42;
+  --color-success: #74c0fc;
+  --color-warning: #ffd43b;
+  --color-info: #cc5de8;
+  --color-error-bg: rgba(255, 140, 66, 0.15);
+  --color-success-bg: rgba(116, 192, 252, 0.15);
+  --color-warning-bg: rgba(255, 212, 59, 0.15);
+  --color-info-bg: rgba(204, 93, 232, 0.15);
+  --color-error-border: rgba(255, 140, 66, 0.6);
+  --color-success-border: rgba(116, 192, 252, 0.6);
+  --color-warning-text: #ffd43b;
 
   color-scheme: dark;
 }
 
-/* ---- Fallback para navegadores sin CSS Relative Color Syntax (~8%) ---- */
-@supports not (color: hsl(from red h s l)) {
-  html.high-contrast-mode {
-    --color-error: #ff8c42;
-    --color-success: #74c0fc;
-    --color-warning: #ffd43b;
-    --color-info: #cc5de8;
-    --color-error-bg: rgba(255, 140, 66, 0.15);
-    --color-success-bg: rgba(116, 192, 252, 0.15);
-    --color-warning-bg: rgba(255, 212, 59, 0.15);
-    --color-info-bg: rgba(204, 93, 232, 0.15);
-    --color-error-border: rgba(255, 140, 66, 0.6);
-    --color-success-border: rgba(116, 192, 252, 0.6);
-    --color-warning-text: #ffd43b;
-  }
-}
+/* @supports not fallback eliminado — valores ya pre-calculados arriba */
 
 html.high-contrast-mode a {
   color: var(--color-primary-hc);

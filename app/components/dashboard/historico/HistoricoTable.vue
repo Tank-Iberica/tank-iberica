@@ -288,7 +288,7 @@ const { t } = useI18n()
   background: var(--color-success-bg, var(--color-success-bg));
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .historico-table {
     font-size: var(--font-size-xs);
   }

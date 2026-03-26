@@ -40,7 +40,11 @@ const emit = defineEmits<{
       :disabled="translateDisabled || translating"
       @click="emit('translate-all')"
     >
-      {{ translating ? t('admin.configLanguages.translating') : t('admin.configLanguages.translateNow') }}
+      {{
+        translating
+          ? t('admin.configLanguages.translating')
+          : t('admin.configLanguages.translateNow')
+      }}
     </button>
 
     <p v-if="showApiKeyHint" class="hint-text">
@@ -134,7 +138,7 @@ const emit = defineEmits<{
   color: var(--text-disabled);
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .config-card {
     padding: var(--spacing-4);
   }

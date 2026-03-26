@@ -38,7 +38,9 @@ defineEmits<{
         </svg>
         Ver
       </a>
-      <button class="btn btn-delete-outline" @click="$emit('delete')">{{ $t('common.delete') }}</button>
+      <button class="btn btn-delete-outline" @click="$emit('delete')">
+        {{ $t('common.delete') }}
+      </button>
       <button class="btn" @click="$emit('cancel')">{{ $t('common.cancel') }}</button>
       <button class="btn btn-primary" :disabled="saving || !isValid" @click="$emit('save')">
         {{ saving ? $t('common.saving') : $t('common.save') }}
@@ -151,7 +153,7 @@ defineEmits<{
   background: var(--color-error-bg, var(--color-error-bg));
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .nf-right {
     width: 100%;
     justify-content: flex-end;

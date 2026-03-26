@@ -53,15 +53,20 @@ async function handleEmailSend(payload: Record<string, unknown>): Promise<Record
   return { sent: true, result }
 }
 
-async function handleImageProcess(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
-  // Image processing requires auth context — store result for polling
-  // For now, log and return placeholder. Full implementation requires
-  // the image pipeline to accept service-role calls.
-  logger.info('[process-jobs] image_process job received', { vehicleId: payload.vehicleId })
-  return { status: 'processed', note: 'Image processing via job queue' }
+async function handleImageProcess(
+  payload: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  // Image processing requires auth context — not yet implemented.
+  // Return 'skipped' so the job is NOT marked as processed prematurely.
+  logger.warn('[process-jobs] image_process not implemented — skipping', {
+    vehicleId: payload.vehicleId,
+  })
+  return { status: 'skipped', note: 'Image processing handler not yet implemented' }
 }
 
-async function handleAiDescription(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+async function handleAiDescription(
+  payload: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
   // Import AI provider dynamically to avoid circular deps
   const { callAI } = await import('../../services/aiProvider')
 
@@ -80,14 +85,22 @@ async function handleAiDescription(payload: Record<string, unknown>): Promise<Re
     (payload.modelRole as 'fast' | 'vision' | 'content') || 'fast',
   )
 
-  return { description: response.text.trim(), provider: response.provider, latencyMs: response.latencyMs }
+  return {
+    description: response.text.trim(),
+    provider: response.provider,
+    latencyMs: response.latencyMs,
+  }
 }
 
-async function handleImportStock(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
-  // Stock import is already a long-running operation
-  // For now, log and return. Full handler would replicate import-stock logic.
-  logger.info('[process-jobs] import_stock job received', { dealerId: payload.dealerId })
-  return { status: 'processed', note: 'Import stock via job queue' }
+async function handleImportStock(
+  payload: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  // Stock import not yet implemented via job queue.
+  // Return 'skipped' so the job is NOT marked as processed prematurely.
+  logger.warn('[process-jobs] import_stock not implemented — skipping', {
+    dealerId: payload.dealerId,
+  })
+  return { status: 'skipped', note: 'Import stock handler not yet implemented' }
 }
 
 // ---------------------------------------------------------------------------
@@ -103,12 +116,21 @@ async function processJob(job: Job): Promise<void> {
 
   // Get supabase client — we need it for complete/fail calls
   // This is called from the main handler which has event context
-  const supabase = (globalThis as Record<string, unknown>).__jobWorkerSupabase as import('@supabase/supabase-js').SupabaseClient
+  const supabase = (globalThis as Record<string, unknown>)
+    .__jobWorkerSupabase as import('@supabase/supabase-js').SupabaseClient
 
   const start = Date.now()
 
   try {
     const result = await handler(job.payload)
+    // Don't mark skipped jobs as completed — leave them in queue for future implementation
+    if (result.status === 'skipped') {
+      logger.info('[process-jobs] Job skipped (handler not implemented)', {
+        jobId: job.id,
+        jobType: job.job_type,
+      })
+      return
+    }
     await completeJob(supabase, job.id, result)
     logger.info('[process-jobs] Job completed', {
       jobId: job.id,

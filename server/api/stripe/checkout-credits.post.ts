@@ -68,6 +68,9 @@ export default defineEventHandler(async (event) => {
 
   const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
   if (!stripeKey) {
+    if (process.env.NODE_ENV === 'production') {
+      throw safeError(503, 'Payment service unavailable')
+    }
     return {
       url: '/precios?mock=true',
       sessionId: `mock_session_${Date.now()}`,

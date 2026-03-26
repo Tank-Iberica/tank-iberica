@@ -71,7 +71,7 @@ function onInput(event: Event) {
   box-shadow: var(--shadow-focus);
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .config-card {
     padding: var(--spacing-4);
   }

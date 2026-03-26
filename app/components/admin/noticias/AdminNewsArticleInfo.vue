@@ -88,7 +88,7 @@ defineEmits<{
   gap: 0.75rem;
 }
 
-(@media ()max-width: 37.5em())) {
+@media (max-width: 37.5em) {
   .info-grid {
     grid-template-columns: 1fr;
   }

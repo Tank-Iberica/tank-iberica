@@ -148,7 +148,7 @@ function onStatusChange(event: Event) {
   font-size: 0.8rem;
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .toolbar-row {
     flex-direction: column;
   }

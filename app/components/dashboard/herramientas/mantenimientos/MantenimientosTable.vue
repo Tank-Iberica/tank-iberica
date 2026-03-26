@@ -285,7 +285,7 @@ const { t } = useI18n()
   margin: 0 0 1rem;
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .data-table {
     font-size: var(--font-size-xs);
   }

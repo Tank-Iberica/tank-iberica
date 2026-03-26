@@ -6,7 +6,7 @@
 
 **TradeBase** es una plataforma SaaS que genera marketplaces B2B verticales sin código repetido:
 
-- Mismo codebase (Nuxt 3 + Supabase + Cloudflare)
+- Mismo codebase (Nuxt 4 + Supabase + Cloudflare)
 - N verticales (vehículos, maquinaria, hostelería, inmuebles, etc.)
 - Configuración por `vertical_config` + datos en BD (sin hardcodes)
 
@@ -14,7 +14,7 @@
 
 ## Stack
 
-- **Frontend:** Nuxt 3 (Vue 3) + TypeScript
+- **Frontend:** Nuxt 4 (Vue 3) + TypeScript
 - **Backend:** Server routes Nuxt (Nitro) → Cloudflare Workers
 - **BD:** Supabase (PostgreSQL + RLS + Realtime)
 - **Pagos:** Stripe (suscripciones, depositos, checkout)

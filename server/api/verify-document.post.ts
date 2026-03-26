@@ -152,7 +152,7 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
   }
 
   // 7. Call AI Vision for document analysis (with fallback to mock)
-  let extractedData: ExtractedData
+  let extractedData: ExtractedData | null
 
   try {
     const aiResponse = await callAI(
@@ -195,28 +195,27 @@ Use null for fields not found in the document.`,
     }
     extractedData = JSON.parse(cleaned) as ExtractedData
   } catch {
-    // Fallback to mock if no AI provider available
-    logger.warn('[verify-document] AI unavailable, using mock extracted data')
-    extractedData = {
-      brand: declaredData.brand,
-      model: declaredData.model,
-      year: declaredData.year,
-      km: declaredData.km,
-      matricula: null,
-      vin: null,
-    }
+    // AI unavailable — cannot verify. Mark as pending_review for manual check.
+    logger.warn('[verify-document] AI unavailable, marking as pending_review (no auto-approve)')
+    extractedData = null
   }
 
-  // 8. Compare extracted data with declared data
-  const discrepancies = compareExtractedData(extractedData, declaredData)
+  // 8. Compare extracted data with declared data (only if AI succeeded)
+  let discrepancies: ReturnType<typeof compareExtractedData> = []
+  let isMatch = false
+  let confidence = 0
+  let newStatus: 'verified' | 'pending' | 'pending_review'
 
-  const isMatch = discrepancies.length === 0
-
-  // Confidence score: 1.0 for mock data, real implementation would use
-  // Claude Vision's confidence indicators
-  const confidence = isMatch ? 0.95 : 0.4
-
-  const newStatus: 'verified' | 'pending' = isMatch ? 'verified' : 'pending'
+  if (extractedData) {
+    discrepancies = compareExtractedData(extractedData, declaredData)
+    isMatch = discrepancies.length === 0
+    confidence = isMatch ? 0.95 : 0.4
+    newStatus = isMatch ? 'verified' : 'pending'
+  } else {
+    // No AI extraction — cannot auto-verify, require manual review
+    newStatus = 'pending'
+    confidence = 0
+  }
   const now = new Date().toISOString()
 
   // 9. Update the verification document based on the result

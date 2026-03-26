@@ -301,6 +301,9 @@ export async function createReportAdapter(type?: ReportProviderType): Promise<Re
     }
   }
 
-  // Mock fallback (always available in dev)
+  // Mock fallback — ONLY in development. In production, refuse to fake verified data.
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('No vehicle report provider available. Configure INFOCAR or CARVERTICAL keys.')
+  }
   return new MockReportAdapter()
 }

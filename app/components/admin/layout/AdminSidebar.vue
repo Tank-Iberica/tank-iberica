@@ -392,7 +392,7 @@ function onBrokeragePopover(e: MouseEvent) {
 
 /* Mobile: off-canvas */
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .admin-sidebar {
     transform: translateX(-100%);
   }
@@ -599,7 +599,7 @@ function onBrokeragePopover(e: MouseEvent) {
   padding: var(--spacing-2);
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .close-btn-mobile {
     display: flex;
   }

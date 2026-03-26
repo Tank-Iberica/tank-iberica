@@ -15,7 +15,11 @@ import { defineEventHandler } from 'h3'
 import { z } from 'zod'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
-import { getIdempotencyKey, checkIdempotency, storeIdempotencyResponse } from '../../utils/idempotency'
+import {
+  getIdempotencyKey,
+  checkIdempotency,
+  storeIdempotencyResponse,
+} from '../../utils/idempotency'
 
 // -- Types ------------------------------------------------------------------
 
@@ -118,6 +122,9 @@ export default defineEventHandler(async (event): Promise<CreateReservationRespon
   const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
 
   if (!stripeKey) {
+    if (process.env.NODE_ENV === 'production') {
+      throw safeError(503, 'Payment service unavailable')
+    }
     // Dev/mock fallback when Stripe is not configured
     const mockId = `res_mock_${Date.now()}`
     await supabase.from('reservations').insert({
@@ -180,7 +187,12 @@ export default defineEventHandler(async (event): Promise<CreateReservationRespon
 
   // Store in idempotency cache if key provided
   if (idempotencyKey) {
-    await storeIdempotencyResponse(supabase, idempotencyKey, 'POST /api/reservations/create', response)
+    await storeIdempotencyResponse(
+      supabase,
+      idempotencyKey,
+      'POST /api/reservations/create',
+      response,
+    )
   }
 
   return response

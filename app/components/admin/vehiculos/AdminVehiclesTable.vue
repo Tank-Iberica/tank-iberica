@@ -314,7 +314,7 @@ const statusLabels = computed<Record<string, string>>(() => ({
   height: 1rem;
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .col-category,
   .col-status {
     display: none;

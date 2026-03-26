@@ -27,6 +27,9 @@ export default defineEventHandler(async (event) => {
   // Import Stripe (handle missing key gracefully)
   const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
   if (!stripeKey) {
+    if (process.env.NODE_ENV === 'production') {
+      throw safeError(503, 'Payment service unavailable')
+    }
     return {
       url: `${returnUrl}?connect=mock`,
       accountId: `acct_mock_${Date.now()}`,

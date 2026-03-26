@@ -49,7 +49,10 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
     throw safeError(401, 'Authentication required')
   }
 
-  // 2. Deduct 1 credit for AI generation
+  // 2. Read and validate body BEFORE charging credits
+  const body = await validateBody(event, generateDescriptionSchema)
+
+  // 3. Deduct 1 credit for AI generation (after validation, before AI call)
   const creditResult = await deductUserCredits(
     user.id,
     DESCRIPTION_CREDIT_COST,
@@ -61,9 +64,6 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
     }
     throw safeError(500, 'Credit service unavailable')
   }
-
-  // 3. Read and validate body
-  const body = await validateBody(event, generateDescriptionSchema)
 
   // 3.5 Sanitize string fields before interpolating into AI prompt
   const brand = sanitizeText(body.brand, { maxLength: 128 })
@@ -120,11 +120,21 @@ Responde SOLO con la descripcion, sin titulos ni encabezados.`
     return { description: response.text.trim(), creditsRemaining: creditResult.newBalance }
   } catch (err: unknown) {
     // Graceful fallback: if all AI providers are down (circuit open, timeout, no keys),
-    // return an empty description so the user can still publish the vehicle manually.
+    // refund the credit and return empty so the user can still publish manually.
     const message = err instanceof Error ? err.message : String(err)
     logger.warn(
-      `[generate-description] AI unavailable (${message}) — returning empty for manual input`,
+      `[generate-description] AI unavailable (${message}) — refunding credit, returning empty`,
     )
-    return { description: '', aiUnavailable: true, creditsRemaining: creditResult.newBalance }
+    // Refund: re-add the deducted credit
+    const refund = await deductUserCredits(
+      user.id,
+      -DESCRIPTION_CREDIT_COST,
+      'Reembolso: IA no disponible para descripción',
+    )
+    return {
+      description: '',
+      aiUnavailable: true,
+      creditsRemaining: refund.success ? refund.newBalance : creditResult.newBalance,
+    }
   }
 })

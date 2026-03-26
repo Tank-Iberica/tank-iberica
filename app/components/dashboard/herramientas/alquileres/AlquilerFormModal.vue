@@ -404,7 +404,7 @@ textarea.field-input {
   accent-color: var(--color-primary);
 }
 
-(@media ()max-width: 47.9375em())) {
+@media (max-width: 47.9375em) {
   .field-row {
     flex-direction: column;
     gap: 0;

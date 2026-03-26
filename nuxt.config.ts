@@ -178,8 +178,8 @@ export default defineNuxtConfig({
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Permissions-Policy':
           'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()',
-        // Report-Only first — switch to Content-Security-Policy once violations confirmed zero
-        'Content-Security-Policy-Report-Only': [
+        // Enforced CSP — unsafe-inline required for Nuxt SSR hydration scripts + scoped styles
+        'Content-Security-Policy': [
           "default-src 'self'",
           // Scripts: GTM, AdSense, Prebid, Turnstile
           "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://cdn.jsdelivr.net https://challenges.cloudflare.com",
@@ -212,7 +212,7 @@ export default defineNuxtConfig({
     '/guia/**': { swr: 60 * 60 },
     '/sobre-nosotros': { prerender: true },
     '/transparencia': { prerender: true },
-    '/preguntas-frecuentes': { prerender: true },
+    '/preguntas-frecuentes': { swr: 60 * 60 },
     '/glosario': { swr: 60 * 60 },
     '/top-dealers': { swr: 60 * 60 },
     '/servicios-postventa': { prerender: true },
@@ -244,6 +244,8 @@ export default defineNuxtConfig({
     prerender: {
       // Crawl links from prerendered pages to discover more routes
       crawlLinks: true,
+      // Don't fail build on 404s from dynamic/DB-driven routes
+      failOnError: false,
       // Static pages to always prerender (SEO landings)
       routes: [
         '/',
