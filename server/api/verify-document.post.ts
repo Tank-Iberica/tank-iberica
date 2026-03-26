@@ -258,7 +258,7 @@ Use null for fields not found in the document.`,
   return {
     match: isMatch,
     confidence,
-    extractedData,
+    extractedData: extractedData ?? undefined,
     discrepancies,
     documentId,
     status: newStatus,
