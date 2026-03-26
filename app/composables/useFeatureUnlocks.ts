@@ -7,6 +7,7 @@
 
 type UnlockableFeature = 'saved_searches' | 'alerts'
 
+/** Composable for checking and managing credit-gated feature unlock status. */
 export function useFeatureUnlocks() {
   const unlocks = useState<Record<string, boolean>>('feature-unlocks', () => ({}))
   const loading = ref(false)

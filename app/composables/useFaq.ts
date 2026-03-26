@@ -13,6 +13,7 @@ export interface FaqEntry {
   sort_order: number
 }
 
+/** Composable for FAQ page entries with category grouping and search. */
 export function useFaq() {
   const supabase = useSupabaseClient()
 

@@ -4,6 +4,7 @@
  */
 import QRCode from 'qrcode'
 
+/** Composable for generating dealer QR codes with share functionality. */
 export function useDealerQR(portalSlug: Ref<string>) {
   const config = useRuntimeConfig()
   const qrDataUrl = ref('')

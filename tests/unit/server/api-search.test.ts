@@ -54,11 +54,20 @@ describe('GET /api/search', () => {
     mockRpc.mockResolvedValue({
       data: [
         {
-          id: 'v1', slug: 'volvo-fh', brand: 'Volvo', model: 'FH',
-          year: 2020, price: 45000, location: 'Madrid',
-          location_province: 'Madrid', location_country: 'ES',
-          category_id: null, dealer_id: 'd1', created_at: '2026-01-01',
-          rank: 1.5, total_estimate: 1,
+          id: 'v1',
+          slug: 'volvo-fh',
+          brand: 'Volvo',
+          model: 'FH',
+          year: 2020,
+          price: 45000,
+          location: 'Madrid',
+          location_province: 'Madrid',
+          location_country: 'ES',
+          category_id: null,
+          dealer_id: 'd1',
+          created_at: '2026-01-01',
+          rank: 1.5,
+          total_estimate: 1,
         },
       ],
       error: null,
@@ -69,9 +78,12 @@ describe('GET /api/search', () => {
     expect(result.results).toHaveLength(1)
     expect(result.results[0].brand).toBe('Volvo')
     expect(result.results[0]).not.toHaveProperty('total_estimate')
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      search_query: 'volvo fh',
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        search_query: 'volvo fh',
+      }),
+    )
   })
 
   it('passes filters to RPC', async () => {
@@ -87,24 +99,30 @@ describe('GET /api/search', () => {
 
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      search_query: 'scania',
-      filter_price_min: 10000,
-      filter_price_max: 80000,
-      filter_year_min: 2018,
-      filter_year_max: 2025,
-      filter_province: 'Barcelona',
-      filter_country: 'ES',
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        search_query: 'scania',
+        filter_price_min: 10000,
+        filter_price_max: 80000,
+        filter_year_min: 2018,
+        filter_year_max: 2025,
+        filter_province: 'Barcelona',
+        filter_country: 'ES',
+      }),
+    )
   })
 
   it('ignores invalid category_id', async () => {
     setQuery({ category_id: 'not-a-uuid' })
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      filter_category_id: null,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        filter_category_id: undefined,
+      }),
+    )
   })
 
   it('accepts valid UUID for category_id', async () => {
@@ -112,18 +130,24 @@ describe('GET /api/search', () => {
     setQuery({ category_id: uuid })
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      filter_category_id: uuid,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        filter_category_id: uuid,
+      }),
+    )
   })
 
   it('clamps limit to max 50', async () => {
     setQuery({ limit: '100' })
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      page_limit: 50,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        page_limit: 50,
+      }),
+    )
   })
 
   it('defaults limit when 0 provided', async () => {
@@ -131,25 +155,61 @@ describe('GET /api/search', () => {
     await (handler as Function)(mockEvent)
 
     // Number('0') || 20 → 20 (0 is falsy, defaults to 20)
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      page_limit: 20,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        page_limit: 20,
+      }),
+    )
   })
 
   it('defaults limit to 20', async () => {
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      page_limit: 20,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        page_limit: 20,
+      }),
+    )
   })
 
   it('returns next_cursor when results equal limit', async () => {
     setQuery({ limit: '2' })
     mockRpc.mockResolvedValue({
       data: [
-        { id: 'v1', slug: 's1', brand: 'A', model: 'B', year: null, price: null, location: null, location_province: null, location_country: null, category_id: null, dealer_id: null, created_at: '', rank: 1, total_estimate: 5 },
-        { id: 'v2', slug: 's2', brand: 'C', model: 'D', year: null, price: null, location: null, location_province: null, location_country: null, category_id: null, dealer_id: null, created_at: '', rank: 0.5, total_estimate: 5 },
+        {
+          id: 'v1',
+          slug: 's1',
+          brand: 'A',
+          model: 'B',
+          year: null,
+          price: null,
+          location: null,
+          location_province: null,
+          location_country: null,
+          category_id: null,
+          dealer_id: null,
+          created_at: '',
+          rank: 1,
+          total_estimate: 5,
+        },
+        {
+          id: 'v2',
+          slug: 's2',
+          brand: 'C',
+          model: 'D',
+          year: null,
+          price: null,
+          location: null,
+          location_province: null,
+          location_country: null,
+          category_id: null,
+          dealer_id: null,
+          created_at: '',
+          rank: 0.5,
+          total_estimate: 5,
+        },
       ],
       error: null,
     })
@@ -162,7 +222,22 @@ describe('GET /api/search', () => {
   it('returns null next_cursor when results < limit', async () => {
     mockRpc.mockResolvedValue({
       data: [
-        { id: 'v1', slug: 's1', brand: 'A', model: 'B', year: null, price: null, location: null, location_province: null, location_country: null, category_id: null, dealer_id: null, created_at: '', rank: 1, total_estimate: 1 },
+        {
+          id: 'v1',
+          slug: 's1',
+          brand: 'A',
+          model: 'B',
+          year: null,
+          price: null,
+          location: null,
+          location_province: null,
+          location_country: null,
+          category_id: null,
+          dealer_id: null,
+          created_at: '',
+          rank: 1,
+          total_estimate: 1,
+        },
       ],
       error: null,
     })
@@ -193,17 +268,23 @@ describe('GET /api/search', () => {
     setQuery({ cursor: cursorId })
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      cursor_id: cursorId,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        cursor_id: cursorId,
+      }),
+    )
   })
 
   it('ignores invalid cursor format', async () => {
     setQuery({ cursor: 'bad-cursor' })
     await (handler as Function)(mockEvent)
 
-    expect(mockRpc).toHaveBeenCalledWith('search_vehicles', expect.objectContaining({
-      cursor_id: null,
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'search_vehicles',
+      expect.objectContaining({
+        cursor_id: undefined,
+      }),
+    )
   })
 })

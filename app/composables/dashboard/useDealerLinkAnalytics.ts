@@ -11,6 +11,7 @@ export interface LinkAnalyticsSummary {
   last30Days: { date: string; count: number }[]
 }
 
+/** Composable for fetching dealer link and QR scan analytics. */
 export function useDealerLinkAnalytics(dealerId: Ref<string | null>) {
   const supabase = useSupabaseClient()
   const loading = ref(false)

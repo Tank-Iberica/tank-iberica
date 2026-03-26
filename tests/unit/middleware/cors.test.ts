@@ -8,10 +8,13 @@ const mockGetHeader = vi.fn()
 const mockSetResponseHeaders = vi.fn()
 const mockGetSiteUrl = vi.fn().mockReturnValue('https://tracciona.com')
 
+const mockSetResponseStatus = vi.fn()
+
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   getHeader: (...args: unknown[]) => mockGetHeader(...args),
   setResponseHeaders: (...args: unknown[]) => mockSetResponseHeaders(...args),
+  setResponseStatus: (...args: unknown[]) => mockSetResponseStatus(...args),
 }))
 
 vi.mock('~~/server/utils/siteConfig', () => ({
@@ -94,7 +97,7 @@ describe('CORS middleware', () => {
     expect(mockSetResponseHeaders).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        'Vary': 'Origin',
+        Vary: 'Origin',
       }),
     )
   })
@@ -113,9 +116,9 @@ describe('CORS middleware', () => {
   it('handles OPTIONS preflight with 204', () => {
     mockGetHeader.mockReturnValue('https://tracciona.com')
     const event = makeEvent('/api/test', 'OPTIONS')
-    handler(event as any)
-    expect(event.node.res.statusCode).toBe(204)
-    expect(event.node.res.end).toHaveBeenCalled()
+    const result = handler(event as any)
+    expect(mockSetResponseStatus).toHaveBeenCalledWith(event, 204)
+    expect(result).toBe('')
   })
 
   it('normalizes trailing slashes in origin', () => {

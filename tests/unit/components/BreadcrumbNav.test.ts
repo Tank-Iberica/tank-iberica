@@ -1,8 +1,14 @@
 /**
  * Tests for app/components/ui/BreadcrumbNav.vue
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
+
+beforeAll(() => {
+  vi.stubGlobal('useHead', vi.fn())
+  vi.stubGlobal('useSiteUrl', () => 'https://tracciona.com')
+})
+
 import BreadcrumbNav from '../../../app/components/ui/BreadcrumbNav.vue'
 
 const baseItems = [

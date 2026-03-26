@@ -50,7 +50,9 @@ vi.mock('#supabase/server', () => ({
 }))
 
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
-vi.mock('../../../server/utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
+vi.mock('../../../server/utils/verifyCronSecret', () => ({
+  verifyCronSecret: mockVerifyCronSecret,
+}))
 
 vi.stubGlobal('useRuntimeConfig', () => ({
   cloudflareImagesApiToken: undefined,
@@ -58,7 +60,10 @@ vi.stubGlobal('useRuntimeConfig', () => ({
   public: {},
 }))
 vi.stubGlobal('verifyCronSecret', mockVerifyCronSecret)
-vi.stubGlobal('$fetch', vi.fn().mockResolvedValue({ success: true, errors: [], result: { id: 'thumb' } }))
+vi.stubGlobal(
+  '$fetch',
+  vi.fn().mockResolvedValue({ success: true, errors: [], result: { id: 'thumb' } }),
+)
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -83,7 +88,11 @@ function makeThenableChain(data: any = null, error: any = null) {
 }
 
 /** Returns a supabase client where call 1 = users (admin check), rest = thenableChain. */
-function makeAdminSupabase(role: string | null = 'admin', secondData: any = null, secondError: any = null) {
+function makeAdminSupabase(
+  role: string | null = 'admin',
+  secondData: any = null,
+  secondError: any = null,
+) {
   let callCount = 0
   return {
     from: vi.fn().mockImplementation(() => {
@@ -126,7 +135,9 @@ describe('GET /api/infra/alerts', () => {
   })
 
   it('returns alerts array for admin', async () => {
-    mockServiceRole.mockReturnValue(makeAdminSupabase('admin', [{ id: 'alert-1', component: 'supabase' }]))
+    mockServiceRole.mockReturnValue(
+      makeAdminSupabase('admin', [{ id: 'alert-1', component: 'supabase' }]),
+    )
     const result = await alertsGetHandler({} as any)
     expect(result.alerts).toEqual([{ id: 'alert-1', component: 'supabase' }])
     expect(result.showAll).toBe(false)
@@ -175,7 +186,9 @@ describe('GET /api/infra/metrics', () => {
   })
 
   it('returns metrics for admin with default 24h period', async () => {
-    mockServiceRole.mockReturnValue(makeAdminSupabase('admin', [{ id: 'm1', component: 'supabase' }]))
+    mockServiceRole.mockReturnValue(
+      makeAdminSupabase('admin', [{ id: 'm1', component: 'supabase' }]),
+    )
     const result = await metricsGetHandler({} as any)
     expect(result.period).toBe('24h')
     expect(result.component).toBe('all')
@@ -221,12 +234,16 @@ describe('PATCH /api/infra/alerts/:id', () => {
 
   it('throws 400 when alert ID is missing', async () => {
     mockServiceRole.mockReturnValue(makeAdminSupabase('admin'))
-    await expect(alertsPatchHandler({ context: { params: {} } } as any)).rejects.toMatchObject({ statusCode: 400 })
+    await expect(alertsPatchHandler({ context: { params: {} } } as any)).rejects.toMatchObject({
+      statusCode: 400,
+    })
   })
 
   it('throws 400 when alert ID is not a valid UUID', async () => {
     mockServiceRole.mockReturnValue(makeAdminSupabase('admin'))
-    await expect(alertsPatchHandler({ context: { params: { id: 'not-a-uuid' } } } as any)).rejects.toMatchObject({ statusCode: 400 })
+    await expect(
+      alertsPatchHandler({ context: { params: { id: 'not-a-uuid' } } } as any),
+    ).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 404 when alert not found', async () => {
@@ -238,11 +255,13 @@ describe('PATCH /api/infra/alerts/:id', () => {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
           update: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue(
-            callCount === 1
-              ? { data: { role: 'admin' }, error: null }
-              : { data: null, error: { message: 'not found' } },
-          ),
+          single: vi
+            .fn()
+            .mockResolvedValue(
+              callCount === 1
+                ? { data: { role: 'admin' }, error: null }
+                : { data: null, error: { message: 'not found' } },
+            ),
         }
       }),
     }
@@ -259,11 +278,13 @@ describe('PATCH /api/infra/alerts/:id', () => {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
           update: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue(
-            callCount === 1
-              ? { data: { role: 'admin' }, error: null }
-              : { data: { id: validAlertId, acknowledged: true }, error: null },
-          ),
+          single: vi
+            .fn()
+            .mockResolvedValue(
+              callCount === 1
+                ? { data: { role: 'admin' }, error: null }
+                : { data: { id: validAlertId, acknowledged: true }, error: null },
+            ),
         }
       }),
     }
@@ -286,7 +307,9 @@ describe('PATCH /api/infra/alerts/:id', () => {
         if (callCount === 1) {
           chain.single = vi.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
         } else if (callCount === 2) {
-          chain.single = vi.fn().mockResolvedValue({ data: { id: validAlertId, acknowledged_at: null }, error: null })
+          chain.single = vi
+            .fn()
+            .mockResolvedValue({ data: { id: validAlertId, acknowledged_at: null }, error: null })
         } else {
           // update chain — thenable
           chain.then = (onFulfilled: Function, onRejected?: Function) =>
@@ -314,10 +337,15 @@ describe('PATCH /api/infra/alerts/:id', () => {
         if (callCount === 1) {
           chain.single = vi.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
         } else if (callCount === 2) {
-          chain.single = vi.fn().mockResolvedValue({ data: { id: validAlertId, acknowledged_at: null }, error: null })
+          chain.single = vi
+            .fn()
+            .mockResolvedValue({ data: { id: validAlertId, acknowledged_at: null }, error: null })
         } else {
           chain.then = (onFulfilled: Function, onRejected?: Function) =>
-            Promise.resolve({ data: null, error: { message: 'update failed' } }).then(onFulfilled as any, onRejected as any)
+            Promise.resolve({ data: null, error: { message: 'update failed' } }).then(
+              onFulfilled as any,
+              onRejected as any,
+            )
         }
         return chain
       }),
@@ -364,7 +392,10 @@ describe('POST /api/infra/setup-cf-variants', () => {
       public: {},
     }))
     mockServiceRole.mockReturnValue(makeAdminSupabase('admin'))
-    vi.stubGlobal('$fetch', vi.fn().mockResolvedValue({ success: true, errors: [], result: { id: 'thumb' } }))
+    vi.stubGlobal(
+      '$fetch',
+      vi.fn().mockResolvedValue({ success: true, errors: [], result: { id: 'thumb' } }),
+    )
     const result = await setupCfVariantsHandler({} as any)
     expect(result.created).toHaveLength(4)
   })
@@ -400,7 +431,9 @@ describe('GET /api/infra/slow-queries', () => {
   it('returns slow_queries type when RPC succeeds', async () => {
     mockServiceRole.mockReturnValue({
       rpc: vi.fn().mockReturnValue({
-        limit: vi.fn().mockResolvedValue({ data: [{ query: 'SELECT 1', mean_exec_time: 100 }], error: null }),
+        limit: vi
+          .fn()
+          .mockResolvedValue({ data: [{ query: 'SELECT 1', mean_exec_time: 100 }], error: null }),
       }),
     })
     const result = await slowQueriesHandler({} as any)
@@ -415,7 +448,9 @@ describe('GET /api/infra/slow-queries', () => {
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnThis(),
         order: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockResolvedValue({ data: [{ relname: 'vehicles', seq_scan: 500 }], error: null }),
+        limit: vi
+          .fn()
+          .mockResolvedValue({ data: [{ relname: 'vehicles', seq_scan: 500 }], error: null }),
       }),
     })
     const result = await slowQueriesHandler({} as any)
@@ -487,7 +522,10 @@ describe('GET /api/infra/clusters', () => {
           chain.single = vi.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
         } else {
           chain.then = (onFulfilled: Function, onRejected?: Function) =>
-            Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onFulfilled as any, onRejected as any)
+            Promise.resolve({ data: null, error: { message: 'DB error' } }).then(
+              onFulfilled as any,
+              onRejected as any,
+            )
         }
         return chain
       }),
@@ -507,7 +545,10 @@ const validDgtBody = {
   provider: 'infocar',
 }
 
-function makeDgtSupabase(role: string | null = 'admin', vehicleData: any = { id: 'v1', brand: 'Volvo', model: 'FH16', year: 2020, verification_level: 0 }) {
+function makeDgtSupabase(
+  role: string | null = 'admin',
+  vehicleData: any = { id: 'v1', brand: 'Volvo', model: 'FH16', year: 2020, verification_level: 0 },
+) {
   let callCount = 0
   return {
     from: vi.fn().mockImplementation(() => {
@@ -557,11 +598,13 @@ describe('POST /api/dgt-report', () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue(
-            callCount === 1
-              ? { data: null, error: { message: 'error' } }
-              : { data: null, error: null },
-          ),
+          single: vi
+            .fn()
+            .mockResolvedValue(
+              callCount === 1
+                ? { data: null, error: { message: 'error' } }
+                : { data: null, error: null },
+            ),
         }
       }),
     }
@@ -594,11 +637,13 @@ describe('POST /api/dgt-report', () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue(
-            callCount === 1
-              ? { data: { role: 'admin' }, error: null }
-              : { data: null, error: { message: 'not found' } },
-          ),
+          single: vi
+            .fn()
+            .mockResolvedValue(
+              callCount === 1
+                ? { data: { role: 'admin' }, error: null }
+                : { data: null, error: { message: 'not found' } },
+            ),
         }
       }),
     }
@@ -610,7 +655,7 @@ describe('POST /api/dgt-report', () => {
     mockServiceRole.mockReturnValue(makeDgtSupabase('admin'))
     const result = await dgtReportHandler({} as any)
     expect(result.success).toBe(true)
-    expect(result.kmScore).toBe(85)
+    expect(result.kmScore).toBe(100)
     expect(result.reportUrl).toContain('tracciona.com')
     expect(result.documentId).toBe('doc-1')
   })

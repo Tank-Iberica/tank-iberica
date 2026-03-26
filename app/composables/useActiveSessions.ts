@@ -45,6 +45,7 @@ export function parseDeviceLabel(uaHint: string | null): string {
   return 'Unknown device'
 }
 
+/** Composable for managing active sessions and device fingerprints. */
 export function useActiveSessions() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

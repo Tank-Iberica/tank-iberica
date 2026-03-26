@@ -42,6 +42,13 @@ const sampleAlert = {
 beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal('useI18n', () => ({ t: (key: string) => key }))
+  vi.stubGlobal('useFeatureUnlocks', () => ({
+    unlocks: { value: {} },
+    loading: { value: false },
+    isUnlocked: () => false,
+    unlock: vi.fn(),
+    fetchStatus: vi.fn(),
+  }))
   stubAuth()
   stubClient()
 })

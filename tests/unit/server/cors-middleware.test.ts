@@ -1,14 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const { mockGetHeader, mockSetResponseHeaders } = vi.hoisted(() => ({
+const { mockGetHeader, mockSetResponseHeaders, mockSetResponseStatus } = vi.hoisted(() => ({
   mockGetHeader: vi.fn(),
   mockSetResponseHeaders: vi.fn(),
+  mockSetResponseStatus: vi.fn(),
 }))
 
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   getHeader: mockGetHeader,
   setResponseHeaders: mockSetResponseHeaders,
+  setResponseStatus: mockSetResponseStatus,
 }))
 
 vi.mock('~~/server/utils/siteConfig', () => ({
@@ -83,9 +85,9 @@ describe('cors middleware', () => {
   it('handles OPTIONS preflight with 204', () => {
     const event = makeEvent('/api/vehicles', 'OPTIONS')
     mockGetHeader.mockReturnValue('https://test.tracciona.com')
-    handler(event)
-    expect(event.node.res.statusCode).toBe(204)
-    expect(event.node.res.end).toHaveBeenCalled()
+    const result = handler(event)
+    expect(mockSetResponseStatus).toHaveBeenCalledWith(event, 204)
+    expect(result).toBe('')
   })
 
   it('normalizes trailing slash in origin', () => {

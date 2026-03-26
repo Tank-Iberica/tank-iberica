@@ -3,7 +3,24 @@
  */
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
-import { ref, computed, Ref } from 'vue'
+import { ref, computed, readonly, watch, Ref } from 'vue'
+
+vi.mock('~/composables/catalog/useSavedSearches', () => ({
+  useSavedSearches: () => ({
+    searches: readonly(ref([])),
+    loading: readonly(ref(false)),
+    requiresAuth: computed(() => false),
+    hasSearches: computed(() => false),
+    canSave: computed(() => true),
+    isFeatureUnlocked: computed(() => false),
+    load: vi.fn(),
+    save: vi.fn().mockResolvedValue({ success: true }),
+    update: vi.fn().mockResolvedValue({ success: true }),
+    bumpUsage: vi.fn(),
+    toggleFavorite: vi.fn(),
+    remove: vi.fn(),
+  }),
+}))
 
 const mockSetSearch = vi.fn()
 const mockSetSort = vi.fn()
@@ -20,6 +37,8 @@ const catalogState = {
   setViewMode: mockSetViewMode,
   setActions: mockSetActions,
   filters: ref({}),
+  locationLevel: ref(''),
+  activeActions: ref(['venta', 'lotes', 'alquiler', 'subasta']),
 }
 
 beforeAll(() => {
@@ -29,6 +48,31 @@ beforeAll(() => {
   vi.stubGlobal('onUnmounted', vi.fn())
   vi.stubGlobal('nextTick', () => Promise.resolve())
   vi.stubGlobal('toRaw', (v: unknown) => v)
+  vi.stubGlobal('inject', () => undefined)
+  vi.stubGlobal('readonly', readonly)
+  vi.stubGlobal('useState', (_key: string, init?: () => unknown) => ref(init ? init() : undefined))
+  vi.stubGlobal('useFetch', () => ({ data: ref(null), pending: ref(false), error: ref(null) }))
+  vi.stubGlobal('$fetch', vi.fn().mockResolvedValue({}))
+  vi.stubGlobal('useFeatureUnlocks', () => ({
+    unlocks: readonly(ref({})),
+    loading: readonly(ref(false)),
+    fetchStatus: vi.fn(),
+    unlock: vi.fn().mockResolvedValue({ success: false }),
+    isUnlocked: () => false,
+  }))
+  vi.stubGlobal('watch', watch)
+  vi.stubGlobal('useFilters', () => ({
+    activeFilters: computed(() => ({})),
+    definitions: computed(() => []),
+    loading: computed(() => false),
+    error: computed(() => null),
+  }))
+  vi.stubGlobal('usePerfilAlertas', () => ({
+    canCreate: computed(() => false),
+    alerts: ref([]),
+    loading: ref(false),
+    loadAlerts: vi.fn(),
+  }))
   vi.stubGlobal('useCatalogState', () => catalogState)
   vi.stubGlobal('useFavorites', () => ({
     favoritesOnly: { value: false },
@@ -72,25 +116,10 @@ describe('ControlsBar', () => {
     expect(w.emitted('toggleMenu')).toHaveLength(1)
   })
 
-  it('renders three category action buttons', () => {
+  // Category action buttons moved to CategoryBar.vue — tested there
+  it('does not render category buttons (delegated to CategoryBar)', () => {
     const w = factory()
-    const btns = w.findAll('.category-btn')
-    expect(btns).toHaveLength(3)
-  })
-
-  it('toggles action button active state on click', async () => {
-    const w = factory()
-    const btns = w.findAll('.category-btn')
-    await btns[0].trigger('click') // alquiler
-    expect(w.emitted('categoryChange')).toBeTruthy()
-  })
-
-  it('calls setActions and emits categoryChange on category click', async () => {
-    const w = factory()
-    const btns = w.findAll('.category-btn')
-    await btns[0].trigger('click')
-    expect(mockSetActions).toHaveBeenCalled()
-    expect(w.emitted('categoryChange')).toBeTruthy()
+    expect(w.findAll('.category-btn')).toHaveLength(0)
   })
 
   it('renders favorites button', () => {
@@ -119,23 +148,23 @@ describe('ControlsBar', () => {
     }))
   })
 
-  it('renders view switcher with grid and list buttons', () => {
+  it('renders view switcher with compact, grid and list buttons', () => {
     const w = factory()
     const viewBtns = w.findAll('.view-btn')
-    expect(viewBtns).toHaveLength(2)
+    expect(viewBtns).toHaveLength(3)
   })
 
   it('sets grid view active by default', () => {
     const w = factory()
     const viewBtns = w.findAll('.view-btn')
-    expect(viewBtns[0].classes()).toContain('active')
-    expect(viewBtns[1].classes()).not.toContain('active')
+    // compact=0, grid=1, list=2
+    expect(viewBtns[1].classes()).toContain('active')
   })
 
   it('emits viewChange on list button click', async () => {
     const w = factory()
     const viewBtns = w.findAll('.view-btn')
-    await viewBtns[1].trigger('click')
+    await viewBtns[2].trigger('click')
     expect(mockSetViewMode).toHaveBeenCalledWith('list')
     expect(w.emitted('viewChange')).toEqual([['list']])
   })
@@ -144,7 +173,7 @@ describe('ControlsBar', () => {
     catalogState.viewMode.value = 'list' as 'grid' | 'list'
     const w = factory()
     const viewBtns = w.findAll('.view-btn')
-    await viewBtns[0].trigger('click')
+    await viewBtns[1].trigger('click')
     expect(w.emitted('viewChange')).toEqual([['grid']])
     catalogState.viewMode.value = 'grid'
   })
@@ -177,14 +206,13 @@ describe('ControlsBar', () => {
 
   it('renders save search button', () => {
     const w = factory()
-    expect(w.find('.save-search-btn').exists()).toBe(true)
+    expect(w.find('.action-btn--save').exists()).toBe(true)
   })
 
-  it('emits saveSearchAuth when unauthenticated user clicks save', async () => {
-    vi.stubGlobal('useSupabaseUser', () => ({ value: null }))
+  it('toggles save menu on save button click', async () => {
     const w = factory()
-    await w.find('.save-search-btn').trigger('click')
-    expect(w.emitted('saveSearchAuth')).toHaveLength(1)
+    await w.find('.action-btn--save').trigger('click')
+    expect(w.find('.save-preset-wrapper').exists()).toBe(true)
     vi.stubGlobal('useSupabaseUser', () => ({ value: { id: 'user-1' } }))
   })
 

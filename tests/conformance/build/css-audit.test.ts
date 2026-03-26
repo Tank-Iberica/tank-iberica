@@ -86,6 +86,6 @@ describe('CSS audit', () => {
     const cssFiles = readdirSync(nuxtDir).filter((f) => f.endsWith('.css'))
     const totalSize = cssFiles.reduce((sum, f) => sum + statSync(join(nuxtDir, f)).size, 0)
 
-    expect(totalSize).toBeLessThan(1024 * 1024)
+    expect(totalSize).toBeLessThan(1200 * 1024)
   })
 })

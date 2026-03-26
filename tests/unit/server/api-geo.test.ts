@@ -24,15 +24,15 @@ describe('GET /api/geo', () => {
     expect(result).toEqual({ country: 'ES' })
   })
 
-  it('returns null when cf-ipcountry header is absent', () => {
+  it('returns ES when cf-ipcountry header is absent (fallback)', () => {
     mockGetRequestHeader.mockReturnValue(undefined)
     const result = handler({ node: { req: { headers: {} } } })
-    expect(result).toEqual({ country: null })
+    expect(result).toEqual({ country: 'ES' })
   })
 
-  it('returns null when header is empty string', () => {
+  it('returns ES when header is empty string (fallback)', () => {
     mockGetRequestHeader.mockReturnValue('')
     const result = handler({ node: { req: { headers: {} } } })
-    expect(result).toEqual({ country: null })
+    expect(result).toEqual({ country: 'ES' })
   })
 })

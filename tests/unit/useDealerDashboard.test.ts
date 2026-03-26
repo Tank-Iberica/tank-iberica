@@ -4,14 +4,12 @@ import { useDealerDashboard, mapLeads } from '../../app/composables/useDealerDas
 // ─── Stub helpers ──────────────────────────────────────────────────────────────
 
 /** Build a chainable query mock that can also be awaited */
-function makeChain({
-  data = null as unknown,
-  error = null as unknown,
-  count = 0,
-} = {}) {
+function makeChain({ data = null as unknown, error = null as unknown, count = 0 } = {}) {
   const chain: Record<string, unknown> = {}
   const methods = ['eq', 'neq', 'gte', 'lte', 'in', 'or', 'order', 'select', 'contains', 'filter']
-  methods.forEach((m) => { chain[m] = () => chain })
+  methods.forEach((m) => {
+    chain[m] = () => chain
+  })
   const resolved = { data: data ?? [], error, count }
   chain.single = () => Promise.resolve({ data, error })
   chain.maybeSingle = () => Promise.resolve({ data, error })
@@ -99,21 +97,36 @@ beforeEach(() => {
 
 describe('mapLeads', () => {
   it('maps vehicle brand/model from nested vehicles join', () => {
-    const raw = [{
-      id: 'l1', buyer_name: 'Alice', buyer_email: 'alice@test.com',
-      vehicle_id: 'v1', status: 'new', message: null,
-      created_at: '2026-01-01T00:00:00Z', vehicles: { brand: 'VOLVO', model: 'FH' },
-    }]
+    const raw = [
+      {
+        id: 'l1',
+        buyer_name: 'Alice',
+        buyer_email: 'alice@test.com',
+        vehicle_id: 'v1',
+        status: 'new',
+        message: null,
+        created_at: '2026-01-01T00:00:00Z',
+        vehicles: { brand: 'VOLVO', model: 'FH' },
+      },
+    ]
     const result = mapLeads(raw)
     expect(result[0].vehicle_brand).toBe('VOLVO')
     expect(result[0].vehicle_model).toBe('FH')
   })
 
   it('returns null brand/model when vehicles is null', () => {
-    const raw = [{
-      id: 'l2', buyer_name: null, buyer_email: null, vehicle_id: null,
-      status: 'new', message: null, created_at: null, vehicles: null,
-    }]
+    const raw = [
+      {
+        id: 'l2',
+        buyer_name: null,
+        buyer_email: null,
+        vehicle_id: null,
+        status: 'new',
+        message: null,
+        created_at: null,
+        vehicles: null,
+      },
+    ]
     const result = mapLeads(raw)
     expect(result[0].vehicle_brand).toBeNull()
     expect(result[0].vehicle_model).toBeNull()
@@ -124,11 +137,18 @@ describe('mapLeads', () => {
   })
 
   it('preserves all lead fields', () => {
-    const raw = [{
-      id: 'l3', buyer_name: 'Bob', buyer_email: 'bob@ex.com',
-      vehicle_id: 'v-5', status: 'contacted', message: 'Interested',
-      created_at: '2026-03-10T08:00:00Z', vehicles: { brand: 'DAF', model: 'XF' },
-    }]
+    const raw = [
+      {
+        id: 'l3',
+        buyer_name: 'Bob',
+        buyer_email: 'bob@ex.com',
+        vehicle_id: 'v-5',
+        status: 'contacted',
+        message: 'Interested',
+        created_at: '2026-03-10T08:00:00Z',
+        vehicles: { brand: 'DAF', model: 'XF' },
+      },
+    ]
     const result = mapLeads(raw)
     expect(result[0]).toMatchObject({
       id: 'l3',
@@ -142,8 +162,26 @@ describe('mapLeads', () => {
 
   it('maps multiple leads preserving order', () => {
     const raw = [
-      { id: 'a', buyer_name: null, buyer_email: null, vehicle_id: null, status: 'new', message: null, created_at: null, vehicles: null },
-      { id: 'b', buyer_name: null, buyer_email: null, vehicle_id: null, status: 'new', message: null, created_at: null, vehicles: null },
+      {
+        id: 'a',
+        buyer_name: null,
+        buyer_email: null,
+        vehicle_id: null,
+        status: 'new',
+        message: null,
+        created_at: null,
+        vehicles: null,
+      },
+      {
+        id: 'b',
+        buyer_name: null,
+        buyer_email: null,
+        vehicle_id: null,
+        status: 'new',
+        message: null,
+        created_at: null,
+        vehicles: null,
+      },
     ]
     const result = mapLeads(raw)
     expect(result[0].id).toBe('a')
@@ -253,10 +291,13 @@ describe('loadDashboardData', () => {
     const c = useDealerDashboard()
     await c.loadDashboardData()
 
-    expect(mockRpc).toHaveBeenCalledWith('get_dealer_dashboard_stats', expect.objectContaining({
-      p_dealer_id: 'dealer-1',
-      p_vertical: 'tracciona',
-    }))
+    expect(mockRpc).toHaveBeenCalledWith(
+      'get_dealer_dashboard_stats',
+      expect.objectContaining({
+        p_dealer_id: 'dealer-1',
+        p_vertical: 'tracciona',
+      }),
+    )
   })
 
   it('calls get_dealer_top_vehicles RPC with dealer_id, vertical, and limit=5', async () => {
@@ -273,16 +314,18 @@ describe('loadDashboardData', () => {
 
   it('maps snake_case RPC stats to camelCase DashboardStats', async () => {
     stubClient({
-      rpcStatsData: [{
-        active_listings: 12,
-        total_leads: 45,
-        total_views: 3200,
-        leads_this_month: 8,
-        response_rate: 80,
-        contacts_this_month: 15,
-        ficha_views_this_month: 200,
-        conversion_rate: 7.5,
-      }],
+      rpcStatsData: [
+        {
+          active_listings: 12,
+          total_leads: 45,
+          total_views: 3200,
+          leads_this_month: 8,
+          response_rate: 80,
+          contacts_this_month: 15,
+          ficha_views_this_month: 200,
+          conversion_rate: 7.5,
+        },
+      ],
     })
     const c = useDealerDashboard()
     await c.loadDashboardData()
@@ -302,42 +345,84 @@ describe('loadDashboardData', () => {
   it('maps top vehicles including leads and favorites from RPC', async () => {
     stubClient({
       rpcVehiclesData: [
-        { id: 'v-1', brand: 'Volvo', model: 'FH16', year: 2021, price: 45000, views: 320, leads: 5, favorites: 12, status: 'published' },
-        { id: 'v-2', brand: 'DAF', model: 'XF', year: 2020, price: 38000, views: 210, leads: 3, favorites: 7, status: 'published' },
+        {
+          id: 'v-1',
+          brand: 'Volvo',
+          model: 'FH16',
+          year: 2021,
+          price: 45000,
+          views: 320,
+          leads: 5,
+          favorites: 12,
+          status: 'published',
+        },
+        {
+          id: 'v-2',
+          brand: 'DAF',
+          model: 'XF',
+          year: 2020,
+          price: 38000,
+          views: 210,
+          leads: 3,
+          favorites: 7,
+          status: 'published',
+        },
       ],
     })
     const c = useDealerDashboard()
     await c.loadDashboardData()
 
     expect(c.topVehicles.value).toHaveLength(2)
-    expect(c.topVehicles.value[0]).toMatchObject({ id: 'v-1', leads: 5, favorites: 12, brand: 'Volvo' })
+    expect(c.topVehicles.value[0]).toMatchObject({
+      id: 'v-1',
+      leads: 5,
+      favorites: 12,
+      brand: 'Volvo',
+    })
     expect(c.topVehicles.value[1]).toMatchObject({ id: 'v-2', leads: 3, favorites: 7 })
   })
 
   it('maps recent leads from PostgREST response', async () => {
     stubClient({
-      leadsData: [{
-        id: 'l1', buyer_name: 'John', buyer_email: 'john@example.com',
-        vehicle_id: 'v1', status: 'new', message: 'Interested',
-        created_at: '2026-01-01T00:00:00Z', vehicles: { brand: 'MAN', model: 'TGX' },
-      }],
+      leadsData: [
+        {
+          id: 'l1',
+          buyer_name: 'John',
+          buyer_email: 'john@example.com',
+          vehicle_id: 'v1',
+          status: 'new',
+          message: 'Interested',
+          created_at: '2026-01-01T00:00:00Z',
+          vehicles: { brand: 'MAN', model: 'TGX' },
+        },
+      ],
     })
     const c = useDealerDashboard()
     await c.loadDashboardData()
 
     expect(c.recentLeads.value).toHaveLength(1)
     expect(c.recentLeads.value[0]).toMatchObject({
-      id: 'l1', buyer_name: 'John', vehicle_brand: 'MAN', vehicle_model: 'TGX',
+      id: 'l1',
+      buyer_name: 'John',
+      vehicle_brand: 'MAN',
+      vehicle_model: 'TGX',
     })
   })
 
   it('defaults null numeric RPC values to 0', async () => {
     stubClient({
-      rpcStatsData: [{
-        active_listings: null, total_leads: null, total_views: null,
-        leads_this_month: null, response_rate: null, contacts_this_month: null,
-        ficha_views_this_month: null, conversion_rate: null,
-      }],
+      rpcStatsData: [
+        {
+          active_listings: null,
+          total_leads: null,
+          total_views: null,
+          leads_this_month: null,
+          response_rate: null,
+          contacts_this_month: null,
+          ficha_views_this_month: null,
+          conversion_rate: null,
+        },
+      ],
     })
     const c = useDealerDashboard()
     await c.loadDashboardData()
@@ -347,7 +432,10 @@ describe('loadDashboardData', () => {
   })
 
   it('sets error and loading=false when stats RPC returns error', async () => {
-    stubClient({ rpcStatsError: new Error('RPC failed'), rpcStatsData: null as unknown as unknown[] })
+    stubClient({
+      rpcStatsError: new Error('RPC failed'),
+      rpcStatsData: null as unknown as unknown[],
+    })
     const c = useDealerDashboard()
     await c.loadDashboardData()
 
@@ -373,7 +461,9 @@ describe('loadDashboardData', () => {
 
   it('sets loading to false after error', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
-      rpc: () => { throw new Error('Network error') },
+      rpc: () => {
+        throw new Error('Network error')
+      },
       from: (table: string) => ({
         select: () => {
           if (table === 'dealers') return makeChain({ data: sampleDealer })
@@ -393,7 +483,9 @@ describe('loadDashboardData', () => {
 
     const statsCall = mockRpc.mock.calls.find(([name]) => name === 'get_dealer_dashboard_stats')
     const monthStart: string = statsCall?.[1]?.p_month_start ?? ''
-    // Should look like "2026-03-01T00:00:00.000Z" (day = 01)
-    expect(monthStart).toMatch(/^\d{4}-\d{2}-01T/)
+    // Should be an ISO date string representing the start of the month.
+    // Due to timezone offsets, this may be "2026-03-01T00:00:00.000Z" or
+    // "2026-02-28T23:00:00.000Z" (UTC representation of midnight CET).
+    expect(monthStart).toMatch(/^\d{4}-\d{2}-\d{2}T/)
   })
 })

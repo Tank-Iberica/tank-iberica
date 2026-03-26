@@ -210,17 +210,18 @@ describe('useCatalogState', () => {
     expect(fresh.filters.value).toEqual({})
   })
 
-  it('setActions clears category and subcategory', () => {
+  it('setActions preserves category and subcategory', () => {
     const catalog = useCatalogState()
     catalog.setCategory('cat-1', 'semirremolques')
     catalog.setSubcategory('sub-1', 'cisternas')
     catalog.setActions(['terceros'])
 
     const fresh = useCatalogState()
-    expect(fresh.activeCategoryId.value).toBeNull()
-    expect(fresh.activeCategorySlug.value).toBeNull()
-    expect(fresh.activeSubcategoryId.value).toBeNull()
-    expect(fresh.activeSubcategorySlug.value).toBeNull()
+    // setActions no longer clears category/subcategory
+    expect(fresh.activeCategoryId.value).toBe('cat-1')
+    expect(fresh.activeCategorySlug.value).toBe('semirremolques')
+    expect(fresh.activeSubcategoryId.value).toBe('sub-1')
+    expect(fresh.activeSubcategorySlug.value).toBe('cisternas')
   })
 
   // ─── setSubcategory ──────────────────────────────────────────────────────
@@ -326,9 +327,9 @@ describe('useCatalogState', () => {
 
   // ─── activeActions default ────────────────────────────────────────────────
 
-  it('activeActions defaults to ["alquiler"]', () => {
+  it('activeActions defaults to ["venta", "lotes", "alquiler", "subasta"]', () => {
     const { activeActions } = useCatalogState()
-    expect(activeActions.value).toEqual(['alquiler'])
+    expect(activeActions.value).toEqual(['venta', 'lotes', 'alquiler', 'subasta'])
   })
 
   // ─── resetCatalog restores activeActions default ──────────────────────────
@@ -339,6 +340,6 @@ describe('useCatalogState', () => {
     catalog.resetCatalog()
 
     const fresh = useCatalogState()
-    expect(fresh.activeActions.value).toEqual(['alquiler'])
+    expect(fresh.activeActions.value).toEqual(['venta', 'lotes', 'alquiler', 'subasta'])
   })
 })

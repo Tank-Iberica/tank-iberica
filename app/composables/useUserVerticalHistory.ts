@@ -19,6 +19,7 @@ export interface UserVerticalHistory {
   totalEvents: number
 }
 
+/** Composable for cross-vertical buyer tracking and vertical history. */
 export function useUserVerticalHistory() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()

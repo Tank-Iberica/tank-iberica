@@ -1,17 +1,52 @@
 /**
  * Tests for app/components/catalog/CategoryBar.vue
+ *
+ * The component renders a breadcrumb-style bar with:
+ * - A transaction dropdown (multi-select checkboxes for actions)
+ * - Category pills (or dropdown when one is selected)
+ * - Subcategory pills (shown when a category with linked subcats is selected)
+ * - Scroll arrows for overflow
  */
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 
 const mockSetActions = vi.fn()
+const mockSetCategory = vi.fn()
+const mockSetSubcategory = vi.fn()
+const mockActiveActions = ref<string[]>([])
+const mockActiveCategoryId = ref<string | null>(null)
+const mockActiveSubcategoryId = ref<string | null>(null)
+
+// Supabase mock: returns empty data for all queries
+const mockSupabaseFrom = vi.fn(() => ({
+  select: vi.fn().mockReturnThis(),
+  eq: vi.fn().mockReturnThis(),
+  order: vi.fn().mockResolvedValue({ data: [] }),
+}))
 
 beforeAll(() => {
   vi.stubGlobal('ref', ref)
   vi.stubGlobal('computed', computed)
+  vi.stubGlobal('watch', vi.fn())
+  vi.stubGlobal(
+    'defineEmits',
+    vi.fn(() => vi.fn()),
+  )
+  vi.stubGlobal('useI18n', () => ({
+    t: (key: string) => key,
+    locale: ref('es'),
+  }))
+  vi.stubGlobal('useSupabaseClient', () => ({
+    from: mockSupabaseFrom,
+  }))
   vi.stubGlobal('useCatalogState', () => ({
+    activeActions: mockActiveActions,
+    activeCategoryId: mockActiveCategoryId,
+    activeSubcategoryId: mockActiveSubcategoryId,
     setActions: mockSetActions,
+    setCategory: mockSetCategory,
+    setSubcategory: mockSetSubcategory,
   }))
   vi.stubGlobal('useVerticalConfig', () => ({
     config: ref(null),
@@ -29,13 +64,18 @@ describe('CategoryBar', () => {
       global: { mocks: { $t: (key: string) => key } },
     })
 
-  beforeAll(() => {
+  beforeEach(() => {
     mockSetActions.mockClear()
+    mockSetCategory.mockClear()
+    mockSetSubcategory.mockClear()
+    mockActiveActions.value = []
+    mockActiveCategoryId.value = null
+    mockActiveSubcategoryId.value = null
   })
 
-  it('renders categories-section nav', () => {
+  it('renders category-bar nav', () => {
     const w = factory()
-    expect(w.find('.categories-section').exists()).toBe(true)
+    expect(w.find('.category-bar').exists()).toBe(true)
   })
 
   it('has aria-label for accessibility', () => {
@@ -43,59 +83,43 @@ describe('CategoryBar', () => {
     expect(w.find('nav').attributes('aria-label')).toBe('catalog.title')
   })
 
-  it('renders 3 category buttons', () => {
+  it('renders breadcrumb-bar with breadcrumb-scroll container', () => {
     const w = factory()
-    expect(w.findAll('.category-btn')).toHaveLength(3)
+    expect(w.find('.breadcrumb-bar').exists()).toBe(true)
+    expect(w.find('.breadcrumb-scroll').exists()).toBe(true)
   })
 
-  it('shows translated labels', () => {
+  it('renders transaction segment with dropdown button', () => {
     const w = factory()
-    const btns = w.findAll('.category-btn')
-    expect(btns[0].text()).toBe('catalog.alquiler')
-    expect(btns[1].text()).toBe('catalog.venta')
-    expect(btns[2].text()).toBe('catalog.terceros')
+    const segment = w.find('.segment-transaction')
+    expect(segment.exists()).toBe(true)
+    const btn = segment.find('.bc-btn--selected')
+    expect(btn.exists()).toBe(true)
+    expect(btn.attributes('aria-haspopup')).toBe('listbox')
   })
 
-  it('no button is active by default', () => {
+  it('renders 4 action checkboxes in transaction dropdown (fallback actions)', () => {
     const w = factory()
-    const activeButtons = w.findAll('.category-btn.active')
-    expect(activeButtons).toHaveLength(0)
+    const checkboxes = w.findAll('.segment-transaction .bc-checkbox')
+    expect(checkboxes).toHaveLength(4)
   })
 
-  it('emits change on category click', async () => {
+  it('shows transaction label from $t when no actions selected', () => {
     const w = factory()
-    await w.findAll('.category-btn')[0].trigger('click')
-    expect(w.emitted('change')).toBeTruthy()
+    const label = w.find('.segment-transaction .bc-label')
+    expect(label.text()).toBe('catalog.transaction')
   })
 
-  it('toggles active class on click', async () => {
+  it('renders separator after transaction segment', () => {
     const w = factory()
-    const btn = w.findAll('.category-btn')[0]
-    await btn.trigger('click')
-    expect(btn.classes()).toContain('active')
+    const seps = w.findAll('.bc-sep')
+    expect(seps.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('removes active class on second click', async () => {
+  it('calls setActions when toggling a transaction checkbox', async () => {
     const w = factory()
-    const btn = w.findAll('.category-btn')[0]
-    await btn.trigger('click')
-    await btn.trigger('click')
-    expect(btn.classes()).not.toContain('active')
-  })
-
-  it('supports multi-select', async () => {
-    const w = factory()
-    const btns = w.findAll('.category-btn')
-    await btns[0].trigger('click')
-    await btns[1].trigger('click')
-    expect(btns[0].classes()).toContain('active')
-    expect(btns[1].classes()).toContain('active')
-  })
-
-  it('calls setActions from useCatalogState', async () => {
-    mockSetActions.mockClear()
-    const w = factory()
-    await w.findAll('.category-btn')[0].trigger('click')
+    const checkbox = w.find('.segment-transaction .bc-checkbox')
+    await checkbox.setValue(true)
     expect(mockSetActions).toHaveBeenCalled()
   })
 
@@ -105,8 +129,24 @@ describe('CategoryBar', () => {
     expect(w.find('.scroll-btn-right').exists()).toBe(true)
   })
 
-  it('has scrollable categories container', () => {
+  it('shows dropdown-open class on breadcrumb-bar when transaction is opened', async () => {
     const w = factory()
-    expect(w.find('.categories').exists()).toBe(true)
+    const txBtn = w.find('.segment-transaction .bc-btn--selected')
+    await txBtn.trigger('click')
+    expect(w.find('.breadcrumb-bar.dropdown-open').exists()).toBe(true)
+  })
+
+  it('renders dropdown listbox with aria-label for transaction', () => {
+    const w = factory()
+    const dropdown = w.find('.segment-transaction .bc-dropdown')
+    expect(dropdown.exists()).toBe(true)
+    expect(dropdown.attributes('role')).toBe('listbox')
+  })
+
+  it('transaction dropdown is hidden by default (v-show)', () => {
+    const w = factory()
+    const dropdown = w.find('.segment-transaction .bc-dropdown')
+    // v-show sets display:none, element still exists in DOM
+    expect(dropdown.exists()).toBe(true)
   })
 })

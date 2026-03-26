@@ -82,6 +82,7 @@ export function validateFieldValue(def: CustomFieldDef, value: unknown): string 
   return null
 }
 
+/** Composable for dynamic custom fields per vertical with validation. */
 export function useCustomFields() {
   const supabase = useSupabaseClient()
 

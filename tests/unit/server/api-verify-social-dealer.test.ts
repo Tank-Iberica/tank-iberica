@@ -239,7 +239,7 @@ describe('POST /api/verify-document', () => {
     expect(result.documentId).toBe(validDocUuid)
   })
 
-  it('uses mock data when AI call fails', async () => {
+  it('marks as pending when AI call fails (no auto-approve)', async () => {
     mockCallAI.mockRejectedValueOnce(new Error('AI down'))
     mockServiceRole.mockReturnValue(
       makeChain([
@@ -267,8 +267,8 @@ describe('POST /api/verify-document', () => {
       ]),
     )
     const result = await verifyDocumentHandler({} as any)
-    // Mock data copies declared data → match
-    expect(result.match).toBe(true)
+    // AI unavailable → cannot verify → match is false, status is pending
+    expect(result.match).toBe(false)
   })
 
   // ── Extended validation tests ─────────────────────────────────────────
@@ -1357,18 +1357,14 @@ describe('POST /api/dealer/import-stock', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         insert: vi.fn().mockResolvedValue({ data: null, error: null }),
-        maybeSingle: vi
-          .fn()
-          .mockResolvedValue({
-            data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null,
-            error: null,
-          }),
-        single: vi
-          .fn()
-          .mockResolvedValue({
-            data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null,
-            error: null,
-          }),
+        maybeSingle: vi.fn().mockResolvedValue({
+          data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null,
+          error: null,
+        }),
+        single: vi.fn().mockResolvedValue({
+          data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null,
+          error: null,
+        }),
       })),
     }
     mockServiceRole.mockReturnValue(supabase)

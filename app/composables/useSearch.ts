@@ -43,6 +43,7 @@ interface ServerSearchResponse {
   query: string
 }
 
+/** Composable for client-side search engine integration with debounced queries. */
 export function useSearch(options: UseSearchOptions = {}) {
   const { debounceMs = 300, defaultLimit = 20 } = options
 

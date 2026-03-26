@@ -17,6 +17,7 @@ export interface SavedSearch {
   updated_at: string
 }
 
+/** Composable for DB-backed saved search presets with credit-gated unlocks. */
 export function useSavedSearches() {
   const searches = useState<SavedSearch[]>('saved-searches', () => [])
   const loading = ref(false)

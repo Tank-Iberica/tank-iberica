@@ -20,9 +20,30 @@ const mockEmit = vi.fn()
 
 function makeVehicles() {
   return [
-    { brand: 'Volvo', category: 'camion', price: 50000, year: 2020, location: 'Madrid', vehicle_images: [] },
-    { brand: 'Mercedes', category: 'furgon', price: 30000, year: 2018, location: 'Barcelona', vehicle_images: [] },
-    { brand: 'Volvo', category: 'camion', price: 60000, year: 2021, location: 'Madrid', vehicle_images: [] },
+    {
+      brand: 'Volvo',
+      category: 'camion',
+      price: 50000,
+      year: 2020,
+      location: 'Madrid',
+      vehicle_images: [],
+    },
+    {
+      brand: 'Mercedes',
+      category: 'furgon',
+      price: 30000,
+      year: 2018,
+      location: 'Barcelona',
+      vehicle_images: [],
+    },
+    {
+      brand: 'Volvo',
+      category: 'camion',
+      price: 60000,
+      year: 2021,
+      location: 'Madrid',
+      vehicle_images: [],
+    },
   ]
 }
 
@@ -36,9 +57,20 @@ beforeEach(() => {
 
   vi.stubGlobal('ref', (v: unknown) => {
     let _v = v
-    return { get value() { return _v }, set value(x) { _v = x } }
+    return {
+      get value() {
+        return _v
+      },
+      set value(x) {
+        _v = x
+      },
+    }
   })
-  vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+  vi.stubGlobal('computed', (fn: () => unknown) => ({
+    get value() {
+      return fn()
+    },
+  }))
   vi.stubGlobal('watch', (_source: unknown, _cb: unknown, _opts?: unknown) => {})
   vi.stubGlobal('onMounted', vi.fn())
   vi.stubGlobal('onUnmounted', vi.fn())
@@ -128,9 +160,7 @@ describe('brands computed', () => {
   })
 
   it('deduplicates brands', () => {
-    const vehicles = [
-      { brand: 'Volvo' }, { brand: 'Volvo' }, { brand: 'Mercedes' }
-    ]
+    const vehicles = [{ brand: 'Volvo' }, { brand: 'Volvo' }, { brand: 'Mercedes' }]
     const c = useFilterBar(() => vehicles as never, mockEmit)
     expect(c.brands.value).toHaveLength(2)
   })
@@ -183,27 +213,21 @@ describe('filter state computeds', () => {
 // ─── locationTriggerText ──────────────────────────────────────────────────────
 
 describe('locationTriggerText', () => {
-  it('returns province when editProvince is set', () => {
-    const c = useFilterBar(() => makeVehicles() as never, mockEmit)
-    c.editProvince.value = 'Madrid'
-    expect(c.locationTriggerText.value).toBe('Madrid')
-  })
-
-  it('returns country name + flag when editCountry is set (no province)', () => {
-    const c = useFilterBar(() => makeVehicles() as never, mockEmit)
-    c.editCountry.value = 'ES'
-    expect(c.locationTriggerText.value).toContain('España')
-  })
-
-  it('returns t(catalog.locationAll) when no country or province', () => {
+  it('returns locationAll when no locationLevel is set', () => {
     const c = useFilterBar(() => makeVehicles() as never, mockEmit)
     expect(c.locationTriggerText.value).toBe('catalog.locationAll')
   })
 
-  it('returns country code when code not found in list', () => {
+  it('returns locationLevel key when locationLevel is set', () => {
+    mockLocationLevel.value = 'nacional'
     const c = useFilterBar(() => makeVehicles() as never, mockEmit)
-    c.editCountry.value = 'JP'
-    expect(c.locationTriggerText.value).toBe('JP')
+    expect(c.locationTriggerText.value).toBe('catalog.locationLevel.nacional')
+  })
+
+  it('returns locationLevel key for provincia', () => {
+    mockLocationLevel.value = 'provincia'
+    const c = useFilterBar(() => makeVehicles() as never, mockEmit)
+    expect(c.locationTriggerText.value).toBe('catalog.locationLevel.provincia')
   })
 })
 
@@ -425,7 +449,7 @@ describe('handleClearAll', () => {
     c.handleClearAll()
     expect(mockClearAll).toHaveBeenCalled()
     expect(mockUpdateFilters).toHaveBeenCalledWith(
-      expect.objectContaining({ price_min: undefined, price_max: undefined })
+      expect.objectContaining({ price_min: undefined, price_max: undefined }),
     )
   })
 

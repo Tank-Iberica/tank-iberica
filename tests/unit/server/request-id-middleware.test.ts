@@ -14,7 +14,7 @@ import handler from '../../../server/middleware/request-id'
 function makeEvent(headers: Record<string, string> = {}) {
   return {
     context: {} as Record<string, unknown>,
-    node: { req: { headers } },
+    node: { req: { headers }, res: { headersSent: false } },
   } as any
 }
 

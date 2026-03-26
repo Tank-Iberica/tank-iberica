@@ -12,8 +12,6 @@ const SELECT_STAR_REGEX = /\.select\(\s*['"]?\*['"]?\s*\)/g
 
 // Files where select('*') is intentionally correct
 const ALLOWED_FILES = new Set([
-  // GDPR export: must export ALL user data columns
-  'app/composables/useUserProfile.ts',
   // Extensible config: dynamic columns per vertical (JSONB, [key: string]: unknown)
   'app/composables/useVerticalConfig.ts',
   'app/composables/admin/useAdminVerticalConfig.ts',
@@ -86,9 +84,9 @@ describe('select(*) audit', () => {
     }
   })
 
-  it('allowed list has exactly 5 files', () => {
+  it('allowed list has exactly 4 files', () => {
     // If a new file needs select('*'), add it here with justification
-    expect(ALLOWED_FILES.size).toBe(5)
+    expect(ALLOWED_FILES.size).toBe(4)
   })
 
   it('all allowed files actually contain select(*)', () => {

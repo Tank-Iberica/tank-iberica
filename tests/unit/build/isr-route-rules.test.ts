@@ -53,8 +53,8 @@ describe('ISR (SWR) route rules', () => {
       expect(config.routeRules['/legal/**'].prerender).toBe(true)
     })
 
-    it('/preguntas-frecuentes is prerendered', () => {
-      expect(config.routeRules['/preguntas-frecuentes'].prerender).toBe(true)
+    it('/preguntas-frecuentes uses SWR', () => {
+      expect(config.routeRules['/preguntas-frecuentes'].swr).toBeDefined()
     })
   })
 
