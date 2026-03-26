@@ -116,10 +116,8 @@ const selectedSubcategoryName = computed(() => {
 })
 
 // -- Transaction label --
-const allSelected = computed(() => activeActions.value.length === actionOptions.value.length)
-
 const transactionLabel = computed(() => {
-  if (!activeActions.value.length || allSelected.value) return t('catalog.transaction')
+  if (!activeActions.value.length) return t('catalog.transaction')
   if (activeActions.value.length === 1) return t(`catalog.${activeActions.value[0]}`)
   return `${activeActions.value.length} ${t('catalog.transaction').toLowerCase()}`
 })
