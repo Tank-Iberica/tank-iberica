@@ -50,7 +50,7 @@ interface ExtractedData {
 interface VerifyDocumentResponse {
   match: boolean
   confidence: number
-  extractedData: ExtractedData
+  extractedData?: ExtractedData
   discrepancies: string[]
   documentId: string
   status: 'verified' | 'pending'
