@@ -10,7 +10,7 @@
 import type { ISODateString, LocalizedField, UUID } from './common'
 
 /** Vehicle action category */
-export type VehicleAction = 'alquiler' | 'venta' | 'terceros'
+export type VehicleAction = 'venta' | 'lotes' | 'alquiler' | 'subasta'
 
 /** Vehicle lifecycle status */
 export type VehicleStatus = 'published' | 'draft' | 'sold' | 'rented' | 'archived'

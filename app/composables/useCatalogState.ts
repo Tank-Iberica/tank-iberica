@@ -34,7 +34,7 @@ export interface CatalogState {
 
 const defaultState: CatalogState = {
   activeAction: null,
-  activeActions: ['venta', 'alquiler', 'terceros'],
+  activeActions: ['venta', 'lotes', 'alquiler', 'subasta'],
   activeCategoryId: null,
   activeCategorySlug: null,
   activeSubcategoryId: null,
