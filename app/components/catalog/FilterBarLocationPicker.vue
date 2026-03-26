@@ -23,34 +23,36 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const { locationLevel } = useCatalogState()
+const { locationLevel, setLocationLevel } = useCatalogState()
 const { location: userLocation } = useUserLocation()
 const onLevelChangeFn = inject<(level: LocationLevel) => void>('onLevelChange', () => {})
 
-// "Otro país" mode: when user wants to pick a different country
+// "Otro país" mode
 const otherCountryMode = ref(false)
-const otherCountryCode = ref('')
 
 // Available range levels based on selected country
 const availableLevels = computed(() =>
   getAvailableLevels(props.editCountry || userLocation.value?.country || 'ES'),
 )
 
-function selectLevel(level: LocationLevel) {
-  onLevelChangeFn(level)
-}
-
-function onOtherCountry() {
-  otherCountryMode.value = true
+function onRangeChange(e: Event) {
+  const val = (e.target as HTMLSelectElement).value
+  if (val === '__other__') {
+    otherCountryMode.value = true
+    return
+  }
+  if (val) {
+    onLevelChangeFn(val as LocationLevel)
+  }
 }
 
 function onOtherCountrySelect(e: Event) {
   const code = (e.target as HTMLSelectElement).value
-  otherCountryCode.value = code
   if (code) {
-    // Emit as a synthetic event-like so useFilterBar.onCountrySelect picks it up
-    emit('country-select', e)
+    // Filter by that country without changing the user's own location
+    setLocationLevel('nacional', code, null, null)
     otherCountryMode.value = false
+    closeDropdown()
   }
 }
 
@@ -62,14 +64,13 @@ function closeDropdown() {
 // European countries for "Otro país" picker
 const otherCountries = computed(() => getSortedEuropeanCountries(locale.value))
 
-// Level label using i18n
 function levelLabel(level: LocationLevel): string {
   return t(`catalog.locationLevel.${level}`)
 }
 </script>
 
 <template>
-  <!-- MOBILE: Teleported location dropdown -->
+  <!-- MOBILE: Teleported location panel -->
   <Teleport to="body">
     <div v-if="open" class="loc-overlay" @click="closeDropdown">
       <div class="loc-panel" @click.stop>
@@ -78,7 +79,7 @@ function levelLabel(level: LocationLevel): string {
           <button type="button" class="loc-close" @click="closeDropdown">&#10005;</button>
         </div>
 
-        <!-- Step 1: Country -->
+        <!-- Country -->
         <label class="loc-label">{{ $t('catalog.locationSelectCountry') }}</label>
         <select
           class="loc-select"
@@ -96,7 +97,7 @@ function levelLabel(level: LocationLevel): string {
           </option>
         </select>
 
-        <!-- Step 2: Province (only if Spain) -->
+        <!-- Province (only if Spain) -->
         <template v-if="editCountry === 'ES'">
           <label class="loc-label">{{ $t('catalog.locationSelectProvince') }}</label>
           <select
@@ -110,36 +111,26 @@ function levelLabel(level: LocationLevel): string {
           </select>
         </template>
 
-        <!-- Step 3: Range (level) -->
+        <!-- Range (dropdown instead of pills) -->
         <label class="loc-label">{{ $t('catalog.locationRange') }}</label>
-        <div class="loc-levels" role="listbox" :aria-label="$t('catalog.locationRange')">
-          <button
-            v-for="level in availableLevels"
-            :key="level"
-            :class="['loc-level-btn', { active: locationLevel === level }]"
-            role="option"
-            :aria-selected="locationLevel === level"
-            @click="selectLevel(level)"
-          >
+        <select
+          class="loc-select"
+          :value="locationLevel || ''"
+          :aria-label="$t('catalog.locationRange')"
+          @change="onRangeChange"
+        >
+          <option value="">{{ $t('catalog.locationAll') }}</option>
+          <option v-for="level in availableLevels" :key="level" :value="level">
             {{ levelLabel(level) }}
-          </button>
+          </option>
+          <option value="__other__">{{ $t('catalog.otherCountry') }}</option>
+        </select>
 
-          <!-- "Otro país" option -->
-          <button
-            v-if="!otherCountryMode"
-            :class="['loc-level-btn loc-level-btn--other']"
-            @click="onOtherCountry"
-          >
-            {{ $t('catalog.otherCountry') }}
-          </button>
-        </div>
-
-        <!-- "Otro país" country picker -->
+        <!-- "Otro país" country picker (shown on demand) -->
         <template v-if="otherCountryMode">
           <label class="loc-label">{{ $t('catalog.otherCountry') }}</label>
           <select
             class="loc-select"
-            :value="otherCountryCode"
             :aria-label="$t('catalog.otherCountry')"
             @change="onOtherCountrySelect"
           >
@@ -157,9 +148,9 @@ function levelLabel(level: LocationLevel): string {
     </div>
   </Teleport>
 
-  <!-- DESKTOP: Inline dropdown (positioned absolute below trigger) -->
+  <!-- DESKTOP: Inline dropdown -->
   <div v-if="open" class="loc-dropdown">
-    <!-- Step 1: Country -->
+    <!-- Country -->
     <label class="loc-label">{{ $t('catalog.locationSelectCountry') }}</label>
     <select
       class="loc-select"
@@ -177,7 +168,7 @@ function levelLabel(level: LocationLevel): string {
       </option>
     </select>
 
-    <!-- Step 2: Province (only if Spain) -->
+    <!-- Province (only if Spain) -->
     <template v-if="editCountry === 'ES'">
       <label class="loc-label">{{ $t('catalog.locationSelectProvince') }}</label>
       <select
@@ -191,36 +182,26 @@ function levelLabel(level: LocationLevel): string {
       </select>
     </template>
 
-    <!-- Step 3: Range (level) -->
+    <!-- Range (dropdown) -->
     <label class="loc-label">{{ $t('catalog.locationRange') }}</label>
-    <div class="loc-levels" role="listbox" :aria-label="$t('catalog.locationRange')">
-      <button
-        v-for="level in availableLevels"
-        :key="level"
-        :class="['loc-level-btn', { active: locationLevel === level }]"
-        role="option"
-        :aria-selected="locationLevel === level"
-        @click="selectLevel(level)"
-      >
+    <select
+      class="loc-select"
+      :value="locationLevel || ''"
+      :aria-label="$t('catalog.locationRange')"
+      @change="onRangeChange"
+    >
+      <option value="">{{ $t('catalog.locationAll') }}</option>
+      <option v-for="level in availableLevels" :key="level" :value="level">
         {{ levelLabel(level) }}
-      </button>
+      </option>
+      <option value="__other__">{{ $t('catalog.otherCountry') }}</option>
+    </select>
 
-      <!-- "Otro país" option -->
-      <button
-        v-if="!otherCountryMode"
-        :class="['loc-level-btn loc-level-btn--other']"
-        @click="onOtherCountry"
-      >
-        {{ $t('catalog.otherCountry') }}
-      </button>
-    </div>
-
-    <!-- "Otro país" country picker -->
+    <!-- "Otro país" country picker (shown on demand) -->
     <template v-if="otherCountryMode">
       <label class="loc-label">{{ $t('catalog.otherCountry') }}</label>
       <select
         class="loc-select"
-        :value="otherCountryCode"
         :aria-label="$t('catalog.otherCountry')"
         @change="onOtherCountrySelect"
       >
@@ -279,49 +260,6 @@ function levelLabel(level: LocationLevel): string {
 .loc-select:focus {
   border-color: var(--color-primary);
   outline: none;
-}
-
-/* Range level buttons */
-.loc-levels {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.loc-level-btn {
-  padding: 0.3rem 0.6rem;
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-full);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  color: var(--text-secondary);
-  background: transparent;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  min-height: 2rem;
-}
-
-.loc-level-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.loc-level-btn.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-white);
-}
-
-.loc-level-btn--other {
-  border-style: dashed;
-  color: var(--text-auxiliary);
-}
-
-.loc-level-btn--other:hover {
-  border-style: solid;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
 }
 
 /* Hide desktop dropdown on mobile */

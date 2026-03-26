@@ -12,6 +12,9 @@ import { validateBody } from '../../utils/validateBody'
 
 const schema = z.object({
   name: z.string().min(1).max(100).optional(),
+  filters: z.record(z.unknown()).optional(),
+  search_query: z.string().max(500).optional().nullable(),
+  location_level: z.string().max(50).optional().nullable(),
   is_favorite: z.boolean().optional(),
   bump_usage: z.boolean().optional(),
 })
@@ -30,6 +33,9 @@ export default defineEventHandler(async (event) => {
   // Build update payload
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() }
   if (body.name !== undefined) update.name = body.name
+  if (body.filters !== undefined) update.filters = body.filters
+  if (body.search_query !== undefined) update.search_query = body.search_query
+  if (body.location_level !== undefined) update.location_level = body.location_level
   if (body.is_favorite !== undefined) update.is_favorite = body.is_favorite
   if (body.bump_usage) {
     update.last_used_at = new Date().toISOString()

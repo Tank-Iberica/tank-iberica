@@ -392,7 +392,15 @@
       "subscribeLink": "Hazte suscriptor",
       "createAlert": "Crear alerta",
       "alertCreated": "Alerta creada correctamente",
-      "searchSavedOk": "Búsqueda guardada correctamente"
+      "searchSavedOk": "Búsqueda guardada correctamente",
+      "loadSearch": "Cargar búsqueda",
+      "searchPlaceholder": "Buscar por nombre…",
+      "noSearches": "No tienes búsquedas guardadas",
+      "editSearch": "Editar búsqueda",
+      "deleteConfirm": "¿Eliminar esta búsqueda?",
+      "editName": "Nombre",
+      "editFilters": "Actualizar filtros actuales",
+      "saveChanges": "Guardar cambios"
     }
   },
   "unlock": {

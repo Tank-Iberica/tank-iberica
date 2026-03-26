@@ -131,15 +131,15 @@
 
         <!-- Center: save filters + create alert -->
         <div class="catalog-actions-inline">
-          <!-- Save search -->
+          <!-- Save / Load search -->
           <div class="save-preset-wrapper">
             <button
               :class="[
                 'action-btn action-btn--save',
-                { active: showSaveInput, success: saveSuccess },
+                { active: saveMenuOpen, success: saveSuccess },
               ]"
               :title="$t('catalog.savedFilters.saveSearch')"
-              @click="onClickSave"
+              @click="onClickSaveBtn"
             >
               <svg
                 width="16"
@@ -161,32 +161,71 @@
                   : $t('catalog.savedFilters.saveSearch')
               }}</span>
             </button>
-            <!-- Name input -->
-            <div v-show="showSaveInput" class="save-preset-dropdown">
-              <input
-                ref="presetNameInput"
-                v-model="newPresetName"
-                type="text"
-                :placeholder="$t('catalog.savedFilters.namePlaceholder')"
-                :aria-label="$t('catalog.savedFilters.name')"
-                autocomplete="off"
-                @keydown.enter="onSavePreset"
-                @keydown.escape="onCancelPreset"
-              >
-              <button
-                class="save-preset-confirm"
-                :disabled="!newPresetName.trim()"
-                @click="onSavePreset"
-              >
-                {{ $t('catalog.savedFilters.save') }}
-              </button>
-            </div>
-            <!-- Limit reached prompt -->
-            <div v-show="showSaveLimitPrompt" class="save-preset-dropdown limit-prompt">
-              <p class="limit-text">{{ $t('catalog.savedFilters.limitReached') }}</p>
-              <button class="unlock-btn" @click="onUnlockSearches">
-                {{ $t('catalog.savedFilters.unlockPrompt') }}
-              </button>
+
+            <!-- MOBILE: Teleported save panel -->
+            <Teleport to="body">
+              <div v-if="saveMenuOpen" class="save-overlay" @click="closeSaveMenu">
+                <div class="save-panel save-panel--mobile" @click.stop>
+                  <div class="save-panel-header">
+                    <span>{{ $t('catalog.savedFilters.saveSearch') }}</span>
+                    <button type="button" class="save-panel-close" @click="closeSaveMenu">
+                      &#10005;
+                    </button>
+                  </div>
+                  <CatalogSaveSearchPanelContent
+                    :user="user"
+                    :save-tab="saveTab"
+                    :can-save="canSave"
+                    :new-preset-name="newPresetName"
+                    :load-search-query="loadSearchQuery"
+                    :filtered-searches="filteredSearches"
+                    :editing-id="editingId"
+                    :edit-name="editName"
+                    @update:save-tab="saveTab = $event"
+                    @update:new-preset-name="newPresetName = $event"
+                    @update:load-search-query="loadSearchQuery = $event"
+                    @update:edit-name="editName = $event"
+                    @save-preset="onSavePreset"
+                    @close="closeSaveMenu"
+                    @unlock="onUnlockSearches"
+                    @apply="onApplySearch"
+                    @toggle-favorite="toggleFavorite"
+                    @start-edit="startEdit"
+                    @save-edit="onSaveEdit"
+                    @update-filters="onUpdateFilters"
+                    @delete-search="onDeleteSearch"
+                    @cancel-edit="editingId = ''"
+                  />
+                </div>
+              </div>
+            </Teleport>
+
+            <!-- DESKTOP: Absolute dropdown -->
+            <div v-show="saveMenuOpen" class="save-panel save-panel--desktop">
+              <CatalogSaveSearchPanelContent
+                :user="user"
+                :save-tab="saveTab"
+                :can-save="canSave"
+                :new-preset-name="newPresetName"
+                :load-search-query="loadSearchQuery"
+                :filtered-searches="filteredSearches"
+                :editing-id="editingId"
+                :edit-name="editName"
+                @update:save-tab="saveTab = $event"
+                @update:new-preset-name="newPresetName = $event"
+                @update:load-search-query="loadSearchQuery = $event"
+                @update:edit-name="editName = $event"
+                @save-preset="onSavePreset"
+                @close="closeSaveMenu"
+                @unlock="onUnlockSearches"
+                @apply="onApplySearch"
+                @toggle-favorite="toggleFavorite"
+                @start-edit="startEdit"
+                @save-edit="onSaveEdit"
+                @update-filters="onUpdateFilters"
+                @delete-search="onDeleteSearch"
+                @cancel-edit="editingId = ''"
+              />
             </div>
           </div>
 
@@ -342,7 +381,7 @@
 </template>
 
 <script setup lang="ts">
-import { useSavedSearches } from '~/composables/catalog/useSavedSearches'
+import { useSavedSearches, type SavedSearch } from '~/composables/catalog/useSavedSearches'
 
 const props = defineProps<{
   vehicleCount?: number
@@ -374,66 +413,129 @@ const { favoritesOnly, toggleFilter: toggleFavoritesFilter } = useFavorites()
 const user = useSupabaseUser()
 const openSubscribeModal = inject<() => void>('openSubscribeModal')
 
-// Save search (DB-backed for auth users)
-const { save: saveSearch, canSave } = useSavedSearches()
+// Save/Load search (DB-backed for auth users)
+const {
+  searches,
+  save: saveSearch,
+  update: updateSearch,
+  bumpUsage,
+  toggleFavorite,
+  remove: removeSearch,
+  canSave,
+} = useSavedSearches()
 const { unlock } = useFeatureUnlocks()
-const showSaveInput = ref(false)
-const showSaveLimitPrompt = ref(false)
+const { updateFilters: applyCatalogFilters, setSearch: applySearchQuery } = useCatalogState()
+
+const saveMenuOpen = ref(false)
+const saveTab = ref<'save' | 'load'>('save')
 const newPresetName = ref('')
 const presetNameInput = ref<HTMLInputElement | null>(null)
 const saveSuccess = ref(false)
 
-function onCancelPreset() {
-  showSaveInput.value = false
-  showSaveLimitPrompt.value = false
-  newPresetName.value = ''
+// Load tab search
+const loadSearchQuery = ref('')
+const filteredSearches = computed(() => {
+  const q = loadSearchQuery.value.toLowerCase().trim()
+  const list = searches.value
+  if (!q) return list
+  return list.filter((s) => s.name.toLowerCase().includes(q))
+})
+
+// Edit mode
+const editingId = ref('')
+const editName = ref('')
+
+function closeSaveMenu() {
+  saveMenuOpen.value = false
+  editingId.value = ''
+  loadSearchQuery.value = ''
 }
 
-function onClickSave() {
-  if (!user.value) {
-    openSubscribeModal?.()
-    return
+function onClickSaveBtn() {
+  saveMenuOpen.value = !saveMenuOpen.value
+  if (saveMenuOpen.value) {
+    // Auto-generate name for save tab
+    newPresetName.value = generateSearchName()
+    if (saveTab.value === 'save') {
+      nextTick(() => presetNameInput.value?.focus())
+    }
   }
-  if (canSave.value) {
-    showSaveInput.value = !showSaveInput.value
-    showSaveLimitPrompt.value = false
-  } else {
-    showSaveLimitPrompt.value = !showSaveLimitPrompt.value
-    showSaveInput.value = false
-  }
+}
+
+function generateSearchName(): string {
+  const parts: string[] = []
+  const f = catalogFilters.value
+  if (f.brand) parts.push(String(f.brand))
+  if (f.category_id) parts.push(String(f.category_id).slice(0, 8))
+  if (searchQuery.value) parts.push(searchQuery.value.slice(0, 30))
+  if (locationLevel.value) parts.push(locationLevel.value)
+  if (!parts.length) parts.push(new Date().toLocaleDateString())
+  return parts.join(' · ')
 }
 
 async function onSavePreset() {
-  if (!newPresetName.value.trim()) return
+  const name = newPresetName.value.trim()
+  if (!name) return
   const result = await saveSearch(
-    newPresetName.value,
+    name,
     catalogFilters.value,
     searchQuery.value,
     locationLevel.value,
   )
   if (result.success) {
     newPresetName.value = ''
-    showSaveInput.value = false
     saveSuccess.value = true
+    saveMenuOpen.value = false
     setTimeout(() => {
       saveSuccess.value = false
     }, 3000)
   } else if (result.limitReached) {
-    showSaveInput.value = false
-    showSaveLimitPrompt.value = true
+    // Stay open, switch won't help — limit prompt shows in template
   }
 }
 
 async function onUnlockSearches() {
   const result = await unlock('saved_searches')
   if (result.success) {
-    showSaveLimitPrompt.value = false
-    showSaveInput.value = true
+    // Reload to reflect unlocked state
+    newPresetName.value = generateSearchName()
   }
 }
 
-watch(showSaveInput, (val) => {
-  if (val) nextTick(() => presetNameInput.value?.focus())
+function onApplySearch(s: SavedSearch) {
+  applyCatalogFilters(s.filters as Record<string, never>)
+  if (s.search_query) applySearchQuery(s.search_query)
+  bumpUsage(s.id)
+  closeSaveMenu()
+}
+
+function startEdit(s: SavedSearch) {
+  editingId.value = s.id
+  editName.value = s.name
+}
+
+async function onSaveEdit(id: string) {
+  if (!editName.value.trim()) return
+  await updateSearch(id, { name: editName.value.trim() })
+  editingId.value = ''
+}
+
+async function onUpdateFilters(id: string) {
+  await updateSearch(id, {
+    filters: catalogFilters.value as Record<string, unknown>,
+    search_query: searchQuery.value || null,
+    location_level: locationLevel.value || null,
+  })
+  editingId.value = ''
+}
+
+async function onDeleteSearch(id: string) {
+  await removeSearch(id)
+  editingId.value = ''
+}
+
+watch(saveTab, (val) => {
+  if (val === 'save') nextTick(() => presetNameInput.value?.focus())
 })
 
 // Create alert
@@ -561,9 +663,13 @@ function onDocClick(e: MouseEvent) {
   if (!target.closest('.mobile-search-wrapper')) {
     if (!searchQuery.value) searchExpanded.value = false
   }
-  if (!target.closest('.save-preset-wrapper')) {
-    showSaveInput.value = false
-    showSaveLimitPrompt.value = false
+  if (
+    !target.closest('.save-preset-wrapper') &&
+    !target.closest('.save-overlay') &&
+    !target.closest('.save-panel--mobile')
+  ) {
+    saveMenuOpen.value = false
+    editingId.value = ''
   }
   if (!target.closest('.alert-wrapper')) {
     showAlertDropdown.value = false
@@ -875,55 +981,13 @@ onUnmounted(() => {
   color: var(--color-white);
 }
 
-/* Save preset dropdown */
+/* Save/Load panel */
 .save-preset-wrapper {
   position: relative;
 }
 
-.save-preset-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-primary);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--border-radius);
-  padding: 0.4rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  min-width: 14rem;
-  display: flex;
-  gap: 0.25rem;
-}
-
-.save-preset-dropdown input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: var(--font-size-sm);
-  padding: 0.3rem 0.5rem;
-  background: transparent;
-  min-height: auto;
-  min-width: 0;
-}
-
-.save-preset-confirm {
-  padding: 0.3rem 0.6rem;
-  background: var(--color-primary);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  min-height: auto;
-  min-width: auto;
-}
-
-.save-preset-confirm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.save-panel--desktop {
+  display: none;
 }
 
 .action-btn--save.success {
@@ -969,16 +1033,16 @@ onUnmounted(() => {
 }
 
 .alert-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
+  position: fixed;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
   border-radius: var(--border-radius);
   padding: 0.4rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 9999;
   min-width: 12rem;
   display: flex;
   flex-direction: column;
@@ -1318,6 +1382,34 @@ onUnmounted(() => {
   .controls-right {
     gap: 0.6rem;
   }
+
+  /* Save panel: desktop absolute dropdown */
+  .save-panel--desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-primary);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    z-index: 200;
+    min-width: 16rem;
+    max-width: 20rem;
+  }
+
+  /* Alert dropdown: desktop absolute instead of fixed */
+  .alert-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+  }
 }
 
 /* ============================================
@@ -1361,6 +1453,65 @@ onUnmounted(() => {
   .eye-svg {
     width: 0.875rem;
     height: 0.875rem;
+  }
+}
+</style>
+
+<!-- Non-scoped: teleported to body -->
+<style>
+.save-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6rem;
+}
+
+.save-panel--mobile {
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  width: calc(100% - 2rem);
+  max-width: 18rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+}
+
+.save-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--font-size-base);
+}
+
+.save-panel-close {
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 48em) {
+  .save-overlay {
+    display: none !important;
   }
 }
 </style>

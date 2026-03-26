@@ -34,7 +34,7 @@ export interface CatalogState {
 
 const defaultState: CatalogState = {
   activeAction: null,
-  activeActions: ['alquiler'],
+  activeActions: ['venta', 'lotes', 'alquiler', 'subasta'],
   activeCategoryId: null,
   activeCategorySlug: null,
   activeSubcategoryId: null,
@@ -64,11 +64,12 @@ export function useCatalogState() {
   function setActions(actions: VehicleAction[]) {
     state.value.activeActions = actions
     state.value.activeAction = actions[0] || null
-    state.value.activeCategoryId = null
-    state.value.activeCategorySlug = null
-    state.value.activeSubcategoryId = null
-    state.value.activeSubcategorySlug = null
-    state.value.filters = actions.length ? { actions } : {}
+    if (actions.length) {
+      state.value.filters = { ...state.value.filters, actions }
+    } else {
+      const { actions: _a, ...rest } = state.value.filters
+      state.value.filters = rest
+    }
   }
 
   /**

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
 import { useFilterBar } from '~/composables/catalog/useFilterBar'
-import { useSavedSearches } from '~/composables/catalog/useSavedSearches'
-import type { SavedSearch } from '~/composables/catalog/useSavedSearches'
 
 const props = defineProps<{
   vehicles?: readonly Vehicle[]
@@ -53,43 +51,6 @@ const {
 
 const pricePopoverOpen = ref(false)
 const yearPopoverOpen = ref(false)
-
-// Saved searches (DB-backed)
-const {
-  searches,
-  hasSearches,
-  bumpUsage,
-  toggleFavorite,
-  remove: removeSearch,
-} = useSavedSearches()
-const { updateFilters, setCategory, setSubcategory, setSearch } = useCatalogState()
-const { clearAll: clearDynamicFilters } = useFilters()
-
-function onApplySearch(search: SavedSearch) {
-  // Reset all dynamic attribute filters first
-  clearDynamicFilters()
-  const filters = search.filters as Record<string, unknown>
-  // Apply saved filters (merges & overrides current state)
-  updateFilters({
-    price_min: undefined,
-    price_max: undefined,
-    year_min: undefined,
-    year_max: undefined,
-    brand: undefined,
-    location_countries: undefined,
-    location_regions: undefined,
-    location_province_eq: undefined,
-    category_id: undefined,
-    subcategory_id: undefined,
-    ...filters,
-  })
-  setCategory((filters.category_id as string) ?? null, null)
-  setSubcategory((filters.subcategory_id as string) ?? null, null)
-  setSearch(search.search_query || '')
-  // Bump usage in background
-  bumpUsage(search.id)
-  emit('change')
-}
 </script>
 
 <template>
@@ -194,45 +155,6 @@ function onApplySearch(search: SavedSearch) {
       @toggle-advanced="advancedOpen = !advancedOpen"
     />
   </section>
-
-  <!-- Saved searches strip (non-sticky) -->
-  <div
-    v-if="hasSearches"
-    class="saved-filters-strip"
-    :aria-label="$t('catalog.savedFilters.title')"
-  >
-    <div class="presets-list" role="list">
-      <button
-        v-for="search in searches"
-        :key="search.id"
-        :class="['preset-chip', { 'preset-chip--favorite': search.is_favorite }]"
-        role="listitem"
-        :title="$t('catalog.savedFilters.apply')"
-        @click="onApplySearch(search)"
-      >
-        <span
-          v-if="search.is_favorite"
-          class="preset-star"
-          :aria-label="$t('catalog.savedFilters.unfavorite')"
-          role="button"
-          tabindex="0"
-          @click.stop="toggleFavorite(search.id)"
-          @keydown.enter.stop="toggleFavorite(search.id)"
-          >&#9733;</span
-        >
-        <span class="preset-name">{{ search.name }}</span>
-        <span
-          class="preset-delete"
-          :aria-label="$t('catalog.savedFilters.delete', { name: search.name })"
-          role="button"
-          tabindex="0"
-          @click.stop="removeSearch(search.id)"
-          @keydown.enter.stop="removeSearch(search.id)"
-          >&times;</span
-        >
-      </button>
-    </div>
-  </div>
 </template>
 
 <style scoped>
@@ -249,75 +171,5 @@ function onApplySearch(search: SavedSearch) {
   .filters-section {
     padding: 0.3rem 0;
   }
-}
-
-/* Saved filter presets strip */
-.saved-filters-strip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.presets-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-2);
-}
-
-.preset-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  padding: 0.25rem 0.625rem;
-  background: var(--color-primary);
-  color: var(--color-white);
-  border: none;
-  border-radius: 6.25rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  min-height: 2rem;
-  transition: background var(--transition-fast);
-}
-
-.preset-chip:hover {
-  background: var(--color-primary-dark);
-}
-
-.preset-name {
-  max-width: 9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.preset-delete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  font-size: 0.9rem;
-  line-height: 1;
-  opacity: 0.8;
-  flex-shrink: 0;
-}
-
-.preset-delete:hover {
-  opacity: 1;
-}
-
-.preset-chip--favorite {
-  background: var(--color-primary-dark, var(--color-primary));
-}
-
-.preset-star {
-  font-size: 0.75rem;
-  color: var(--color-gold, var(--color-warning));
-  flex-shrink: 0;
 }
 </style>

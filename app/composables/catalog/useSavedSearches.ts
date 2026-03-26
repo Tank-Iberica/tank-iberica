@@ -126,6 +126,31 @@ export function useSavedSearches() {
     }
   }
 
+  async function update(
+    id: string,
+    patch: {
+      name?: string
+      filters?: Record<string, unknown>
+      search_query?: string | null
+      location_level?: string | null
+    },
+  ) {
+    if (!user.value) return
+    try {
+      const result = await $fetch(`/api/saved-searches/${id}`, {
+        method: 'PATCH',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: patch,
+      })
+      if (result.search) {
+        const idx = searches.value.findIndex((s) => s.id === id)
+        if (idx >= 0) searches.value[idx] = result.search as SavedSearch
+      }
+    } catch {
+      // Silent fail
+    }
+  }
+
   async function remove(id: string) {
     if (!user.value) return
     try {
@@ -154,6 +179,7 @@ export function useSavedSearches() {
     isFeatureUnlocked,
     load,
     save,
+    update,
     bumpUsage,
     toggleFavorite,
     remove,

@@ -392,7 +392,15 @@
       "subscribeLink": "Subscribe now",
       "createAlert": "Create alert",
       "alertCreated": "Alert created successfully",
-      "searchSavedOk": "Search saved successfully"
+      "searchSavedOk": "Search saved successfully",
+      "loadSearch": "Load search",
+      "searchPlaceholder": "Search by name…",
+      "noSearches": "You have no saved searches",
+      "editSearch": "Edit search",
+      "deleteConfirm": "Delete this search?",
+      "editName": "Name",
+      "editFilters": "Update with current filters",
+      "saveChanges": "Save changes"
     }
   },
   "unlock": {

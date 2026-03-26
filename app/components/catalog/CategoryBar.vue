@@ -63,11 +63,6 @@ const actionOptions = computed(() => {
   return actions.map((key) => ({ key }))
 })
 
-// Default: Venta selected (immediately, not just onMounted, to avoid SSR mismatch)
-if (!activeActions.value.length) {
-  setActions(['venta'] as VehicleAction[])
-}
-
 onMounted(async () => {
   await Promise.all([fetchCategories(), fetchSubcategories(), fetchSubcategoryCategoryLinks()])
 
@@ -121,8 +116,10 @@ const selectedSubcategoryName = computed(() => {
 })
 
 // -- Transaction label --
+const allSelected = computed(() => activeActions.value.length === actionOptions.value.length)
+
 const transactionLabel = computed(() => {
-  if (!activeActions.value.length) return t('catalog.transaction')
+  if (!activeActions.value.length || allSelected.value) return t('catalog.transaction')
   if (activeActions.value.length === 1) return t(`catalog.${activeActions.value[0]}`)
   return `${activeActions.value.length} ${t('catalog.transaction').toLowerCase()}`
 })
